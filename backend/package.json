@@ -1,0 +1,22 @@
+{
+  "name": "backend-deepcodelab",
+  "version": "1.0.0",
+  "description": "Backend for DeepCodeLab",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "nodemon src/index.js",
+    "start": "node src/index.js"
+  },
+  "keywords": [
+    "backend",
+    "dsa",
+    "deepcodelab"
+  ],
+  "author": "Manas Kumar Pradhan",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0"
+  }
+}
