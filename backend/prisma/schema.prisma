@@ -107,6 +107,8 @@ model TestcaseResults {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([submissionId])
 }
 
 model ProblemSolved {
@@ -119,4 +121,6 @@ model ProblemSolved {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@unique([userId, problemId])
 }
