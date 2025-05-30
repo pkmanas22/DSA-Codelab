@@ -12,12 +12,12 @@ const problemRoutes = express.Router();
 
 problemRoutes.post('/create-problem', authMiddleware, checkAdmin, createProblem);
 
-problemRoutes.put('/update-problem/:id', authMiddleware, checkAdmin, updateProblem);
+problemRoutes.patch('/update-problem/:problemId', authMiddleware, checkAdmin, updateProblem);
 
-problemRoutes.delete('/delete-problem/:id', authMiddleware, checkAdmin, deleteProblem);
+problemRoutes.delete('/delete-problem/:problemId', authMiddleware, checkAdmin, deleteProblem);
 
 problemRoutes.get('/get-all-problems', authMiddleware, getAllProblems);
 
-problemRoutes.get('/get-problem/:id', authMiddleware, getProblemById);
+problemRoutes.get('/get-problem/:problemId', authMiddleware, getProblemById);
 
 export default problemRoutes;
