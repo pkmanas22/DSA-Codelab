@@ -31,7 +31,6 @@ export const rapidApiPollBatchResults = async (tokens) => {
       params: {
         tokens,
         base64_encoded: false,
-        fields: '*',
       },
       headers: {
         'x-rapidapi-key': process.env.RAPID_API_JUDGE0_KEY,
@@ -50,4 +49,28 @@ export const rapidApiPollBatchResults = async (tokens) => {
 
     await sleep(1000); // Batch polling until all submissions are done
   }
+};
+
+export const prepareJudge0SubmissionsAndReturnTokens = async (
+  testcases,
+  languageId,
+  sourceCode
+) => {
+  // testcases = [{input, output}, {input, output}, ...]
+  const submissions = testcases.map(({ input, output }) => ({
+    language_id: languageId,
+    source_code: sourceCode,
+    stdin: input,
+    expected_output: output,
+  }));
+  //   console.log('Submissions', submissions);
+
+  const submissionResponses = await rapidApiSubmitBatch(submissions); // return tokens
+
+  const submissionToken = submissionResponses.map(({ token }) => token).join(',');
+  // console.log('Submission token', submissionToken);
+
+  const submissionsResults = await rapidApiPollBatchResults(submissionToken);
+
+  return submissionsResults;
 };

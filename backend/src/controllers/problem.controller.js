@@ -7,6 +7,7 @@ import {
 import { db } from '../libs/db.js';
 import {
   getRapidApiLanguageId,
+  prepareJudge0SubmissionsAndReturnTokens,
   rapidApiPollBatchResults,
   rapidApiSubmitBatch,
 } from '../libs/rapidApi.lib.js';
@@ -64,20 +65,22 @@ export const createProblem = async (req, res) => {
         });
       }
 
-      const submissions = testcases.map(({ input, output }) => ({
-        language_id: languageId,
-        source_code: solutionCode,
-        stdin: input,
-        expected_output: output,
-      }));
-      //   console.log('Submissions', submissions);
+      const submissionsResults = await prepareJudge0SubmissionsAndReturnTokens(
+        testcases,
+        languageId,
+        solutionCode
+      );
 
-      const submissionResponses = await rapidApiSubmitBatch(submissions); // return tokens
-
-      const submissionToken = submissionResponses.map(({ token }) => token).join(',');
-      // console.log('Submission token', submissionToken);
-
-      const submissionsResults = await rapidApiPollBatchResults(submissionToken);
+      /* {
+        stdout: 'true\n',
+        time: '0.857',
+        memory: 47960,
+        stderr: null,
+        token: 'a7082b3e-3e80-4e83-80c0-3ee5068ef47c',
+        compile_output: null,
+        message: null,
+        status: { id: 3, description: 'Accepted' }
+      }, */
 
       // console.log('Submissions Results', submissionsResults);
 
@@ -269,20 +272,11 @@ export const updateProblem = async (req, res) => {
           });
         }
 
-        const submissions = updatedProblemDetails.testcases.map(({ input, output }) => ({
-          language_id: languageId,
-          source_code: solutionCode,
-          stdin: input,
-          expected_output: output,
-        }));
-        //   console.log('Submissions', submissions);
-
-        const submissionResponses = await rapidApiSubmitBatch(submissions); // return tokens
-
-        const submissionToken = submissionResponses.map(({ token }) => token).join(',');
-        // console.log('Submission token', submissionToken);
-
-        const submissionsResults = await rapidApiPollBatchResults(submissionToken);
+        const submissionsResults = await prepareJudge0SubmissionsAndReturnTokens(
+          testcases,
+          languageId,
+          solutionCode
+        );
 
         // console.log('Submissions Results', submissionsResults);
 
