@@ -5,6 +5,11 @@ import {
 } from '../libs/judge0.lib.js';
 
 import { db } from '../libs/db.js';
+import {
+  getRapidApiLanguageId,
+  rapidApiPollBatchResults,
+  rapidApiSubmitBatch,
+} from '../libs/rapidApi.lib.js';
 
 export const createProblem = async (req, res) => {
   /*
@@ -50,7 +55,7 @@ export const createProblem = async (req, res) => {
 
   try {
     for (const [language, solutionCode] of Object.entries(referenceSolutions)) {
-      const languageId = await getJudge0LanguageId(language);
+      const languageId = await getRapidApiLanguageId(language);
       //   console.log(languageId);
       if (!languageId) {
         return res.status(400).json({
@@ -67,17 +72,17 @@ export const createProblem = async (req, res) => {
       }));
       //   console.log('Submissions', submissions);
 
-      const submissionResponses = await judge0SubmitBatch(submissions); // return tokens
+      const submissionResponses = await rapidApiSubmitBatch(submissions); // return tokens
 
       const submissionToken = submissionResponses.map(({ token }) => token).join(',');
-      //   console.log('Submission token', submissionToken);
+      // console.log('Submission token', submissionToken);
 
-      const submissionsResults = await judge0PollBatchResults(submissionToken);
+      const submissionsResults = await rapidApiPollBatchResults(submissionToken);
 
-      //   console.log('Submissions Results', submissionsResults);
+      // console.log('Submissions Results', submissionsResults);
 
       submissionsResults.forEach((result, idx) => {
-        //   console.log(`Testcase ${idx + 1} on language ${language} - ${JSON.stringify(result)}`);
+        console.log(`Testcase ${idx + 1} on language ${language} - ${result.status.description}`);
 
         if (result.status.id !== 3) {
           return res.status(400).json({
@@ -88,33 +93,32 @@ export const createProblem = async (req, res) => {
           });
         }
       });
-
-      //   console.log('All testcases passed');
-      // save to db
-      const newProblem = await db.Problem.create({
-        data: {
-          title,
-          description,
-          difficulty,
-          tags,
-          examples,
-          constraints,
-          companies,
-          hints,
-          editorial,
-          testcases,
-          codeSnippets,
-          referenceSolutions,
-          userId: req.user.id,
-        },
-      });
-
-      return res.status(201).json({
-        success: true,
-        message: 'Problem created successfully.',
-        data: newProblem,
-      });
     }
+    //   console.log('All testcases passed');
+    // save to db
+    const newProblem = await db.Problem.create({
+      data: {
+        title,
+        description,
+        difficulty,
+        tags,
+        examples,
+        constraints,
+        companies,
+        hints,
+        editorial,
+        testcases,
+        codeSnippets,
+        referenceSolutions,
+        userId: req.user.id,
+      },
+    });
+
+    return res.status(201).json({
+      success: true,
+      message: 'Problem created successfully.',
+      data: newProblem,
+    });
   } catch (error) {
     console.log('Error while creating problem', error);
     return res.status(500).json({
