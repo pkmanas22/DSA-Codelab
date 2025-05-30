@@ -1,9 +1,13 @@
 import axios from 'axios';
-import { GET_RAPID_API_LANGUAGE_ID } from '../utils/constant.js';
+import { GET_RAPID_API_LANGUAGE_ID, GET_RAPID_API_LANGUAGE_NAME } from '../utils/constant.js';
 import { sleep } from '../utils/index.js';
 
 export const getRapidApiLanguageId = (language) => {
   return GET_RAPID_API_LANGUAGE_ID[language.toUpperCase()];
+};
+
+export const getRapidApiLanguageName = (languageId) => {
+  return GET_RAPID_API_LANGUAGE_NAME[languageId];
 };
 
 export const rapidApiSubmitBatch = async (submissions) => {

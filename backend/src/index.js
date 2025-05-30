@@ -6,6 +6,7 @@ import cors from 'cors';
 // routes
 import authRoutes from './routes/auth.route.js';
 import problemRoutes from './routes/problem.route.js';
+import executeCodeRoutes from './routes/executeCode.route.js';
 
 dotenv.config();
 
@@ -29,6 +30,7 @@ app.get('/', (_, res) => {
 
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/problem', problemRoutes);
+app.use('/api/v1/execute-code', executeCodeRoutes);
 
 app.listen(port, () => {
   console.log(`Server started on port ${port}`);
