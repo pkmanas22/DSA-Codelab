@@ -84,7 +84,7 @@ model Submission {
   user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   problem Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
 
-  testcasesResults TestcaseResults[]
+  testcaseResults TestcaseResults[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -95,6 +95,7 @@ model TestcaseResults {
   submissionId   String
   testCaseNumber Int
   isPassed       Boolean
+  stdin          String
   stdout         String?
   expectedOutput String
   stderr         String?

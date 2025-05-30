@@ -95,6 +95,7 @@ model TestcaseResults {
   submissionId   String
   testCaseNumber Int
   isPassed       Boolean
+  stdin          String
   stdout         String?
   expectedOutput String
   stderr         String?
