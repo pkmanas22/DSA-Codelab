@@ -4,7 +4,7 @@ import { Outlet } from 'react-router-dom';
 
 const Layout = () => {
   return (
-    <div className="w-screen min-h-screen p-5">
+    <div className="">
       <Header />
       <Outlet />
       <Footer />
