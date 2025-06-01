@@ -1,4 +1,4 @@
-import { Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import './App.css';
 import routes from './routes';
@@ -15,6 +15,7 @@ import AdminDashboard from './components/AdminDashboard';
 import CreateProblem from './components/CreateProblem';
 import UpdateProblem from './components/UpdateProblem';
 import { PageNotFound } from './components/common';
+import ProtectedRoute from './layouts/ProtectedRoute';
 
 function App() {
   return (
@@ -26,16 +27,21 @@ function App() {
           <Route path={routes.login} element={<Login />} />
           <Route path={routes.register} element={<Register />} />
 
-          <Route path={routes.profile} element={<Profile />} />
-
           <Route path={routes.problems.all} element={<ProblemSet />} />
-          <Route path={routes.problems.problem} element={<Problem />} />
-          <Route path={routes.submissions} element={<Submissions />} />
-          <Route path={routes.playlist} element={<Playlist />} />
 
-          <Route path={routes.admin.dashboard} element={<AdminDashboard />} />
-          <Route path={routes.admin.createProblem} element={<CreateProblem />} />
-          <Route path={routes.admin.updateProblem} element={<UpdateProblem />} />
+          <Route element={<ProtectedRoute allowedRoles={['USER', 'ADMIN']} />}>
+            <Route path={routes.profile} element={<Profile />} />
+
+            <Route path={routes.problems.problem} element={<Problem />} />
+            <Route path={routes.submissions} element={<Submissions />} />
+            <Route path={routes.playlist} element={<Playlist />} />
+          </Route>
+
+          <Route element={<ProtectedRoute allowedRoles={['ADMIN']} />}>
+            <Route path={routes.admin.dashboard} element={<AdminDashboard />} />
+            <Route path={routes.admin.createProblem} element={<CreateProblem />} />
+            <Route path={routes.admin.updateProblem} element={<UpdateProblem />} />
+          </Route>
 
           <Route path="*" element={<PageNotFound />} />
         </Route>
