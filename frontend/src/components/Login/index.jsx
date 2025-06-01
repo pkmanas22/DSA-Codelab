@@ -1,8 +1,41 @@
-import React from 'react';
 import Input from '../common/Input';
 import { Mail, Lock } from 'lucide-react';
+import { useAuthLogin } from '../../hooks/reactQuery/useAuthApi';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { zodLoginSchema } from '../../utils/zodSchema';
+import { useAuthStore } from '../../stores/useAuthStore';
+import toast from 'react-hot-toast';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Login = () => {
+  const { mutate: loginUser, isLoading } = useAuthLogin();
+  const { setAuth } = useAuthStore();
+
+  const navigate = useNavigate();
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(zodLoginSchema),
+  });
+
+  const myLoginHandler = (data) => {
+    loginUser(data, {
+      onSuccess: (res) => {
+        // console.log(res);
+        toast.success(res?.message || 'Login successful');
+        setAuth({ user: res?.data });
+        navigate('/profile');
+      },
+      onError: (err) => {
+        toast.error(err.error || 'Something went wrong');
+      },
+    });
+  };
+
   return (
     <div className="hero bg-base-200 min-h-[80vh]">
       <div className="hero-content flex-col lg:flex-row w-full">
@@ -10,21 +43,44 @@ const Login = () => {
           <div className="card bg-base-100 w-full max-w-sm shrink-0 shadow-2xl">
             <div className="card-body">
               <fieldset className="fieldset">
-                <form>
-                  <Input placeHolder="john.doe@gmail.com" icon={Mail} label="Email" type="email" />
-                  <Input placeHolder="******" icon={Lock} label="Password" type="password" />
+                <form className="form-control" onSubmit={handleSubmit(myLoginHandler)}>
+                  <Input
+                    {...register('email')}
+                    placeHolder="john.doe@gmail.com"
+                    icon={Mail}
+                    label="Email"
+                    type="email"
+                    classNames={errors.email && 'input-error'}
+                    errorMsg={errors.email && errors.email.message}
+                  />
+                  <Input
+                    {...register('password')}
+                    placeHolder="******"
+                    icon={Lock}
+                    label="Password"
+                    type="password"
+                    classNames={errors.password && 'input-error'}
+                    errorMsg={errors.password && errors.password.message}
+                  />
+                  <div>
+                    <Link to="#" className="link link-hover">
+                      Forgot password?
+                    </Link>
+                  </div>
+                  <button
+                    disabled={isLoading}
+                    type="submit"
+                    className={`btn btn-neutral mt-4 block mx-auto ${isLoading && 'btn-disabled'}`}
+                  >
+                    {isLoading && <span className="loading loading-spinner loading-xs mr-2"></span>}
+                    Login
+                  </button>
                 </form>
-                <div>
-                  <a className="link link-hover">Forgot password?</a>
-                </div>
-                <button type="submit" className="btn btn-neutral mt-4">
-                  Login
-                </button>
                 <p className="text-center">
                   Don't have an account?{' '}
-                  <a href="/register" className="link link-hover">
+                  <Link to="/register" className="link link-hover">
                     Register now
-                  </a>
+                  </Link>
                 </p>
               </fieldset>
             </div>
