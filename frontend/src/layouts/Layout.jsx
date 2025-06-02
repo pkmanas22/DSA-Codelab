@@ -4,11 +4,13 @@ import { Outlet } from 'react-router-dom';
 
 const Layout = () => {
   return (
-    <div className="">
+    <>
       <Header />
-      <Outlet />
+      <div className="w-screen p-8">
+        <Outlet />
+      </div>
       <Footer />
-    </div>
+    </>
   );
 };
 

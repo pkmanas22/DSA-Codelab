@@ -1,4 +1,4 @@
-import Input from '../common/Input';
+import { Input } from '../common';
 import { Mail, Lock } from 'lucide-react';
 import { useAuthLogin } from '../../hooks/reactQuery/useAuthApi';
 import { useForm } from 'react-hook-form';

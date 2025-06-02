@@ -1,6 +1,5 @@
 import { Lock, Mail, User } from 'lucide-react';
-import React from 'react';
-import Input from '../common/Input';
+import { Input } from '../common';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuthRegister } from '../../hooks/reactQuery/useAuthApi';
 import { useAuthStore } from '../../stores/useAuthStore';
