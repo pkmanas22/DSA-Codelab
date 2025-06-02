@@ -90,9 +90,9 @@ export const createProblem = async (req, res) => {
         if (result.status.id !== 3) {
           return res.status(400).json({
             success: false,
-            error: `Testcase ${idx + 1} failed for language ${language}. Description: ${
-              result.status.description
-            }. Reason: ${result.message}`,
+            error:
+              `Testcase ${idx + 1} on language ${language} - ${result.status.description}` ||
+              'Testcase failed.',
           });
         }
       });
