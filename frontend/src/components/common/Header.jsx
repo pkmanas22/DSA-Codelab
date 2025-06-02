@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { User, Code, LogOut, Trophy, BookOpen, Settings, Bell, Search } from 'lucide-react';
 import { useAuthStore } from '../../stores/useAuthStore';
 import routes from '../../routes';
@@ -10,10 +10,13 @@ const Header = () => {
 
   const { mutate: authLogoutHandle } = useAuthLogout();
 
+  const navigate = useNavigate();
+
   const handleLogout = () => {
     authLogoutHandle(null, {
       onSuccess: () => {
         clearAuth();
+        navigate('/login');
       },
       onError: (err) => {
         toast.error(err.error || 'Something went wrong');

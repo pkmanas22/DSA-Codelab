@@ -37,7 +37,7 @@ const Login = () => {
   };
 
   return (
-    <div className="hero bg-base-200 min-h-[80vh]">
+    <div className="hero rounded-lg shadow-lg bg-base-200 min-h-[80vh]">
       <div className="hero-content flex-col lg:flex-row w-full">
         <div className="w-full lg:w-1/2 flex justify-center">
           <div className="card bg-base-100 w-full max-w-sm shrink-0 shadow-2xl">
@@ -62,11 +62,7 @@ const Login = () => {
                     classNames={errors.password && 'input-error'}
                     errorMsg={errors.password && errors.password.message}
                   />
-                  <div>
-                    <Link to="#" className="link link-hover">
-                      Forgot password?
-                    </Link>
-                  </div>
+
                   <button
                     disabled={isLoading}
                     type="submit"
