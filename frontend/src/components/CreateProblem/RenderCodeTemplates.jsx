@@ -94,18 +94,20 @@ const RenderCodeTemplates = ({ control, errors, watch, resetField }) => {
                     <Trash2 className="w-4 h-4" />
                   </button>
                 </div>
-                <Controller
-                  name={`codeSnippets.${lang?.value}`}
-                  control={control}
-                  render={({ field }) => (
-                    <CodeEditor
-                      key={`codeSnippets.${lang?.value}`}
-                      language={lang?.value}
-                      value={field.value}
-                      onChange={field.onChange}
-                    />
-                  )}
-                />
+                <div className="h-96">
+                  <Controller
+                    name={`codeSnippets.${lang?.value}`}
+                    control={control}
+                    render={({ field }) => (
+                      <CodeEditor
+                        key={`codeSnippets.${lang?.value}`}
+                        language={lang?.value}
+                        value={field.value}
+                        onChange={field.onChange}
+                      />
+                    )}
+                  />
+                </div>
                 {errors.codeSnippets && (
                   <span className="label-text-alt text-error text-sm">
                     {errors.codeSnippets?.message}

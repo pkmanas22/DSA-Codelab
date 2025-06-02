@@ -96,18 +96,20 @@ const RenderReferenceSolutions = ({ control, errors, watch, resetField }) => {
                     <Trash2 className="w-4 h-4" />
                   </button>
                 </div>
-                <Controller
-                  name={`referenceSolutions.${lang?.value}`}
-                  control={control}
-                  render={({ field }) => (
-                    <CodeEditor
-                      key={`referenceSolutions.${lang?.value}`}
-                      language={lang?.value}
-                      value={field.value}
-                      onChange={field.onChange}
-                    />
-                  )}
-                />
+                <div className="h-96">
+                  <Controller
+                    name={`referenceSolutions.${lang?.value}`}
+                    control={control}
+                    render={({ field }) => (
+                      <CodeEditor
+                        key={`referenceSolutions.${lang?.value}`}
+                        language={lang?.value}
+                        value={field.value}
+                        onChange={field.onChange}
+                      />
+                    )}
+                  />
+                </div>
                 {errors.referenceSolutions && (
                   <span className="label-text-alt text-error text-sm">
                     {errors.referenceSolutions?.message}

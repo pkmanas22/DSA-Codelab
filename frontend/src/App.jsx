@@ -8,7 +8,6 @@ import Profile from './components/Profile';
 import Login from './components/Login';
 import Register from './components/Register';
 import ProblemSet from './components/ProblemSet';
-import Problem from './components/Problem';
 import Submissions from './components/Submissions';
 import Playlist from './components/Playlist';
 import AdminDashboard from './components/AdminDashboard';
@@ -16,12 +15,14 @@ import CreateProblem from './components/CreateProblem';
 import UpdateProblem from './components/UpdateProblem';
 import { PageNotFound } from './components/common';
 import ProtectedRoute from './layouts/ProtectedRoute';
+import ProblemContentInterface from './components/Problem';
 
 function App() {
   return (
     <>
-      <Toaster position="top-right" reverseOrder={true} />
+      <Toaster position="bottom-right" reverseOrder={true} />
       <Routes>
+        <Route path={routes.problems.problem} element={<ProblemContentInterface />} />
         <Route path={routes.root} element={<Layout />}>
           <Route index element={<Home />} />
           <Route path={routes.login} element={<Login />} />
@@ -32,7 +33,6 @@ function App() {
           <Route element={<ProtectedRoute allowedRoles={['USER', 'ADMIN']} />}>
             <Route path={routes.profile} element={<Profile />} />
 
-            <Route path={routes.problems.problem} element={<Problem />} />
             <Route path={routes.submissions} element={<Submissions />} />
             <Route path={routes.playlist} element={<Playlist />} />
           </Route>
