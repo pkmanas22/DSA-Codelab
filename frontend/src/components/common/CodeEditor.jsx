@@ -1,11 +1,12 @@
 import Editor from '@monaco-editor/react';
 
-const CodeEditor = ({ language }) => {
+const CodeEditor = ({ language, ...props }) => {
   return (
     <Editor
       height="300px"
       language={language.toLowerCase()}
       theme="vs-dark"
+      {...props}
       options={{
         minimap: { enabled: false },
         fontSize: 14,

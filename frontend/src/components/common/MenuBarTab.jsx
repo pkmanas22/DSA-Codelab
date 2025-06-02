@@ -29,12 +29,13 @@ const MenuBarTab = ({ children }) => {
     >
       <div className="tabs tabs-lift justify-center">
         {validChildren.map((child, idx) => (
-          <label key={idx} className="tab cursor-pointer">
+          <label key={idx} className="tab cursor-pointer" onClick={() => setActiveIdx(idx)}>
             <input
               type="radio"
               name={uid}
               checked={activeIdx === idx}
-              onChange={() => setActiveIdx(idx)}
+              onChange={() => {}}
+              hidden={true}
               className="hidden"
             />
             {child.props.icon && <child.props.icon className="w-4 h-4 mr-2" />}

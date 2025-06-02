@@ -8,6 +8,7 @@ const TabNavigationButtons = () => {
   return (
     <div className="flex justify-between items-center mt-6 pt-4 border-t border-base-300">
       <button
+        type="button"
         onClick={previousTab}
         disabled={activeTabIdx === 0}
         className={`btn btn-outline ${activeTabIdx === 0 ? 'btn-disabled' : ''}`}
@@ -21,6 +22,7 @@ const TabNavigationButtons = () => {
       </span>
 
       <button
+        type="button"
         onClick={nextTab}
         disabled={activeTabIdx === totalTabs - 1}
         className={`btn btn-primary ${activeTabIdx === totalTabs - 1 ? 'btn-disabled' : ''}`}

@@ -1,27 +1,45 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Card } from '../common';
 import { SUPPORTED_LANGUAGES } from '../../constants/problemDetails';
 import CodeEditor from '../common/CodeEditor';
-import { Trash2 } from 'lucide-react';
+import { Code2, Trash2 } from 'lucide-react';
 import TabNavigationButtons from '../common/TabNavigationButtons';
+import { Controller } from 'react-hook-form';
 
-const RenderReferenceSolutions = () => {
-  const [activeTab, setActiveTab] = useState('add');
+const RenderReferenceSolutions = ({ control, errors, watch, resetField }) => {
+  const [activeTab, setActiveTab] = useState('manage');
   const [addedLanguages, setAddedLanguages] = useState([]);
 
+  const referenceSolutions = watch('referenceSolutions'); // get live referenceSolutions data
+
+  useEffect(() => {
+    if (referenceSolutions) {
+      const langs = Object.keys(referenceSolutions);
+      const matchedLangs = SUPPORTED_LANGUAGES.filter((lang) => langs.includes(lang.value));
+      setAddedLanguages(matchedLangs);
+    }
+  }, [referenceSolutions]);
+
   const toggleSelectedLanguage = (lang) => {
-    setAddedLanguages((prev) =>
-      prev.includes(lang) ? prev.filter((l) => l !== lang) : [...prev, lang]
-    );
+    const isAlreadyAdded = addedLanguages.includes(lang);
+
+    if (isAlreadyAdded) {
+      setAddedLanguages((prev) => prev.filter((l) => l !== lang));
+      // 🧼 Clear the corresponding field from the form
+      resetField(`referenceSolutions.${lang.value}`);
+    } else {
+      setAddedLanguages((prev) => [...prev, lang]);
+    }
   };
+
   return (
     <div className="space-y-4">
-      <Card title="Code Templates" subTitle="Code templates for the problem">
+      <Card title="Add Reference Solution" subTitle="Reference solutions for the problem">
         <div className="flex items-center flex-wrap gap-2">
-          <button onClick={() => setActiveTab('add')} className="btn flex-1">
+          <button type="button" onClick={() => setActiveTab('add')} className="btn flex-1">
             Add Reference Solution
           </button>
-          <button onClick={() => setActiveTab('manage')} className="btn flex-1">
+          <button type="button" onClick={() => setActiveTab('manage')} className="btn flex-1">
             Manage Reference Solutions{' '}
             <div className="badge badge-sm badge-secondary">{addedLanguages.length}</div>
           </button>
@@ -36,6 +54,7 @@ const RenderReferenceSolutions = () => {
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
               {SUPPORTED_LANGUAGES.map((lang) => (
                 <button
+                  type="button"
                   onClick={() => toggleSelectedLanguage(lang)}
                   className={`btn btn-neutral ${addedLanguages.includes(lang) && 'disabled'}`}
                   disabled={addedLanguages.includes(lang)}
@@ -59,24 +78,41 @@ const RenderReferenceSolutions = () => {
               </div>
             )}
 
-            {addedLanguages.map((lang, idx) => (
+            {addedLanguages.map((lang) => (
               <div
                 key={lang?.id}
                 className="space-y-2 card border-dashed border-1 border-base-300 bg-base-50 p-3 my-2"
               >
                 <div className="flex items-center justify-between">
-                  <p className="text-sm font-semibold">
-                    {idx + 1}. {lang?.name} Solution
+                  <p className="text-sm font-semibold flex items-center gap-2">
+                    <Code2 className="w-4 h-4" /> {lang?.name} Solution
                   </p>
 
                   <button
+                    type="button"
                     onClick={() => toggleSelectedLanguage(lang)}
                     className="btn btn-ghost btn-sm"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
                 </div>
-                <CodeEditor language={lang?.value} />
+                <Controller
+                  name={`referenceSolutions.${lang?.value}`}
+                  control={control}
+                  render={({ field }) => (
+                    <CodeEditor
+                      key={`referenceSolutions.${lang?.value}`}
+                      language={lang?.value}
+                      value={field.value}
+                      onChange={field.onChange}
+                    />
+                  )}
+                />
+                {errors.referenceSolutions && (
+                  <span className="label-text-alt text-error text-sm">
+                    {errors.referenceSolutions?.message}
+                  </span>
+                )}
               </div>
             ))}
           </div>

@@ -43,17 +43,38 @@ export const COMPANIES_NAME = [
 ];
 
 export const SUPPORTED_LANGUAGES = [
-  { id: 1, name: 'Python', value: 'python' },
-  { id: 2, name: 'C++', value: 'cpp' },
-  { id: 3, name: 'Java', value: 'java' },
-  { id: 4, name: 'JavaScript', value: 'javascript' },
-  { id: 5, name: 'C', value: 'c' },
-  { id: 6, name: 'C#', value: 'csharp' },
-  { id: 7, name: 'Go', value: 'go' },
-  { id: 8, name: 'Ruby', value: 'ruby' },
-  { id: 9, name: 'Rust', value: 'rust' },
-  { id: 10, name: 'SQL', value: 'sql' },
-  { id: 11, name: 'Swift', value: 'swift' },
-  { id: 12, name: 'Kotlin', value: 'kotlin' },
-  { id: 13, name: 'TypeScript', value: 'typescript' },
+  { id: 1, name: 'Python', value: 'PYTHON' },
+  { id: 3, name: 'Java', value: 'JAVA' },
+  { id: 4, name: 'JavaScript', value: 'JAVASCRIPT' },
+  // { id: 2, name: 'C++', value: 'cpp' },
+  // { id: 5, name: 'C', value: 'c' },
+  // { id: 6, name: 'C#', value: 'csharp' },
+  // { id: 7, name: 'Go', value: 'go' },
+  // { id: 8, name: 'Ruby', value: 'ruby' },
+  // { id: 9, name: 'Rust', value: 'rust' },
+  // { id: 10, name: 'SQL', value: 'sql' },
+  // { id: 11, name: 'Swift', value: 'swift' },
+  // { id: 12, name: 'Kotlin', value: 'kotlin' },
+  // { id: 13, name: 'TypeScript', value: 'typescript' },
 ];
+
+export const DEFAULT_PROBLEM_VALUES = {
+  testcases: [
+    { input: '', output: '' },
+    { input: '', output: '' },
+  ],
+  examples: [
+    { input: '', output: '', explanation: '' },
+    { input: '', output: '', explanation: '' },
+  ],
+  codeSnippets: {
+    JAVASCRIPT: 'function solution() {\n  // Write your code here\n}',
+    PYTHON: 'def solution():\n    # Write your code here\n    pass',
+    JAVA: 'public class Solution {\n    public static void main(String[] args) {\n        // Write your code here\n    }\n}',
+  },
+  referenceSolutions: {
+    JAVASCRIPT: '// Add your reference solution here',
+    PYTHON: '# Add your reference solution here',
+    JAVA: '// Add your reference solution here',
+  },
+};

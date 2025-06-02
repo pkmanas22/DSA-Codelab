@@ -1,38 +1,19 @@
-import { useState } from 'react';
 import { Card } from '../common';
 import { Plus, Trash2 } from 'lucide-react';
 import TabNavigationButtons from '../common/TabNavigationButtons';
 
-const RenderExamples = () => {
-  const [examples, setExamples] = useState([
-    { input: '', output: '', explanation: '' },
-    { input: '', output: '', explanation: '' },
-  ]);
-
-  const addExample = () => {
-    setExamples([...examples, { input: '', output: '', explanation: '' }]);
-  };
-
-  const removeExample = (index) => {
-    if (examples.length > 2) {
-      setExamples(examples.filter((_, i) => i !== index));
-    }
-  };
-
-  const updateExample = (index, field, value) => {
-    const updatedExamples = examples.map((example, i) =>
-      i === index ? { ...example, [field]: value } : example
-    );
-    setExamples(updatedExamples);
-  };
-
+const RenderExamples = ({ exampleFields, register, errors, addExample, removeExample }) => {
   return (
     <div className="space-y-4">
       <Card
         title={
           <div className="flex items-center w-full justify-between">
             <span>Examples</span>
-            <button onClick={addExample} className="btn btn-sm btn-primary">
+            <button
+              type="button"
+              onClick={() => addExample({ input: '', output: '', explanation: '' })}
+              className="btn btn-sm btn-primary"
+            >
               <Plus className="w-4 h-4" />
               Add Example
             </button>
@@ -41,19 +22,22 @@ const RenderExamples = () => {
         subTitle="Provide clear examples with input, output, and explanations"
       >
         <div className="space-y-4 grid grid-cols-2 gap-3">
-          {examples.map((example, index) => (
+          {exampleFields?.map((field, index) => (
             <div
-              key={index}
+              key={field.id}
               className="h-full card border-dashed border-1 border-base-300 bg-base-50"
             >
-              <div className="card-header p-4 pb-2">
+              <div className="p-4 pb-2">
                 <div className="flex items-center justify-between">
                   <h3 className="text-sm font-semibold">Example {index + 1}</h3>
-                  {examples.length > 2 && (
-                    <button onClick={() => removeExample(index)} className="btn btn-ghost btn-sm">
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  )}
+                  <button
+                    type="button"
+                    className="btn btn-ghost btn-sm text-error"
+                    onClick={() => removeExample(index)}
+                    disabled={exampleFields.length === 1}
+                  >
+                    <Trash2 className="w-4 h-4" /> Remove
+                  </button>
                 </div>
               </div>
               <div className="card-body p-4 pt-0">
@@ -62,33 +46,45 @@ const RenderExamples = () => {
                     <span className="label-text text-sm">Input</span>
                   </label>
                   <textarea
-                    placeholder="Example input"
+                    {...register(`examples.${index}.input`)}
+                    placeholder="Enter testcase input"
                     className="textarea textarea-bordered w-full"
-                    value={example.input}
-                    onChange={(e) => updateExample(index, 'input', e.target.value)}
                   />
+                  {errors.examples?.[index]?.input && (
+                    <span className="label-text-alt text-error text-sm">
+                      {errors.examples?.[index]?.input.message}
+                    </span>
+                  )}
                 </div>
                 <div className="form-control">
                   <label className="label">
-                    <span className="label-text text-sm">Output</span>
+                    <span className="label-text text-sm">Expected Output</span>
                   </label>
                   <textarea
-                    placeholder="Expected output"
+                    {...register(`examples.${index}.output`)}
+                    placeholder="Enter testcase output"
                     className="textarea textarea-bordered w-full"
-                    value={example.output}
-                    onChange={(e) => updateExample(index, 'output', e.target.value)}
                   />
+                  {errors.examples?.[index]?.output && (
+                    <span className="label-text-alt text-error text-sm">
+                      {errors.examples?.[index]?.output.message}
+                    </span>
+                  )}
                 </div>
                 <div className="form-control">
                   <label className="label">
                     <span className="label-text text-sm">Explanation</span>
                   </label>
                   <textarea
-                    placeholder="Explain the example"
+                    {...register(`examples.${index}.explanation`)}
+                    placeholder="Enter testcase output"
                     className="textarea textarea-bordered w-full"
-                    value={example.explanation}
-                    onChange={(e) => updateExample(index, 'explanation', e.target.value)}
                   />
+                  {errors.examples?.[index]?.explanation && (
+                    <span className="label-text-alt text-error text-sm">
+                      {errors.examples?.[index]?.explanation.message}
+                    </span>
+                  )}
                 </div>
               </div>
             </div>

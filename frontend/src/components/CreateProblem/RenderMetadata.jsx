@@ -1,30 +1,33 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Card } from '../common';
-import { Building2, Lightbulb, Tag, Tags, X } from 'lucide-react';
+import { Building2, Lightbulb, Tag, X } from 'lucide-react';
 import { COMPANIES_NAME, TAG_OPTIONS } from '../../constants/problemDetails';
 import TabNavigationButtons from '../common/TabNavigationButtons';
 
-const RenderMetadata = () => {
-  const [selectedTags, setSelectedTags] = useState([]);
-  const [selectedCompanies, setSelectedCompanies] = useState([]);
-  const [hints, setHints] = useState('');
-  const [editorial, setEditorial] = useState('');
+const RenderMetadata = ({ setValue, watch, register, errors }) => {
+  const selectedTags = watch('tags') || [];
+  const selectedCompanies = watch('companies') || [];
+  // const hints = watch('hints') || '';
+  // const editorial = watch('editorial') || '';
 
   const toggleTag = (tag) => {
-    setSelectedTags((prev) =>
-      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
-    );
+    const updatedTags = selectedTags.includes(tag)
+      ? selectedTags.filter((t) => t !== tag)
+      : [...selectedTags, tag];
+    setValue('tags', updatedTags);
   };
 
   const toggleCompany = (company) => {
-    setSelectedCompanies((prev) =>
-      prev.includes(company) ? prev.filter((c) => c !== company) : [...prev, company]
-    );
+    const updatedCompanies = selectedCompanies.includes(company)
+      ? selectedCompanies.filter((c) => c !== company)
+      : [...selectedCompanies, company];
+    setValue('companies', updatedCompanies);
   };
 
   return (
     <div className="space-y-4">
       <Card title="Metadata" subTitle="Additional information">
+        {/* Tags */}
         <div className="card border-dashed border-1 border-base-300 bg-base-50 p-3">
           <div className="flex items-center gap-2">
             <Tag className="w-4 h-4" />
@@ -45,6 +48,7 @@ const RenderMetadata = () => {
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-2">
               {TAG_OPTIONS.filter((tag) => !selectedTags.includes(tag)).map((tag) => (
                 <button
+                  type="button"
                   key={tag}
                   onClick={() => toggleTag(tag)}
                   className="btn btn-outline btn-sm cursor-pointer p-1"
@@ -56,6 +60,7 @@ const RenderMetadata = () => {
           </div>
         </div>
 
+        {/* Companies */}
         <div className="card border-dashed border-1 border-base-300 bg-base-50 p-3">
           <div className="flex items-center gap-2">
             <Building2 className="w-4 h-4" />
@@ -77,6 +82,7 @@ const RenderMetadata = () => {
               {COMPANIES_NAME.filter((company) => !selectedCompanies.includes(company)).map(
                 (company) => (
                   <button
+                    type="button"
                     key={company}
                     onClick={() => toggleCompany(company)}
                     className="btn btn-outline btn-sm cursor-pointer p-1"
@@ -89,6 +95,7 @@ const RenderMetadata = () => {
           </div>
         </div>
 
+        {/* Hints and Editorial */}
         <div className="card border-dashed border-1 border-base-300 bg-base-50 p-3">
           <div className="flex items-center gap-2">
             <Lightbulb className="w-4 h-4" />
@@ -102,9 +109,9 @@ const RenderMetadata = () => {
               <textarea
                 placeholder="Provide helpful hints for solving the problem..."
                 className="textarea textarea-bordered w-full"
-                value={hints}
-                onChange={(e) => setHints(e.target.value)}
+                {...register('hints')}
               />
+              {errors?.hints && <p className="text-red-500 text-sm">{errors.hints.message}</p>}
             </div>
             <div className="form-control">
               <label className="label">
@@ -113,9 +120,11 @@ const RenderMetadata = () => {
               <textarea
                 placeholder="Write a detailed editorial explaining the solution approach..."
                 className="textarea textarea-bordered w-full min-h-[150px]"
-                value={editorial}
-                onChange={(e) => setEditorial(e.target.value)}
+                {...register('editorial')}
               />
+              {errors?.editorial && (
+                <p className="text-red-500 text-sm">{errors.editorial.message}</p>
+              )}
             </div>
           </div>
         </div>
