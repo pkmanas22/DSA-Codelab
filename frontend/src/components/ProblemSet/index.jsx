@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   FileJson,
   ListPlus,
@@ -11,49 +11,10 @@ import {
   Search,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
-
-const dummyProblems = [
-  {
-    id: 'e2aa94f4-84dc-46cb-9f8b-bd3a4462eb1f',
-    title: 'Two Sum',
-    acceptance: 55.7,
-    difficulty: 'Easy',
-    solved: true,
-    companies: ['Google', 'Amazon'],
-    tags: ['Array', 'HashMap', 'Two Pointers', 'Binary Search'],
-  },
-  {
-    id: 2,
-    title: 'Add Two Numbers',
-    acceptance: 46.1,
-    difficulty: 'Medium',
-    solved: false,
-    companies: ['Microsoft', 'Meta'],
-    tags: ['Linked List', 'Math', 'Recursion'],
-  },
-  {
-    id: 3,
-    title: 'Longest Substring Without Repeating Characters',
-    acceptance: 36.8,
-    difficulty: 'Medium',
-    solved: true,
-    companies: ['Amazon'],
-    tags: ['String', 'HashMap', 'Sliding Window'],
-  },
-  {
-    id: 4,
-    title: 'Median of Two Sorted Arrays',
-    acceptance: 43.7,
-    difficulty: 'Hard',
-    solved: true,
-    companies: ['Google', 'Apple'],
-    tags: ['Array', 'Binary Search', 'Divide and Conquer'],
-  },
-];
-
-const allCompanies = ['Google', 'Amazon', 'Microsoft', 'Meta', 'Apple'];
-const allTags = ['Array', 'HashMap', 'Two Pointers', 'Binary Search'];
-const isAdmin = true;
+import { useGetAllProblems } from '../../hooks/reactQuery/useProblemApi';
+import { toast } from 'react-hot-toast';
+import { COMPANIES_NAME, TAG_OPTIONS } from '../../constants/problemDetails';
+import { useAuthStore } from '../../stores/useAuthStore';
 
 const ProblemSet = () => {
   const [search, setSearch] = useState('');
@@ -62,6 +23,30 @@ const ProblemSet = () => {
   const [tagFilter, setTagFilter] = useState('');
   const [sortBy, setSortBy] = useState('');
   const [sortAsc, setSortAsc] = useState(true);
+  const [filteredProblems, setFilteredProblems] = useState([]);
+
+  const { data, isLoading, isError, error } = useGetAllProblems();
+  const { authUser, isAuthenticated } = useAuthStore();
+
+  useEffect(() => {
+    const updatedData = data?.data
+      .filter((p) => p.title.toLowerCase().includes(search.toLowerCase()))
+      .filter((p) => (difficultyFilter ? p.difficulty === difficultyFilter : true))
+      .filter((p) => (companyFilter ? p.companies.includes(companyFilter) : true))
+      .filter((p) => (tagFilter ? p.tags.includes(tagFilter) : true))
+      .sort((a, b) => {
+        if (!sortBy) return 0;
+        const valA = a[sortBy];
+        const valB = b[sortBy];
+        if (typeof valA === 'string') {
+          return sortAsc ? valA.localeCompare(valB) : valB.localeCompare(valA);
+        } else {
+          return sortAsc ? valA - valB : valB - valA;
+        }
+      });
+
+    setFilteredProblems(updatedData);
+  }, [data, search, difficultyFilter, companyFilter, tagFilter, sortBy, sortAsc]);
 
   const handleSort = (key) => {
     if (sortBy === key) {
@@ -72,21 +57,13 @@ const ProblemSet = () => {
     }
   };
 
-  const filteredProblems = dummyProblems
-    .filter((p) => p.title.toLowerCase().includes(search.toLowerCase()))
-    .filter((p) => (difficultyFilter ? p.difficulty === difficultyFilter : true))
-    .filter((p) => (companyFilter ? p.companies.includes(companyFilter) : true))
-    .filter((p) => (tagFilter ? p.tags.includes(tagFilter) : true))
-    .sort((a, b) => {
-      if (!sortBy) return 0;
-      const valA = a[sortBy];
-      const valB = b[sortBy];
-      if (typeof valA === 'string') {
-        return sortAsc ? valA.localeCompare(valB) : valB.localeCompare(valA);
-      } else {
-        return sortAsc ? valA - valB : valB - valA;
-      }
-    });
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (isError) {
+    toast.error(error?.error || 'Something went wrong');
+  }
 
   return (
     <div className="container mx-auto px-4 max-w-7xl">
@@ -118,9 +95,9 @@ const ProblemSet = () => {
               onChange={(e) => setDifficultyFilter(e.target.value)}
             >
               <option value="">All Difficulties</option>
-              <option value="Easy">Easy</option>
-              <option value="Medium">Medium</option>
-              <option value="Hard">Hard</option>
+              <option value="EASY">Easy</option>
+              <option value="MEDIUM">Medium</option>
+              <option value="HARD">Hard</option>
             </select>
 
             <select
@@ -129,7 +106,7 @@ const ProblemSet = () => {
               onChange={(e) => setTagFilter(e.target.value)}
             >
               <option value="">All Tags</option>
-              {allTags.map((tag) => (
+              {TAG_OPTIONS.map((tag) => (
                 <option key={tag} value={tag}>
                   {tag}
                 </option>
@@ -142,7 +119,7 @@ const ProblemSet = () => {
               onChange={(e) => setCompanyFilter(e.target.value)}
             >
               <option value="">All Companies</option>
-              {allCompanies.map((c) => (
+              {COMPANIES_NAME.map((c) => (
                 <option key={c} value={c}>
                   {c}
                 </option>
@@ -217,41 +194,46 @@ const ProblemSet = () => {
                 </tr>
               </thead>
               <tbody>
-                {filteredProblems.length > 0 ? (
-                  filteredProblems.map((problem, index) => (
+                {filteredProblems?.length > 0 ? (
+                  filteredProblems?.map((problem, index) => (
                     <tr key={problem.id}>
                       <td>{index + 1}</td>
                       <td>
                         <input
                           type="checkbox"
                           className="checkbox checkbox-sm"
-                          checked={problem.solved}
+                          checked={isAuthenticated} // TODO: Fix this later
                           readOnly
                           // disabled
                         />
                       </td>
                       <td>
-                        <Link to={`/problems/${problem.id}`}>{problem.title}</Link>
+                        <Link to={`/problems/${problem?.id}`}>{problem?.title}</Link>
                       </td>
-                      <td>{problem.acceptance.toFixed(1)}%</td>
+                      {/* <td>{problem.acceptance.toFixed(1)}%</td> */}
+                      <td>75%</td>
                       <td>
                         <span
                           className={`badge ${
-                            problem.difficulty === 'Easy'
+                            problem.difficulty === 'EASY'
                               ? 'badge-success'
-                              : problem.difficulty === 'Medium'
+                              : problem.difficulty === 'MEDIUM'
                               ? 'badge-warning'
                               : 'badge-error'
                           }`}
                         >
-                          {problem.difficulty}
+                          {problem.difficulty === 'EASY'
+                            ? 'Easy'
+                            : problem.difficulty === 'MEDIUM'
+                            ? 'Med.'
+                            : 'Hard'}
                         </span>
                       </td>
                       <td className="flex flex-wrap gap-2">
                         <button className="btn btn-xs btn-outline btn-primary gap-1">
                           <Bookmark className="w-4" />
                         </button>
-                        {isAdmin && (
+                        {isAuthenticated && authUser?.role === 'ADMIN' && (
                           <>
                             <button className="btn btn-xs btn-outline btn-accent gap-1">
                               <Pencil className="w-4" />
