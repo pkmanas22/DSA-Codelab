@@ -162,7 +162,7 @@ const LeetCodeInterface = () => {
           testcases: data?.data?.testcases,
           submissionData: res?.data,
         });
-        console.log('Submission data', res?.data);
+        // console.log('Submission data', res?.data);
         navigate(`/problems/${problemId}/#submissions`, { replace: true });
       },
       onError: (err) => {

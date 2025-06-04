@@ -5,6 +5,20 @@ export const getAllSubmissions = async (req, res) => {
   try {
     const allSubmissions = await db.Submission.findMany({
       where: { userId },
+      select: {
+        id: true,
+        language: true,
+        createdAt: true,
+        memory: true,
+        status: true,
+        time: true,
+        problemId: true,
+        problem: {
+          select: {
+            title: true,
+          },
+        },
+      },
     });
 
     return res.status(200).json({
@@ -14,6 +28,56 @@ export const getAllSubmissions = async (req, res) => {
     });
   } catch (error) {
     console.log('Error while fetching all submissions', error);
+    return res.status(500).json({
+      success: false,
+      error: 'Internal server error.',
+    });
+  }
+};
+
+export const getSubmissionById = async (req, res) => {
+  const { submissionId } = req.params;
+  try {
+    const submission = await db.Submission.findUnique({
+      where: { id: submissionId },
+      select: {
+        id: true,
+        language: true,
+        createdAt: true,
+        memory: true,
+        status: true,
+        time: true,
+        problemId: true,
+        sourceCode: true,
+        problem: {
+          select: {
+            title: true,
+          },
+        },
+        testcasesResults: {
+          select: {
+            isPassed: true,
+          },
+        },
+      },
+    });
+
+    // console.log(submission);
+
+    if (!submission) {
+      return res.status(404).json({
+        success: false,
+        error: 'Submission not found.',
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: 'Submission fetched successfully.',
+      data: submission,
+    });
+  } catch (error) {
+    console.log('Error while fetching submission', error);
     return res.status(500).json({
       success: false,
       error: 'Internal server error.',

@@ -155,13 +155,13 @@ export const executeCodeForSubmit = async (req, res) => {
         compileOutput: detailedResults.some(({ compileOutput }) => compileOutput)
           ? JSON.stringify(detailedResults.map(({ compileOutput }) => compileOutput))
           : null,
-        status: JSON.stringify(detailedResults.map(({ status }) => status)),
         time: detailedResults.some(({ time }) => time)
           ? JSON.stringify(detailedResults.map(({ time }) => time))
           : null,
         memory: detailedResults.some(({ memory }) => memory)
           ? JSON.stringify(detailedResults.map(({ memory }) => memory))
           : null,
+        status: isAllPassed ? 'Accepted' : 'Wrong Answer',
       },
     });
 

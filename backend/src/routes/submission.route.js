@@ -2,6 +2,7 @@ import express from 'express';
 import { authMiddleware } from '../middlewares/auth.middleware.js';
 import {
   getAllSubmissions,
+  getSubmissionById,
   getSubmissionByProblemId,
   getTotalSubmissionsCountByProblemId,
 } from '../controllers/submission.controller.js';
@@ -9,7 +10,12 @@ import {
 const submissionRoutes = express.Router();
 
 submissionRoutes.get('/get-all-submissions', authMiddleware, getAllSubmissions);
-submissionRoutes.get('/get-submission/:problemId', authMiddleware, getSubmissionByProblemId);
+submissionRoutes.get(
+  '/get-submission/problem/:problemId',
+  authMiddleware,
+  getSubmissionByProblemId
+);
+submissionRoutes.get('/get-submission/:submissionId', authMiddleware, getSubmissionById);
 submissionRoutes.get(
   '/get-submissions-count/:problemId',
   authMiddleware,

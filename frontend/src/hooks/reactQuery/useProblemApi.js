@@ -4,13 +4,13 @@ import problemApis from '../../apis/problemApi';
 
 export const useGetAllProblems = () =>
   useQuery({
-    queryKey: QUERY_KEYS.ALL_PROBLEMS,
+    queryKey: QUERY_KEYS.PROBLEMS,
     queryFn: () => problemApis.getAllProblems(),
   });
 
 export const useGetProblemById = (id) =>
   useQuery({
-    queryKey: [QUERY_KEYS.PROBLEM, id],
+    queryKey: [QUERY_KEYS.PROBLEMS, id],
     queryFn: () => problemApis.getProblemById(id),
   });
 

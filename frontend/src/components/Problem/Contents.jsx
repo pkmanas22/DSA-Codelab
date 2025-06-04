@@ -19,6 +19,7 @@ const Contents = ({
   constraints,
   referenceSolutions = {},
   submissionData = {},
+  submissionsHistory = [],
 }) => {
   const [activeTab, setActiveTab] = useState('description');
   const { hash: activeHashPathName } = useLocation();
@@ -184,7 +185,7 @@ const Contents = ({
               {isAuthenticated && (
                 <Link to={`/submissions`} className="flex items-center gap-2 mb-2 hover:underline">
                   <ArrowLeftCircle />
-                  <span>All Submissions</span>
+                  <span>My All Submissions</span>
                 </Link>
               )}
               {submissionData?.status ? (
@@ -260,9 +261,41 @@ const Contents = ({
                   </div>
                 </>
               ) : (
-                <p className="text-center p-3 opacity-70">
-                  Click on submit button to submit your code
-                </p>
+                submissionsHistory.length > 0 && (
+                  <table className="table w-full">
+                    <thead>
+                      <tr className="font-semibold">
+                        <th>#</th>
+                        <th>Status</th>
+                        <th>Submission Time</th>
+                        <th>Language</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {submissionsHistory.map((submission, index) => (
+                        <tr className="hover:bg-base-200" key={submission?.id}>
+                          <td className="text-center">{index + 1}</td>
+                          <td>
+                            <Link
+                              to={`/submissions/${submission?.id}`}
+                              className={`text-center underline ${
+                                submission?.status === 'Accepted' ? 'text-success' : 'text-error'
+                              }`}
+                            >
+                              {submission.status}
+                            </Link>
+                          </td>
+                          <td className="text-center">
+                            {new Date(submission?.createdAt).toDateString()}
+                          </td>
+                          <td className="text-center capitalize">
+                            {submission.language.toLowerCase()}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )
               )}
             </div>
           )}

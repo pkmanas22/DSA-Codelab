@@ -112,7 +112,7 @@ const RightSideNavbar = () => {
 
           <li>
             <Link
-              to={routes.submissions}
+              to={routes.submissions.all}
               className="flex items-center gap-3 p-3 hover:bg-slate-700/50 rounded-lg transition-all duration-200"
             >
               <BookOpen className="w-4 h-4 text-slate-400" />

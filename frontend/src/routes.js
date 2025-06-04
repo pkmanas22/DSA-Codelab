@@ -7,7 +7,10 @@ const routes = {
     all: '/problems',
     problem: '/problems/:problemId',
   },
-  submissions: '/submissions',
+  submissions: {
+    all: '/submissions',
+    submission: '/submissions/:submissionId',
+  },
   playlist: 'playlist',
 
   // admin

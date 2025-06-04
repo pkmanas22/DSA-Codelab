@@ -4,7 +4,9 @@ import routes from '../../routes';
 import RightSideNavbar from './RightSideNavbar';
 
 const Header = () => {
-  const { authUser } = useAuthStore();
+  const { authUser, isAuthenticated } = useAuthStore();
+
+  // console.log(isAuthenticated);
 
   return (
     <header className="sticky top-0 z-50 w-full bg-base-300 text-base-content from-slate-900 via-slate-800 to-slate-900 border-b border-slate-700/50 backdrop-blur-xl">
@@ -47,6 +49,17 @@ const Header = () => {
               >
                 Discuss
               </Link> */}
+
+              {isAuthenticated && (
+                <li>
+                  <Link
+                    to={routes.submissions.all}
+                    className="px-4 py-2 text-slate-300 hover:text-white hover:bg-slate-700/50 rounded-lg transition-all duration-200 font-medium"
+                  >
+                    My Submissions
+                  </Link>
+                </li>
+              )}
 
               {authUser?.role === 'ADMIN' && (
                 <>
