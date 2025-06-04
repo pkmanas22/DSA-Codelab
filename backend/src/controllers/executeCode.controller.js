@@ -67,8 +67,8 @@ export const executeCodeForRun = async (req, res) => {
         stderr: result.stderr || null,
         compileOutput: result.compile_output?.trim() || null,
         status: result.status.description,
-        time: result.time ? `${result.time} s` : undefined,
-        memory: result.memory ? `${result.memory} KB` : undefined,
+        time: result.time ? `${result.time}` : 0,
+        memory: result.memory ? `${result.memory}` : 0,
       };
     });
 
@@ -209,7 +209,7 @@ export const executeCodeForSubmit = async (req, res) => {
         id: submission.id,
       },
       include: {
-        testcaseResults: true,
+        testcasesResults: true,
       },
     });
 
@@ -217,7 +217,7 @@ export const executeCodeForSubmit = async (req, res) => {
 
     // console.log(submissionWithTestcaseResults);
 
-    const firstFailedResult = submissionWithTestcaseResults.testcaseResults.find(
+    const firstFailedResult = submissionWithTestcaseResults.testcasesResults.find(
       (result) => !result.isPassed
     );
 
@@ -229,7 +229,7 @@ export const executeCodeForSubmit = async (req, res) => {
       });
     }
 
-    const summaryOfSubmission = submissionWithTestcaseResults.testcaseResults.reduce(
+    const summaryOfSubmission = submissionWithTestcaseResults.testcasesResults.reduce(
       (final, result) => {
         final.time = (final.time || 0) + Number(result.time); // in second
         final.memory = (final.memory || 0) + Number(result.memory); // in KB
