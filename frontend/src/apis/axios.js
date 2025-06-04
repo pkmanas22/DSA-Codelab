@@ -11,16 +11,6 @@ const responseInterceptors = () => {
   axios.interceptors.response.use(
     (res) => res.data,
     (error) => {
-      if (axios.isAxiosError(error)) {
-        // You can log or modify the error response here
-
-        // You can even show a toast or trigger global logout if needed
-        // e.g., if (status === 401) logoutUser();
-        // return error.response.data;
-        return Promise.reject(error.response.data);
-      }
-
-      // Non-Axios errors
       return Promise.reject(error);
     }
   );

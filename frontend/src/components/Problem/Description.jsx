@@ -1,35 +1,75 @@
-import { Star, ThumbsUp, MessageSquare, ExternalLink, HelpCircle } from 'lucide-react';
-import { Footer } from '../common';
+import { useLocation } from 'react-router-dom';
+import { CopyButton } from '../common';
+import { useEffect, useState } from 'react';
 
-const Description = ({ setActiveTab, activeTab }) => {
+const Description = ({
+  title = '',
+  description = '',
+  isSolved = false,
+  difficulty,
+  tags = [],
+  companies = [],
+  examples = [],
+  hints,
+  editorial,
+  constraints,
+  referenceSolutions = {},
+}) => {
+  const [activeTab, setActiveTab] = useState('description');
+  const { hash: activeHashPathName } = useLocation();
+
+  useEffect(() => {
+    const updateTabFromHash = () => {
+      const hash = window.location.hash.slice(1);
+      setActiveTab(hash || 'description');
+    };
+
+    updateTabFromHash(); // Initial set
+
+    window.addEventListener('hashchange', updateTabFromHash);
+    return () => window.removeEventListener('hashchange', updateTabFromHash);
+  }, [activeHashPathName]);
+
   return (
     <div className="h-full flex flex-col">
       {/* Tabs */}
       <div className="tabs tabs-bordered bg-base-200 flex-shrink-0">
-        <a
+        <span
           className={`tab ${activeTab === 'description' ? 'tab-active' : ''}`}
-          onClick={() => setActiveTab('description')}
+          onClick={() => {
+            setActiveTab('description');
+            window.location.hash = 'description';
+          }}
         >
           Description
-        </a>
-        <a
+        </span>
+        <span
           className={`tab ${activeTab === 'editorial' ? 'tab-active' : ''}`}
-          onClick={() => setActiveTab('editorial')}
+          onClick={() => {
+            setActiveTab('editorial');
+            window.location.hash = 'editorial';
+          }}
         >
           Editorial
-        </a>
-        <a
+        </span>
+        <span
           className={`tab ${activeTab === 'solutions' ? 'tab-active' : ''}`}
-          onClick={() => setActiveTab('solutions')}
+          onClick={() => {
+            setActiveTab('solutions');
+            window.location.hash = 'solutions';
+          }}
         >
           Solutions
-        </a>
-        <a
+        </span>
+        <span
           className={`tab ${activeTab === 'submissions' ? 'tab-active' : ''}`}
-          onClick={() => setActiveTab('submissions')}
+          onClick={() => {
+            setActiveTab('submissions');
+            window.location.hash = 'submissions';
+          }}
         >
           Submissions
-        </a>
+        </span>
       </div>
 
       {/* Content - Fixed height and scrollable */}
@@ -37,156 +77,92 @@ const Description = ({ setActiveTab, activeTab }) => {
         <div className="h-full overflow-y-auto px-6 py-2">
           {activeTab === 'description' && (
             <div className="prose prose-sm max-w-none">
-              <div className="flex items-center justify-between mb-4">
-                <h1 className="text-2xl font-bold text-base-content m-0">
-                  2125. Number of Laser Beams in a Bank
-                </h1>
-                <div className="badge badge-success">Solved ✓</div>
+              <div className="flex items-center justify-between">
+                <h1 className="text-2xl font-bold text-base-content m-0">{title}</h1>
+                {isSolved && <div className="badge badge-success">Solved ✓</div>}
               </div>
 
+              <div className="badge badge-warning capitalize my-3">{difficulty}</div>
               <div className="flex gap-2 mb-6">
-                <div className="badge badge-warning">Medium</div>
-                <div className="badge badge-outline">Topics</div>
-                <div className="badge badge-outline">Companies</div>
-                <div className="badge badge-outline">Hint</div>
+                {companies.map((company) => (
+                  <div key={company} className="badge badge-outline">
+                    {company}
+                  </div>
+                ))}
               </div>
 
-              <div className="space-y-4 text-base-content">
-                <p>
-                  Anti-theft security devices are activated inside a bank. You are given a{' '}
-                  <strong>0-indexed</strong> binary string array{' '}
-                  <code className="bg-base-200 px-1 py-0.5 rounded">bank</code> representing the
-                  floor plan of the bank, which is an
-                  <code className="bg-base-200 px-1 py-0.5 rounded">m x n</code> 2D matrix.
-                  <code className="bg-base-200 px-1 py-0.5 rounded">bank[i]</code> represents the{' '}
-                  <code className="bg-base-200 px-1 py-0.5 rounded">
-                    i<sup>th</sup>
-                  </code>{' '}
-                  row, consisting of
-                  <code className="bg-base-200 px-1 py-0.5 rounded">'0'</code>s and
-                  <code className="bg-base-200 px-1 py-0.5 rounded">'1'</code>s.
-                  <code className="bg-base-200 px-1 py-0.5 rounded">'0'</code> means the cell is
-                  empty, while
-                  <code className="bg-base-200 px-1 py-0.5 rounded">'1'</code> means the cell has a
-                  security device.
-                </p>
+              <div className="space-y-2 text-base-content">
+                <p>{description}</p>
 
-                <p>
-                  There is <strong>one</strong> laser beam between any <strong>two</strong> security
-                  devices if <strong>both</strong> conditions are met:
-                </p>
-
-                <ul className="space-y-2">
-                  <li>
-                    The two devices are located on <strong>two different rows</strong>:
-                    <code className="bg-base-200 px-1 py-0.5 rounded">r₁</code> and
-                    <code className="bg-base-200 px-1 py-0.5 rounded">r₂</code>, where
-                    <code className="bg-base-200 px-1 py-0.5 rounded">r₁ &lt; r₂</code>.
-                  </li>
-                  <li>
-                    For <strong>each row</strong>{' '}
-                    <code className="bg-base-200 px-1 py-0.5 rounded">i</code> where
-                    <code className="bg-base-200 px-1 py-0.5 rounded">r₁ &lt; i &lt; r₂</code>,
-                    there are <strong>no security devices</strong> in the
-                    <code className="bg-base-200 px-1 py-0.5 rounded">
-                      i<sup>th</sup>
-                    </code>{' '}
-                    row.
-                  </li>
-                </ul>
-
-                <p>
-                  Laser beams are independent, i.e., one beam does not interfere nor join with
-                  another.
-                </p>
-
-                <p>
-                  Return <em>the total number of laser beams in the bank</em>.
-                </p>
-
-                <div className="bg-base-200 p-4 rounded-lg mt-6">
-                  <h3 className="font-semibold mb-2">Example 1:</h3>
-                  <div className="space-y-2 font-mono text-sm">
-                    <div>
-                      <strong>Input:</strong> bank = ["011001","000000","010100","001000"]
+                {Array.isArray(examples) &&
+                  examples.map((exmp, index) => (
+                    <div key={index} className="bg-base-200 p-4 rounded-lg mt-6">
+                      <h3 className="font-semibold mb-2">Example {index + 1}:</h3>
+                      <pre className="space-y-2 font-mono text-sm text-pretty">
+                        <div>
+                          <strong>Input:</strong> {exmp?.input}
+                        </div>
+                        <div>
+                          <strong>Output:</strong> {exmp?.output}
+                        </div>
+                        <div>
+                          <strong>Explanation:</strong> {exmp?.explanation}
+                        </div>
+                      </pre>
                     </div>
-                    <div>
-                      <strong>Output:</strong> 8
-                    </div>
-                    <div>
-                      <strong>Explanation:</strong> Between each of the following device pairs,
-                      there is one beam...
-                    </div>
+                  ))}
+
+                <div className="">
+                  <h3 className="font-semibold mb-1">Constraints:</h3>
+                  <ul className="space-y-1 text-sm ml-3">{constraints}</ul>
+                </div>
+
+                <div className="">
+                  <h3 className="font-semibold mb-2">Tags:</h3>
+                  <div className="flex gap-2">
+                    {tags.map((tag) => (
+                      <div key={tag} className="badge badge-outline">
+                        {tag}
+                      </div>
+                    ))}
                   </div>
                 </div>
 
-                <div className="bg-base-200 p-4 rounded-lg mt-6">
-                  <h3 className="font-semibold mb-2">Example 2:</h3>
-                  <div className="space-y-2 font-mono text-sm">
-                    <div>
-                      <strong>Input:</strong> bank = ["000","111"]
-                    </div>
-                    <div>
-                      <strong>Output:</strong> 0
-                    </div>
-                    <div>
-                      <strong>Explanation:</strong> No laser beams in this case because there are no
-                      security devices on different rows.
-                    </div>
-                  </div>
-                </div>
-
-                <div className="mt-6">
-                  <h3 className="font-semibold mb-2">Constraints:</h3>
-                  <ul className="space-y-1 text-sm">
-                    <li>• m == bank.length</li>
-                    <li>• n == bank[i].length</li>
-                    <li>• 1 ≤ m, n ≤ 500</li>
-                    <li>• bank[i][j] is either '0' or '1'</li>
-                  </ul>
+                <div className="">
+                  <h3 className="font-semibold mb-1">Hints:</h3>
+                  <ul className="space-y-1 text-sm ml-3">{hints}</ul>
                 </div>
               </div>
-
-              {/* <div className="flex items-center gap-4 mt-8 pt-4 border-t border-base-300">
-                <button className="btn btn-ghost btn-sm">
-                  <ThumbsUp className="w-4 h-4 mr-1" />
-                  1.9K
-                </button>
-                <button className="btn btn-ghost btn-sm">
-                  <MessageSquare className="w-4 h-4 mr-1" />
-                  126
-                </button>
-                <button className="btn btn-ghost btn-sm">
-                  <Star className="w-4 h-4" />
-                </button>
-                <button className="btn btn-ghost btn-sm">
-                  <ExternalLink className="w-4 h-4" />
-                </button>
-                <button className="btn btn-ghost btn-sm">
-                  <HelpCircle className="w-4 h-4" />
-                </button>
-              </div> */}
-
-              {/* footer */}
-              <footer className="footer flex justify-center items-center mt-5">
-                <p className="text-sm text-center mt-2 opacity-50">
-                  Copyright © {new Date().getFullYear()} - All right reserved
-                </p>
-              </footer>
             </div>
           )}
 
           {activeTab === 'editorial' && (
             <div className="prose prose-sm max-w-none">
               <h2 className="text-xl font-bold mb-4">Editorial</h2>
-              <p>Editorial content would go here...</p>
+              <p>{editorial}</p>
             </div>
           )}
 
           {activeTab === 'solutions' && (
             <div className="prose prose-sm max-w-none">
               <h2 className="text-xl font-bold mb-4">Solutions</h2>
-              <p>Community solutions would go here...</p>
+              <div>
+                {Object.entries(referenceSolutions).map(([lang, code]) => {
+                  return (
+                    <div key={lang}>
+                      <h3 className="font-semibold my-2 flex justify-between">
+                        {lang}{' '}
+                        <span className="sticky top-0 right-0">
+                          <CopyButton text={code} />
+                        </span>
+                      </h3>
+                      <pre className="max-h-60 h-full text-xs bg-base-200 p-4 rounded-lg overflow-scroll relative">
+                        {code}
+                      </pre>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           )}
 
@@ -198,6 +174,12 @@ const Description = ({ setActiveTab, activeTab }) => {
           )}
         </div>
       </div>
+      {/* footer */}
+      <footer className="footer flex justify-center items-center mt-1">
+        <p className="text-sm text-center opacity-50">
+          Copyright © {new Date().getFullYear()} - All right reserved
+        </p>
+      </footer>
     </div>
   );
 };

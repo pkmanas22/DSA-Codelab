@@ -32,7 +32,7 @@ const Register = () => {
         navigate('/profile');
       },
       onError: (err) => {
-        toast.error(err.error || 'Something went wrong');
+        toast.error(err.response.data?.error || 'Something went wrong');
       },
     });
   };

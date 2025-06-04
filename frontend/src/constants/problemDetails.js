@@ -43,9 +43,9 @@ export const COMPANIES_NAME = [
 ];
 
 export const SUPPORTED_LANGUAGES = [
-  { id: 1, name: 'Python', value: 'PYTHON' },
-  { id: 3, name: 'Java', value: 'JAVA' },
-  { id: 4, name: 'JavaScript', value: 'JAVASCRIPT' },
+  { id: 102, name: 'JavaScript', value: 'JAVASCRIPT' },
+  { id: 109, name: 'Python', value: 'PYTHON' },
+  { id: 91, name: 'Java', value: 'JAVA' },
   // { id: 2, name: 'C++', value: 'cpp' },
   // { id: 5, name: 'C', value: 'c' },
   // { id: 6, name: 'C#', value: 'csharp' },

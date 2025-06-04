@@ -1,4 +1,4 @@
-import { useQuery } from 'react-query';
+import { useMutation, useQuery } from 'react-query';
 import { QUERY_KEYS } from '../../constants/keys';
 import problemApis from '../../apis/problemApi';
 
@@ -10,6 +10,10 @@ export const useGetAllProblems = () =>
 
 export const useGetProblemById = (id) =>
   useQuery({
-    queryKey: `${QUERY_KEYS.PROBLEM}-${id}`,
+    queryKey: [QUERY_KEYS.PROBLEM, id],
     queryFn: () => problemApis.getProblemById(id),
   });
+
+export const useRunProblem = () => useMutation(problemApis.runTheProblem);
+
+export const useSubmitProblem = () => useMutation(problemApis.submitTheProblem);

@@ -1,43 +1,159 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
 import { Play, Upload, Home, List, Plus, BookmarkPlus, Star, FileJson } from 'lucide-react';
 import { useAuthStore } from '../../stores/useAuthStore';
-import { RightSideNavbar } from '../common';
+import { MyLoader, PageNotFound, RightSideNavbar } from '../common';
 import Description from './Description';
 import ProblemPageCodeEditor from './ProblemPageCodeEditor';
 import Testcases from './Testcases';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import routes from '../../routes';
+import {
+  useGetProblemById,
+  useRunProblem,
+  useSubmitProblem,
+} from '../../hooks/reactQuery/useProblemApi';
+import toast from 'react-hot-toast';
+import { SUPPORTED_LANGUAGES } from '../../constants/problemDetails';
+import useCodeEditorStore from '../../stores/useCodeEditorStore';
 
 const LeetCodeInterface = () => {
-  const [activeTab, setActiveTab] = useState('description');
-  const [activeTestCase, setActiveTestCase] = useState(0);
-  const [selectedLanguage, setSelectedLanguage] = useState('java');
-  const [code, setCode] = useState(`class Solution {
-    public int numberOfBeams(String[] bank) {
-        
-    }
-}`);
+  const [problem, setProblem] = useState({});
+
+  const { problemId } = useParams();
 
   const navigate = useNavigate();
 
-  const testCases = [
-    {
-      input: '["011001","000000","010100","001000"]',
-      output: '8',
-      explanation:
-        'Between each of the following device pairs, there is one beam. Total beams = 8.',
-    },
-    {
-      input: '["000","111"]',
-      output: '0',
-      explanation:
-        'No laser beams in this case because there are no security devices on different rows.',
-    },
-  ];
+  const { isAuthenticated } = useAuthStore();
 
-  const handleEditorChange = (value) => {
-    setCode(value || '');
+  const { data, isLoading, isError } = useGetProblemById(problemId || '');
+  const { mutate: myRunProblemHandler, isLoading: runProblemLoading } = useRunProblem();
+  const { mutate: mySubmitProblemHandler, isLoading: submitProblemLoading } = useSubmitProblem();
+
+  const { codeMap, lastEditedLanguage } = useCodeEditorStore();
+
+  useEffect(() => {
+    if (data) {
+      // console.log(data);
+      setProblem(data?.data);
+    }
+  }, [data]);
+
+  if (isLoading) {
+    return <MyLoader />;
+  }
+
+  if (isError) {
+    // toast.error(error.response.data?.error || 'Something went wrong');
+    return <PageNotFound />;
+  }
+
+  const handleRunCode = () => {
+    setProblem(data?.data);
+    if (!problemId || !lastEditedLanguage) return;
+    const languageId = SUPPORTED_LANGUAGES.find((l) => l.value === lastEditedLanguage)?.id;
+
+    const sourceCode = codeMap[`${problemId}:${lastEditedLanguage}`];
+
+    if (
+      !sourceCode ||
+      !languageId ||
+      problem?.codeSnippets[SUPPORTED_LANGUAGES[0].value] === sourceCode
+    ) {
+      toast.error('Please write code first');
+      return;
+    }
+
+    const testcases = problem?.testcases;
+    if (!testcases) return;
+
+    const stdin = testcases.reduce((acc, { input }) => [...acc, input], []);
+
+    const expectedOutputs = testcases.reduce((acc, { output }) => [...acc, output], []);
+
+    const payload = {
+      sourceCode,
+      languageId,
+      stdin,
+      expectedOutputs,
+    };
+
+    // console.log('Payload', payload);
+
+    console.log('start running...');
+
+    myRunProblemHandler(payload, {
+      onSuccess: (res) => {
+        console.log(res);
+        if (res?.success) {
+          toast.success(res?.message || 'Code ran successfully');
+        } else {
+          toast.error(res?.message || 'Something went wrong');
+        }
+        const updatedTestcases = testcases.map((t, i) => ({
+          ...t,
+          isPassed: res?.data[i]?.isPassed,
+          status: res?.data[i]?.status,
+          stdout: res?.data[i]?.stdout,
+          time: res?.data[i]?.time,
+        }));
+        // console.log('updatedTestcases', updatedTestcases);
+
+        setProblem({
+          ...problem,
+          testcases: updatedTestcases,
+        });
+      },
+      onError: (err) => {
+        toast.error(err.response.data?.error || 'Something went wrong');
+      },
+    });
+  };
+
+  const handleSaveToPlaylist = () => {
+    console.log('save to playlist');
+  };
+
+  const handleSubmitCode = () => {
+    if (!problemId || !lastEditedLanguage) return;
+    const languageId = SUPPORTED_LANGUAGES.find((l) => l.value === lastEditedLanguage)?.id;
+
+    const sourceCode = codeMap[`${problemId}:${lastEditedLanguage}`];
+
+    if (
+      !sourceCode ||
+      !languageId ||
+      problem?.codeSnippets[SUPPORTED_LANGUAGES[0].value] === sourceCode
+    ) {
+      toast.error('Please write code first');
+      return;
+    }
+
+    const payload = {
+      sourceCode,
+      languageId,
+      problemId,
+    };
+
+    // console.log('Payload', payload);
+
+    console.log('start submitting...');
+
+    mySubmitProblemHandler(payload, {
+      onSuccess: (res) => {
+        console.log(res);
+        if (!res?.success) {
+          toast.error(res?.message || 'Something went wrong');
+        } else {
+          toast.success(res?.message || 'Submission successful');
+        }
+        console.log('Submission data', res?.data);
+        navigate(`/problems/${problemId}/#submissions`, { replace: true });
+      },
+      onError: (err) => {
+        toast.error(err.response.data?.error || 'Something went wrong');
+      },
+    });
   };
 
   return (
@@ -59,17 +175,56 @@ const LeetCodeInterface = () => {
 
         <div className="navbar-center">
           <div className="flex items-center gap-3">
-            <button className="btn btn-outline btn-sm" title="Add to Playlist">
-              <Star className="w-4 h-4 text-yellow-500" />
-            </button>
-            <button className="btn btn-primary btn-sm" title="Run Code">
-              <Play className="w-4 h-4" />
-              Run
-            </button>
-            <button className="btn btn-success btn-sm" title="Submit Solution">
-              <Upload className="w-4 h-4" />
-              Submit
-            </button>
+            <div
+              className="tooltip tooltip-bottom"
+              data-tip={isAuthenticated ? 'Save to playlist' : 'Login to save to playlist'}
+            >
+              <button
+                type="button"
+                className={`btn btn-outline btn-sm ${!isAuthenticated && 'btn-disabled'}`}
+                disabled={!isAuthenticated}
+                onClick={handleSaveToPlaylist}
+              >
+                <BookmarkPlus className="w-4 h-4" />
+                Save
+              </button>
+            </div>
+
+            <div
+              className="tooltip tooltip-bottom"
+              data-tip={isAuthenticated ? 'Run Code' : 'Login to run code'}
+            >
+              <button
+                type="button"
+                className={`btn btn-primary btn-sm ${
+                  (!isAuthenticated || runProblemLoading) && 'btn-disabled'
+                }`}
+                disabled={!isAuthenticated || runProblemLoading}
+                onClick={handleRunCode}
+              >
+                {runProblemLoading && <span className="loading loading-spinner"></span>}
+                <Play className="w-4 h-4" />
+                Run
+              </button>
+            </div>
+
+            <div
+              className="tooltip tooltip-bottom"
+              data-tip={isAuthenticated ? 'Submit Code' : 'Login to submit code'}
+            >
+              <button
+                type="button"
+                className={`btn btn-success btn-sm ${
+                  (!isAuthenticated || submitProblemLoading) && 'btn-disabled'
+                }`}
+                disabled={!isAuthenticated || submitProblemLoading}
+                onClick={handleSubmitCode}
+              >
+                {submitProblemLoading && <span className="loading loading-spinner"></span>}
+                <Upload className="w-4 h-4" />
+                Submit
+              </button>
+            </div>
           </div>
         </div>
 
@@ -83,33 +238,30 @@ const LeetCodeInterface = () => {
         <PanelGroup direction="horizontal" className="h-full">
           {/* Left Panel - Problem Description */}
           <Panel defaultSize={45} minSize={30}>
-            <Description setActiveTab={setActiveTab} activeTab={activeTab} />
+            <Description isSolved {...problem} /> // TODO: pass isSolved based on the value
           </Panel>
 
-          <PanelResizeHandle className="w-1 bg-base-300 hover:bg-primary transition-colors" />
+          <PanelResizeHandle className="w-2 bg-base-300 hover:bg-primary transition-colors flex justify-center items-center">
+            <div className="h-20 w-0.5 bg-success rounded-full opacity-80" />
+          </PanelResizeHandle>
 
           {/* Right Panel - Code Editor and Tests */}
           <Panel defaultSize={55} minSize={40}>
             <PanelGroup direction="vertical">
               {/* Code Editor */}
               <Panel defaultSize={80} minSize={40}>
-                <ProblemPageCodeEditor
-                  code={code}
-                  handleEditorChange={handleEditorChange}
-                  selectedLanguage={selectedLanguage}
-                  setSelectedLanguage={setSelectedLanguage}
-                />
+                <ProblemPageCodeEditor codeSnippets={problem?.codeSnippets} />
               </Panel>
 
-              <PanelResizeHandle className="h-1 bg-base-300 hover:bg-primary transition-colors" />
+              <PanelResizeHandle className="h-2 bg-base-300 hover:bg-primary transition-colors flex justify-center items-center">
+                <div className="w-6 h-0.5 bg-success rounded-full opacity-80" />
+                <div className="w-6 h-0.5 bg-success rounded-full opacity-80" />
+                <div className="w-6 h-0.5 bg-success rounded-full opacity-80" />
+              </PanelResizeHandle>
 
               {/* Test Cases */}
               <Panel defaultSize={20} minSize={20}>
-                <Testcases
-                  testCases={testCases}
-                  activeTestCase={activeTestCase}
-                  setActiveTestCase={setActiveTestCase}
-                />
+                <Testcases testcases={problem?.testcases} />
               </Panel>
             </PanelGroup>
           </Panel>
