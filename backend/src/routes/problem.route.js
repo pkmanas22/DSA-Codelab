@@ -16,8 +16,8 @@ problemRoutes.patch('/update-problem/:problemId', authMiddleware, checkAdmin, up
 
 problemRoutes.delete('/delete-problem/:problemId', authMiddleware, checkAdmin, deleteProblem);
 
-problemRoutes.get('/get-all-problems', authMiddleware, getAllProblems);
+problemRoutes.get('/get-all-problems', getAllProblems);
 
-problemRoutes.get('/get-problem/:problemId', authMiddleware, getProblemById);
+problemRoutes.get('/get-problem/:problemId', getProblemById);
 
 export default problemRoutes;
