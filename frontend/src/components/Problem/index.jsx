@@ -3,7 +3,7 @@ import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
 import { Play, Upload, Home, List, Plus, BookmarkPlus, Star, FileJson } from 'lucide-react';
 import { useAuthStore } from '../../stores/useAuthStore';
 import { MyLoader, PageNotFound, RightSideNavbar } from '../common';
-import Description from './Description';
+import Contents from './Contents';
 import ProblemPageCodeEditor from './ProblemPageCodeEditor';
 import Testcases from './Testcases';
 import { Link, useNavigate, useParams } from 'react-router-dom';
@@ -49,7 +49,10 @@ const LeetCodeInterface = () => {
   }
 
   const handleRunCode = () => {
-    setProblem(data?.data);
+    setProblem({
+      ...problem,
+      testcases: data?.data?.testcases,
+    });
     if (!problemId || !lastEditedLanguage) return;
     const languageId = SUPPORTED_LANGUAGES.find((l) => l.value === lastEditedLanguage)?.id;
 
@@ -115,6 +118,12 @@ const LeetCodeInterface = () => {
   };
 
   const handleSubmitCode = () => {
+    setProblem({
+      ...problem,
+      testcases: data?.data?.testcases,
+    });
+    console.log(data?.data?.testcases);
+
     if (!problemId || !lastEditedLanguage) return;
     const languageId = SUPPORTED_LANGUAGES.find((l) => l.value === lastEditedLanguage)?.id;
 
@@ -147,6 +156,12 @@ const LeetCodeInterface = () => {
         } else {
           toast.success(res?.message || 'Submission successful');
         }
+
+        setProblem({
+          ...problem,
+          testcases: data?.data?.testcases,
+          submissionData: res?.data,
+        });
         console.log('Submission data', res?.data);
         navigate(`/problems/${problemId}/#submissions`, { replace: true });
       },
@@ -238,7 +253,7 @@ const LeetCodeInterface = () => {
         <PanelGroup direction="horizontal" className="h-full">
           {/* Left Panel - Problem Description */}
           <Panel defaultSize={45} minSize={30}>
-            <Description isSolved {...problem} /> // TODO: pass isSolved based on the value
+            <Contents {...problem} /> // TODO: pass isSolved based on the value
           </Panel>
 
           <PanelResizeHandle className="w-2 bg-base-300 hover:bg-primary transition-colors flex justify-center items-center">

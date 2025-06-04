@@ -1,8 +1,12 @@
-import { useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { CopyButton } from '../common';
 import { useEffect, useState } from 'react';
+import { ArrowLeftCircle } from 'lucide-react';
+import useCodeEditorStore from '../../stores/useCodeEditorStore';
+import { useAuthStore } from '../../stores/useAuthStore';
 
-const Description = ({
+const Contents = ({
+  id = '',
   title = '',
   description = '',
   isSolved = false,
@@ -14,9 +18,15 @@ const Description = ({
   editorial,
   constraints,
   referenceSolutions = {},
+  submissionData = {},
 }) => {
   const [activeTab, setActiveTab] = useState('description');
   const { hash: activeHashPathName } = useLocation();
+
+  const { codeMap, lastEditedLanguage } = useCodeEditorStore();
+  const { isAuthenticated, authUser } = useAuthStore();
+
+  const sourceCode = codeMap[`${id}:${lastEditedLanguage}`];
 
   useEffect(() => {
     const updateTabFromHash = () => {
@@ -79,7 +89,9 @@ const Description = ({
             <div className="prose prose-sm max-w-none">
               <div className="flex items-center justify-between">
                 <h1 className="text-2xl font-bold text-base-content m-0">{title}</h1>
-                {isSolved && <div className="badge badge-success">Solved ✓</div>}
+                {(isSolved || submissionData?.isAllPassed) && (
+                  <div className="badge badge-success">Solved ✓</div>
+                )}
               </div>
 
               <div className="badge badge-warning capitalize my-3">{difficulty}</div>
@@ -156,7 +168,7 @@ const Description = ({
                           <CopyButton text={code} />
                         </span>
                       </h3>
-                      <pre className="max-h-60 h-full text-xs bg-base-200 p-4 rounded-lg overflow-scroll relative">
+                      <pre className="max-h-60 h-full text-xs bg-base-200 p-4 rounded-lg overflow-auto relative">
                         {code}
                       </pre>
                     </div>
@@ -169,7 +181,89 @@ const Description = ({
           {activeTab === 'submissions' && (
             <div className="prose prose-sm max-w-none">
               <h2 className="text-xl font-bold mb-4">Submissions</h2>
-              <p>Your submissions would go here...</p>
+              {isAuthenticated && (
+                <Link to={`/submissions`} className="flex items-center gap-2 mb-2 hover:underline">
+                  <ArrowLeftCircle />
+                  <span>All Submissions</span>
+                </Link>
+              )}
+              {submissionData?.status ? (
+                <>
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      {submissionData?.isAllPassed ? (
+                        <span className="badge badge-success">{submissionData?.status}</span>
+                      ) : (
+                        <span className="badge badge-error">{submissionData?.status}</span>
+                      )}
+                      <p className="text-sm opacity-50">
+                        {submissionData?.passedTestcasesCount} /{' '}
+                        {submissionData?.totalTestcasesCount} testcases passed
+                      </p>
+                    </div>
+                    <p className="text-sm opacity-70">
+                      Submitted by {authUser?.name} on{' '}
+                      {new Date(submissionData?.submittedOn).toString()}
+                    </p>
+
+                    {!submissionData?.isAllPassed && (
+                      <div className="bg-base-200 p-4 rounded-lg mt-6">
+                        <h3 className="font-semibold mb-2">
+                          Failed testcase no. {submissionData?.testCaseNumber}:
+                        </h3>
+                        <pre className="space-y-2 font-mono text-sm text-pretty">
+                          <div>
+                            <strong>Input:</strong> {submissionData?.stdin}
+                          </div>
+                          <div>
+                            <strong>Output:</strong> {submissionData?.stdout}
+                          </div>
+                          <div>
+                            <strong>Expected Output:</strong> {submissionData?.expectedOutput}
+                          </div>
+                          <div>
+                            <strong>Error:</strong> {submissionData?.stderr}
+                          </div>
+                        </pre>
+                      </div>
+                    )}
+
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="border border-base-300 rounded-lg p-3">
+                        <h4 className="text-center font-semibold">Time</h4>
+                        <p className="text-center p-2 text-2xl text-white">
+                          {Number(submissionData?.time).toFixed(2)} ms
+                        </p>
+                      </div>
+                      <div className="border border-base-300 rounded-lg p-3">
+                        <h4 className="text-center font-semibold">Memory</h4>
+                        <p className="text-center p-2 text-2xl text-white">
+                          {submissionData?.memory} KB
+                        </p>
+                      </div>
+                    </div>
+
+                    <h3 className="font-semibold my-2 flex justify-between">
+                      <span>
+                        Code:{' '}
+                        <span className="opacity-70 capitalize">
+                          {lastEditedLanguage.toLowerCase()}
+                        </span>
+                      </span>
+                      <span className="sticky top-0 right-0">
+                        <CopyButton text={sourceCode} />
+                      </span>
+                    </h3>
+                    <pre className="max-h-60 h-full text-xs bg-base-200 p-4 rounded-lg overflow-auto relative">
+                      {sourceCode}
+                    </pre>
+                  </div>
+                </>
+              ) : (
+                <p className="text-center p-3 opacity-70">
+                  Click on submit button to submit your code
+                </p>
+              )}
             </div>
           )}
         </div>
@@ -184,4 +278,4 @@ const Description = ({
   );
 };
 
-export default Description;
+export default Contents;

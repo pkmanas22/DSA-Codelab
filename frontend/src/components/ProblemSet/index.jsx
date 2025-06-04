@@ -202,7 +202,7 @@ const ProblemSet = () => {
                         <input
                           type="checkbox"
                           className="checkbox checkbox-sm"
-                          checked={isAuthenticated} // TODO: Fix this later
+                          checked={isAuthenticated && problem?.isSolved} // TODO: Store solved problems
                           readOnly
                           // disabled
                         />

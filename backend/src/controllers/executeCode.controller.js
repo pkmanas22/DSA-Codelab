@@ -221,11 +221,22 @@ export const executeCodeForSubmit = async (req, res) => {
       (result) => !result.isPassed
     );
 
+    const totalTestcasesCount = submissionWithTestcaseResults.testcasesResults.length;
+    const passedTestcasesCount = submissionWithTestcaseResults.testcasesResults.filter(
+      (tc) => tc?.isPassed
+    ).length;
+
     if (firstFailedResult) {
       return res.status(200).json({
         success: false,
         message: `Submission failed for test case ${firstFailedResult.testCaseNumber}.`,
-        data: firstFailedResult,
+        data: {
+          ...firstFailedResult,
+          submittedOn: submissionWithTestcaseResults.updatedAt,
+          totalTestcasesCount,
+          passedTestcasesCount,
+          isAllPassed,
+        },
       });
     }
 
@@ -242,7 +253,13 @@ export const executeCodeForSubmit = async (req, res) => {
     return res.status(200).json({
       success: true,
       message: 'Submission accepted.',
-      data: summaryOfSubmission,
+      data: {
+        ...summaryOfSubmission,
+        submittedOn: submissionWithTestcaseResults.updatedAt,
+        totalTestcasesCount,
+        passedTestcasesCount,
+        isAllPassed,
+      },
     });
   } catch (error) {
     console.log('Error while executing code for submit', error);

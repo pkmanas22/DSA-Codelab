@@ -1,9 +1,15 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const Testcases = ({ testcases = [] }) => {
   const [activeTestCase, setActiveTestCase] = useState(0);
-  console.log('testcases', testcases);
+  // console.log('testcases', testcases);
   const totalRunTime = testcases.reduce((acc, { time }) => acc + Number(time), 0);
+
+  useEffect(() => {
+    const firstFailed = testcases.findIndex((tc) => !tc?.isPassed);
+    // console.log(firstFailed);
+    setActiveTestCase(firstFailed > -1 ? firstFailed : 0);
+  }, [testcases]);
 
   return (
     <div className="h-full flex flex-col bg-base-100">
@@ -14,7 +20,6 @@ const Testcases = ({ testcases = [] }) => {
         </div>
       </div>
 
-      {/* Test Cases Content - Properly constrained and scrollable */}
       <div className="flex-1 overflow-hidden">
         <div className="h-full overflow-y-auto p-4">
           {!!testcases[activeTestCase]?.status && (

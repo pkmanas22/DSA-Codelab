@@ -12,6 +12,8 @@ import {
   rapidApiSubmitBatch,
 } from '../libs/rapidApi.lib.js';
 
+import jwt from 'jsonwebtoken';
+
 export const createProblem = async (req, res) => {
   /*
    * 1. Get all fields from body
@@ -142,10 +144,59 @@ export const getAllProblems = async (req, res) => {
       });
     }
 
+    const token = req.cookies['x-auth-token'] || null;
+
+    if (!token) {
+      return res.status(200).json({
+        success: true,
+        message: 'Problems fetched successfully.',
+        data: problems,
+      });
+    }
+
+    const { id } = jwt.verify(token, process.env.JWT_SECRET);
+
+    if (!id) {
+      return res.status(401).json({
+        success: false,
+        error: 'Unauthorized user',
+      });
+    }
+
+    const user = await db.user.findUnique({
+      where: { id },
+      select: {
+        id: true,
+      },
+    });
+
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        error: 'Unauthorized user',
+      });
+    }
+
+    // Get list of problemIds solved by user
+    const solvedProblems = await db.ProblemSolved.findMany({
+      where: { userId: id },
+      select: { problemId: true },
+    });
+
+    const solvedSet = new Set(solvedProblems.map((p) => p.problemId));
+
+    // Add `isSolved` only if solved
+    const annotatedProblems = problems.map((problem) => {
+      if (solvedSet.has(problem.id)) {
+        return { ...problem, isSolved: true };
+      }
+      return problem; // No isSolved key for unsolved
+    });
+
     return res.status(200).json({
       success: true,
       message: 'Problems fetched successfully.',
-      data: problems,
+      data: annotatedProblems,
     });
   } catch (error) {
     console.log('Error while fetching problems', error);
@@ -173,10 +224,60 @@ export const getProblemById = async (req, res) => {
       });
     }
 
+    const examplesLength = problem.examples?.length || 0;
+    const showedTestcases = problem.testcases?.slice(0, examplesLength);
+
+    const token = req.cookies['x-auth-token'] || null;
+
+    if (!token) {
+      return res.status(200).json({
+        success: true,
+        message: 'Problem fetched successfully.',
+        data: {
+          ...problem,
+          testcases: showedTestcases,
+        },
+      });
+    }
+
+    const { id } = jwt.verify(token, process.env.JWT_SECRET);
+
+    if (!id) {
+      return res.status(401).json({
+        success: false,
+        error: 'Unauthorized user',
+      });
+    }
+
+    const user = await db.user.findUnique({
+      where: { id },
+      select: {
+        id: true,
+      },
+    });
+
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        error: 'Unauthorized user',
+      });
+    }
+
+    const isSolved = await db.ProblemSolved.findFirst({
+      where: {
+        userId: id,
+        problemId: problemId,
+      },
+    });
+
     return res.status(200).json({
       success: true,
       message: 'Problem fetched successfully.',
-      data: problem,
+      data: {
+        ...problem,
+        testcases: showedTestcases,
+        isSolved: !!isSolved,
+      },
     });
   } catch (error) {
     console.log('Error while fetching problem', error);
