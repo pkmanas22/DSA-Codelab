@@ -11,7 +11,10 @@ const routes = {
     all: '/submissions',
     submission: '/submissions/:submissionId',
   },
-  playlist: 'playlist',
+  playlists: {
+    all: '/playlists',
+    playlist: '/playlists/:playlistId',
+  },
 
   // admin
   admin: {

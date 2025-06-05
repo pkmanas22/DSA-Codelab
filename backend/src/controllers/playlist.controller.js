@@ -6,6 +6,22 @@ export const createPlaylist = async (req, res) => {
   const { name, description } = req.body;
 
   try {
+    const existingPlaylist = await db.Playlist.findUnique({
+      where: {
+        name_createdBy: {
+          name,
+          createdBy: userId,
+        },
+      },
+    });
+
+    if (existingPlaylist) {
+      return res.status(400).json({
+        success: false,
+        error: 'Playlist with same name exists',
+      });
+    }
+
     const playlist = await db.Playlist.create({
       data: {
         name,
@@ -31,6 +47,54 @@ export const createPlaylist = async (req, res) => {
     return res.status(500).json({
       success: false,
       error: 'Failed to create playlist.',
+    });
+  }
+};
+
+export const addSingleProblemToPlaylist = async (req, res) => {
+  const { problemId, playlistId } = req.body;
+
+  if (!problemId) {
+    return res.status(400).json({
+      success: false,
+      error: 'No problems provided.',
+    });
+  }
+
+  try {
+    const existing = await db.ProblemInPlaylist.findUnique({
+      where: {
+        playlistId_problemId: {
+          playlistId,
+          problemId,
+        },
+      },
+    });
+
+    if (existing) {
+      return res.status(400).json({
+        success: false,
+        error: 'Problem already exists in the selected playlist.',
+      });
+    }
+
+    const problemsInPlaylist = await db.ProblemInPlaylist.create({
+      data: {
+        playlistId,
+        problemId,
+      },
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: 'Problems added to playlist successfully.',
+      data: problemsInPlaylist,
+    });
+  } catch (error) {
+    console.log('Error while adding problems to playlist', error);
+    return res.status(500).json({
+      success: false,
+      error: 'Failed to add problems to playlist.',
     });
   }
 };

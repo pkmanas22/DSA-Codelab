@@ -8,7 +8,6 @@ import Profile from './components/Profile';
 import Login from './components/Login';
 import Register from './components/Register';
 import ProblemSet from './components/ProblemSet';
-import Playlist from './components/Playlist';
 import AdminDashboard from './components/AdminDashboard';
 import CreateProblem from './components/CreateProblem';
 import UpdateProblem from './components/UpdateProblem';
@@ -17,6 +16,8 @@ import ProtectedRoute from './layouts/ProtectedRoute';
 import ProblemContentInterface from './components/Problem';
 import SubmissionsSet from './components/SubmissionsSet';
 import Submission from './components/Submission';
+import PlaylistSet from './components/PlaylistSet';
+import Playlist from './components/Playlist';
 
 function App() {
   return (
@@ -36,7 +37,9 @@ function App() {
 
             <Route path={routes.submissions.all} element={<SubmissionsSet />} />
             <Route path={routes.submissions.submission} element={<Submission />} />
-            <Route path={routes.playlist} element={<Playlist />} />
+
+            <Route path={routes.playlists.all} element={<PlaylistSet />} />
+            <Route path={routes.playlists.playlist} element={<Playlist />} />
           </Route>
 
           <Route element={<ProtectedRoute allowedRoles={['ADMIN']} />}>

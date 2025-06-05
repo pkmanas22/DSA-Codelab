@@ -9,12 +9,15 @@ import {
   ArrowDown,
   Bookmark,
   Search,
+  BookmarkPlusIcon,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useGetAllProblems } from '../../hooks/reactQuery/useProblemApi';
 import { toast } from 'react-hot-toast';
 import { COMPANIES_NAME, TAG_OPTIONS } from '../../constants/problemDetails';
 import { useAuthStore } from '../../stores/useAuthStore';
+import { useGetAllPlaylists } from '../../hooks/reactQuery/usePlaylistApi';
+import { MyLoader, PlaylistModal } from '../common';
 
 const ProblemSet = () => {
   const [search, setSearch] = useState('');
@@ -24,8 +27,11 @@ const ProblemSet = () => {
   const [sortBy, setSortBy] = useState('');
   const [sortAsc, setSortAsc] = useState(true);
   const [filteredProblems, setFilteredProblems] = useState([]);
+  const [problemIdForPlaylist, setProblemIdForPlaylist] = useState(null);
 
   const { data, isLoading, isError, error } = useGetAllProblems();
+  const { data: allPlaylists } = useGetAllPlaylists();
+
   const { authUser, isAuthenticated } = useAuthStore();
 
   useEffect(() => {
@@ -56,9 +62,16 @@ const ProblemSet = () => {
       setSortAsc(true);
     }
   };
+  console.log(allPlaylists);
+  const openModal = () => {
+    const modal = document.getElementById('add_to_playlist');
+    if (modal) {
+      modal.showModal();
+    } else return;
+  };
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <MyLoader />;
   }
 
   if (isError) {
@@ -230,8 +243,16 @@ const ProblemSet = () => {
                         </span>
                       </td>
                       <td className="flex flex-wrap gap-2">
-                        <button className="btn btn-xs btn-outline btn-primary gap-1">
-                          <Bookmark className="w-4" />
+                        <button
+                          type="button"
+                          onClick={() => {
+                            openModal();
+                            setProblemIdForPlaylist(problem?.id);
+                          }}
+                          className="btn btn-xs btn-outline btn-primary gap-1"
+                          disabled={!isAuthenticated}
+                        >
+                          <BookmarkPlusIcon className="w-4" />
                         </button>
                         {isAuthenticated && authUser?.role === 'ADMIN' && (
                           <>
@@ -256,6 +277,10 @@ const ProblemSet = () => {
               </tbody>
             </table>
           </div>
+
+          {/* Modal */}
+
+          <PlaylistModal allPlaylists={allPlaylists?.data} problemId={problemIdForPlaylist} />
         </div>
       </div>
     </div>

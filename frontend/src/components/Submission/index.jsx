@@ -2,9 +2,10 @@ import React from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useGetSubmissionById } from '../../hooks/reactQuery/useSubmissionApi';
 import { CopyButton, MyLoader, PageNotFound } from '../common';
-import { Book } from 'lucide-react';
+import { Book, LinkIcon } from 'lucide-react';
 import { useAuthStore } from '../../stores/useAuthStore';
 import { calculateAverageMemory, calculateAverageTime } from '../../utils/calculation';
+import formatDate from '../../utils/formatDate';
 
 const Submission = () => {
   const { submissionId } = useParams();
@@ -58,7 +59,8 @@ const Submission = () => {
                 <div className="flex gap-2 items-center text-2xl">
                   <span className="font-semibold ">Problem:</span>
                   <Link to={`/problems/${data.data?.problemId}`}>
-                    <span className="text-primary hover:underline">
+                    <span className="text-primary hover:underline flex items-center gap-2">
+                      <LinkIcon className="w-4" />
                       {data.data?.problem?.title}
                     </span>
                   </Link>
@@ -68,20 +70,7 @@ const Submission = () => {
                   <span>{data.data?.language?.toLowerCase()}</span>
                 </div>
                 <p>Submitted By : {authUser.name}</p>
-                <p>
-                  Submission Time :{' '}
-                  {new Date(data.data.createdAt)
-                    .toLocaleString('en-US', {
-                      month: 'short', // "Jun"
-                      day: '2-digit', // "04"
-                      year: 'numeric', // "2025"
-                      hour: '2-digit',
-                      minute: '2-digit',
-                      second: '2-digit',
-                      hour12: false, // 24-hour format
-                    })
-                    .replace(',', '')}
-                </p>
+                <p>Submission Time : {formatDate(data.data.createdAt, true)}</p>
                 <div
                   className={`badge ${
                     data.data?.status === 'Accepted' ? 'badge-success' : 'badge-error'

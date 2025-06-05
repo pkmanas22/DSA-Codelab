@@ -4,6 +4,7 @@ import { useGetAllSubmissions } from '../../hooks/reactQuery/useSubmissionApi';
 import toast from 'react-hot-toast';
 import { MyLoader } from '../common';
 import { calculateAverageMemory, calculateAverageTime } from '../../utils/calculation';
+import formatDate from '../../utils/formatDate';
 
 const SubmissionsSet = () => {
   const { data, isLoading, isError, error } = useGetAllSubmissions();
@@ -62,9 +63,7 @@ const SubmissionsSet = () => {
                             {submission?.problem?.title}
                           </Link>
                         </td>
-                        <td className="text-center">
-                          {new Date(submission?.createdAt).toDateString()}
-                        </td>
+                        <td className="text-center">{formatDate(submission?.createdAt, true)}</td>
                         <td
                           className={`text-center ${
                             submission?.status === 'Accepted' ? 'text-success' : 'text-error'

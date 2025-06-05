@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import { ArrowLeftCircle } from 'lucide-react';
 import useCodeEditorStore from '../../stores/useCodeEditorStore';
 import { useAuthStore } from '../../stores/useAuthStore';
+import formatDate from '../../utils/formatDate';
+import SubmissionHistory from './SubmissionHistory';
 
 const Contents = ({
   id = '',
@@ -22,6 +24,8 @@ const Contents = ({
   submissionsHistory = [],
 }) => {
   const [activeTab, setActiveTab] = useState('description');
+  const [isSubmitted, setIsSubmitted] = useState(false);
+
   const { hash: activeHashPathName } = useLocation();
 
   const { codeMap, lastEditedLanguage } = useCodeEditorStore();
@@ -32,6 +36,7 @@ const Contents = ({
   useEffect(() => {
     const updateTabFromHash = () => {
       const hash = window.location.hash.slice(1);
+      if (hash === 'submission') setIsSubmitted(true);
       setActiveTab(hash || 'description');
     };
 
@@ -73,14 +78,25 @@ const Contents = ({
           Solutions
         </span>
         <span
-          className={`tab ${activeTab === 'submissions' ? 'tab-active' : ''}`}
+          className={`tab ${activeTab === 'submissionHistory' ? 'tab-active' : ''}`}
           onClick={() => {
-            setActiveTab('submissions');
-            window.location.hash = 'submissions';
+            setActiveTab('submissionHistory');
+            window.location.hash = 'submissionHistory';
           }}
         >
-          Submissions
+          Submission History
         </span>
+        {isSubmitted && (
+          <span
+            className={`tab ${activeTab === 'submission' ? 'tab-active' : ''}`}
+            onClick={() => {
+              setActiveTab('submission');
+              window.location.hash = 'submission';
+            }}
+          >
+            Current Submission
+          </span>
+        )}
       </div>
 
       {/* Content - Fixed height and scrollable */}
@@ -179,125 +195,84 @@ const Contents = ({
             </div>
           )}
 
-          {activeTab === 'submissions' && (
+          {activeTab === 'submission' && (
             <div className="prose prose-sm max-w-none">
-              <h2 className="text-xl font-bold mb-4">Submissions</h2>
-              {isAuthenticated && (
-                <Link to={`/submissions`} className="flex items-center gap-2 mb-2 hover:underline">
-                  <ArrowLeftCircle />
-                  <span>My All Submissions</span>
-                </Link>
-              )}
-              {submissionData?.status ? (
-                <>
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2">
-                      {submissionData?.isAllPassed ? (
-                        <span className="badge badge-success">{submissionData?.status}</span>
-                      ) : (
-                        <span className="badge badge-error">{submissionData?.status}</span>
-                      )}
-                      <p className="text-sm opacity-50">
-                        {submissionData?.passedTestcasesCount} /{' '}
-                        {submissionData?.totalTestcasesCount} testcases passed
+              <h2 className="text-xl font-bold mb-4">Submissions</h2>{' '}
+              <>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    {submissionData?.isAllPassed ? (
+                      <span className="badge badge-success">{submissionData?.status}</span>
+                    ) : (
+                      <span className="badge badge-error">{submissionData?.status}</span>
+                    )}
+                    <p className="text-sm opacity-50">
+                      {submissionData?.passedTestcasesCount} / {submissionData?.totalTestcasesCount}{' '}
+                      testcases passed
+                    </p>
+                  </div>
+                  <p className="text-sm opacity-70">
+                    Submitted by {authUser?.name} on {formatDate(submissionData?.submittedOn, true)}
+                  </p>
+
+                  {!submissionData?.isAllPassed && (
+                    <div className="bg-base-200 p-4 rounded-lg mt-6">
+                      <h3 className="font-semibold mb-2">
+                        Failed testcase no. {submissionData?.testCaseNumber}:
+                      </h3>
+                      <pre className="space-y-2 font-mono text-sm text-pretty">
+                        <div>
+                          <strong>Input:</strong> {submissionData?.stdin}
+                        </div>
+                        <div>
+                          <strong>Output:</strong> {submissionData?.stdout}
+                        </div>
+                        <div>
+                          <strong>Expected Output:</strong> {submissionData?.expectedOutput}
+                        </div>
+                        <div>
+                          <strong>Error:</strong> {submissionData?.stderr}
+                        </div>
+                      </pre>
+                    </div>
+                  )}
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="border border-base-300 rounded-lg p-3">
+                      <h4 className="text-center font-semibold">Time</h4>
+                      <p className="text-center p-2 text-2xl text-white">
+                        {Number(submissionData?.time).toFixed(2)} ms
                       </p>
                     </div>
-                    <p className="text-sm opacity-70">
-                      Submitted by {authUser?.name} on{' '}
-                      {new Date(submissionData?.submittedOn).toString()}
-                    </p>
-
-                    {!submissionData?.isAllPassed && (
-                      <div className="bg-base-200 p-4 rounded-lg mt-6">
-                        <h3 className="font-semibold mb-2">
-                          Failed testcase no. {submissionData?.testCaseNumber}:
-                        </h3>
-                        <pre className="space-y-2 font-mono text-sm text-pretty">
-                          <div>
-                            <strong>Input:</strong> {submissionData?.stdin}
-                          </div>
-                          <div>
-                            <strong>Output:</strong> {submissionData?.stdout}
-                          </div>
-                          <div>
-                            <strong>Expected Output:</strong> {submissionData?.expectedOutput}
-                          </div>
-                          <div>
-                            <strong>Error:</strong> {submissionData?.stderr}
-                          </div>
-                        </pre>
-                      </div>
-                    )}
-
-                    <div className="grid grid-cols-2 gap-3">
-                      <div className="border border-base-300 rounded-lg p-3">
-                        <h4 className="text-center font-semibold">Time</h4>
-                        <p className="text-center p-2 text-2xl text-white">
-                          {Number(submissionData?.time).toFixed(2)} ms
-                        </p>
-                      </div>
-                      <div className="border border-base-300 rounded-lg p-3">
-                        <h4 className="text-center font-semibold">Memory</h4>
-                        <p className="text-center p-2 text-2xl text-white">
-                          {submissionData?.memory} KB
-                        </p>
-                      </div>
+                    <div className="border border-base-300 rounded-lg p-3">
+                      <h4 className="text-center font-semibold">Memory</h4>
+                      <p className="text-center p-2 text-2xl text-white">
+                        {submissionData?.memory} KB
+                      </p>
                     </div>
-
-                    <h3 className="font-semibold my-2 flex justify-between">
-                      <span>
-                        Code:{' '}
-                        <span className="opacity-70 capitalize">
-                          {lastEditedLanguage.toLowerCase()}
-                        </span>
-                      </span>
-                      <span className="sticky top-0 right-0">
-                        <CopyButton text={sourceCode} />
-                      </span>
-                    </h3>
-                    <pre className="max-h-60 h-full text-xs bg-base-200 p-4 rounded-lg overflow-auto relative">
-                      {sourceCode}
-                    </pre>
                   </div>
-                </>
-              ) : (
-                submissionsHistory.length > 0 && (
-                  <table className="table w-full">
-                    <thead>
-                      <tr className="font-semibold">
-                        <th>#</th>
-                        <th>Status</th>
-                        <th>Submission Time</th>
-                        <th>Language</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {submissionsHistory.map((submission, index) => (
-                        <tr className="hover:bg-base-200" key={submission?.id}>
-                          <td className="text-center">{index + 1}</td>
-                          <td>
-                            <Link
-                              to={`/submissions/${submission?.id}`}
-                              className={`text-center underline ${
-                                submission?.status === 'Accepted' ? 'text-success' : 'text-error'
-                              }`}
-                            >
-                              {submission.status}
-                            </Link>
-                          </td>
-                          <td className="text-center">
-                            {new Date(submission?.createdAt).toDateString()}
-                          </td>
-                          <td className="text-center capitalize">
-                            {submission.language.toLowerCase()}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                )
-              )}
+
+                  <h3 className="font-semibold my-2 flex justify-between">
+                    <span>
+                      Code:{' '}
+                      <span className="opacity-70 capitalize">
+                        {lastEditedLanguage.toLowerCase()}
+                      </span>
+                    </span>
+                    <span className="sticky top-0 right-0">
+                      <CopyButton text={sourceCode} />
+                    </span>
+                  </h3>
+                  <pre className="max-h-60 h-full text-xs bg-base-200 p-4 rounded-lg overflow-auto relative">
+                    {sourceCode}
+                  </pre>
+                </div>
+              </>
             </div>
+          )}
+
+          {activeTab === 'submissionHistory' && submissionsHistory.length > 0 && (
+            <SubmissionHistory {...{ submissionsHistory }} />
           )}
         </div>
       </div>

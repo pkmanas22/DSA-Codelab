@@ -6,5 +6,16 @@ import Input from './Input';
 import PageNotFound from './PageNotFound';
 import RightSideNavbar from './RightSideNavbar';
 import MyLoader from './MyLoader';
+import PlaylistModal from './PlaylistModal';
 
-export { Header, Footer, PageNotFound, Input, Card, RightSideNavbar, CopyButton, MyLoader };
+export {
+  Header,
+  Footer,
+  PageNotFound,
+  Input,
+  Card,
+  RightSideNavbar,
+  CopyButton,
+  MyLoader,
+  PlaylistModal,
+};

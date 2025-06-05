@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
 import { Play, Upload, Home, List, Plus, BookmarkPlus, Star, FileJson } from 'lucide-react';
 import { useAuthStore } from '../../stores/useAuthStore';
-import { MyLoader, PageNotFound, RightSideNavbar } from '../common';
+import { MyLoader, PageNotFound, PlaylistModal, RightSideNavbar } from '../common';
 import Contents from './Contents';
 import ProblemPageCodeEditor from './ProblemPageCodeEditor';
 import Testcases from './Testcases';
@@ -16,6 +16,7 @@ import {
 import toast from 'react-hot-toast';
 import { SUPPORTED_LANGUAGES } from '../../constants/problemDetails';
 import useCodeEditorStore from '../../stores/useCodeEditorStore';
+import { useGetAllPlaylists } from '../../hooks/reactQuery/usePlaylistApi';
 
 const LeetCodeInterface = () => {
   const [problem, setProblem] = useState({});
@@ -29,6 +30,7 @@ const LeetCodeInterface = () => {
   const { data, isLoading, isError } = useGetProblemById(problemId || '');
   const { mutate: myRunProblemHandler, isLoading: runProblemLoading } = useRunProblem();
   const { mutate: mySubmitProblemHandler, isLoading: submitProblemLoading } = useSubmitProblem();
+  const { data: allPlaylists } = useGetAllPlaylists();
 
   const { codeMap, lastEditedLanguage } = useCodeEditorStore();
 
@@ -113,10 +115,6 @@ const LeetCodeInterface = () => {
     });
   };
 
-  const handleSaveToPlaylist = () => {
-    console.log('save to playlist');
-  };
-
   const handleSubmitCode = () => {
     setProblem({
       ...problem,
@@ -163,7 +161,7 @@ const LeetCodeInterface = () => {
           submissionData: res?.data,
         });
         // console.log('Submission data', res?.data);
-        navigate(`/problems/${problemId}/#submissions`, { replace: true });
+        navigate(`/problems/${problemId}/#submission`, { replace: true });
       },
       onError: (err) => {
         toast.error(err.response.data?.error || 'Something went wrong');
@@ -196,11 +194,13 @@ const LeetCodeInterface = () => {
             >
               <button
                 type="button"
-                className={`btn btn-outline btn-sm ${!isAuthenticated && 'btn-disabled'}`}
+                onClick={() => {
+                  document.getElementById('add_to_playlist').showModal();
+                }}
+                className="btn btn-sm btn-outline gap-1"
                 disabled={!isAuthenticated}
-                onClick={handleSaveToPlaylist}
               >
-                <BookmarkPlus className="w-4 h-4" />
+                <BookmarkPlus className="w-4" />
                 Save
               </button>
             </div>
@@ -282,6 +282,10 @@ const LeetCodeInterface = () => {
           </Panel>
         </PanelGroup>
       </div>
+
+      {/* Modal */}
+
+      <PlaylistModal allPlaylists={allPlaylists?.data} {...{ problemId }} />
     </div>
   );
 };

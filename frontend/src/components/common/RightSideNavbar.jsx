@@ -1,7 +1,7 @@
 import React from 'react';
 import { useAuthStore } from '../../stores/useAuthStore';
 import routes from '../../routes';
-import { Bell, BookOpen, Code, LogOut, Trophy, User } from 'lucide-react';
+import { Bell, BookMarked, BookOpen, Code, LogOut, Trophy, User } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuthLogout } from '../../hooks/reactQuery/useAuthApi';
 import toast from 'react-hot-toast';
@@ -117,6 +117,16 @@ const RightSideNavbar = () => {
             >
               <BookOpen className="w-4 h-4 text-slate-400" />
               <span className="text-slate-200">My Submissions</span>
+            </Link>
+          </li>
+
+          <li>
+            <Link
+              to={routes.playlists.all}
+              className="flex items-center gap-3 p-3 hover:bg-slate-700/50 rounded-lg transition-all duration-200"
+            >
+              <BookMarked className="w-4 h-4 text-slate-400" />
+              <span className="text-slate-200">My Playlists</span>
             </Link>
           </li>
 
