@@ -76,7 +76,6 @@ const ProblemSet = () => {
       setSortAsc(true);
     }
   };
-  console.log(allPlaylists);
   const openModal = () => {
     const modal = document.getElementById('add_to_playlist');
     if (modal) {
@@ -91,6 +90,13 @@ const ProblemSet = () => {
   if (isError) {
     toast.error(error?.error || 'Something went wrong');
   }
+
+  // console.log(data?.data?.map((p) => p.tags).flat());
+  const availableCompanies = Array.from(new Set(data?.data?.flatMap((p) => p?.companies)));
+  const availableTags = Array.from(new Set(data?.data?.flatMap((p) => p?.tags)));
+
+  // console.log(availableCompanies);
+  // console.log(availableTags);
 
   return (
     <div className="container mx-auto px-4 max-w-7xl">
@@ -133,9 +139,9 @@ const ProblemSet = () => {
               onChange={(e) => setTagFilter(e.target.value)}
             >
               <option value="">All Tags</option>
-              {TAG_OPTIONS.map((tag) => (
-                <option key={tag} value={tag}>
-                  {tag}
+              {availableTags.map((tag) => (
+                <option key={tag} value={tag} className="capitalize">
+                  {tag.toLowerCase()}
                 </option>
               ))}
             </select>
@@ -146,9 +152,9 @@ const ProblemSet = () => {
               onChange={(e) => setCompanyFilter(e.target.value)}
             >
               <option value="">All Companies</option>
-              {COMPANIES_NAME.map((c) => (
-                <option key={c} value={c}>
-                  {c}
+              {availableCompanies.map((comp) => (
+                <option key={comp} value={comp} className="capitalize">
+                  {comp.toLowerCase()}
                 </option>
               ))}
             </select>
@@ -189,7 +195,7 @@ const ProblemSet = () => {
                       )}
                     </div>
                   </th>
-                  <th onClick={() => handleSort('acceptance')} className="cursor-pointer">
+                  {/* <th onClick={() => handleSort('acceptance')} className="cursor-pointer">
                     <div className="flex items-center gap-2">
                       Acceptance{' '}
                       {sortBy === 'acceptance' ? (
@@ -202,7 +208,7 @@ const ProblemSet = () => {
                         <ArrowUpDown className="w-5" />
                       )}
                     </div>
-                  </th>
+                  </th> */}
                   <th onClick={() => handleSort('difficulty')} className="cursor-pointer ">
                     <div className="flex items-center gap-2">
                       Difficulty{' '}
@@ -238,7 +244,7 @@ const ProblemSet = () => {
                         <Link to={`/problems/${problem?.id}`}>{problem?.title}</Link>
                       </td>
                       {/* <td>{problem.acceptance.toFixed(1)}%</td> */}
-                      <td>75%</td>
+                      {/* <td>75%</td> */}
                       <td>
                         <span
                           className={`badge ${

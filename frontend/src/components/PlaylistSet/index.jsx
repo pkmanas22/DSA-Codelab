@@ -43,7 +43,7 @@ const PlaylistSet = () => {
       },
     });
   };
-  console.log(data);
+  // console.log(data);
 
   if (isLoading) return <MyLoader />;
 
