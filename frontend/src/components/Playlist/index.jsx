@@ -4,16 +4,20 @@ import { useParams, Link } from 'react-router-dom';
 import { useGetPlaylistById } from '../../hooks/reactQuery/usePlaylistApi';
 import { MyLoader } from '../common';
 import formatDate from '../../utils/formatDate';
+import { useAuthStore } from '../../stores/useAuthStore';
 
 const Playlist = () => {
   const { playlistId } = useParams();
 
+  const { problemsSolved } = useAuthStore();
+
   const { data, isLoading } = useGetPlaylistById(playlistId);
-  console.log(data);
+  // console.log(data);
 
   if (isLoading) {
     return <MyLoader />;
   }
+  console.log(problemsSolved);
   return (
     <div className="container mx-auto px-4 max-w-7xl">
       <div className="card bg-base-100 shadow-xl">
@@ -32,7 +36,7 @@ const Playlist = () => {
               <thead>
                 <tr className="text-base-content/70 text-center font-semibold">
                   <th>#</th>
-                  {/* <th>Solved</th> */}
+                  <th>Solved</th>
                   <th>Title</th>
                   {/* <th>Acceptance</th> */}
                   <th>Tags</th>
@@ -46,15 +50,15 @@ const Playlist = () => {
                   data?.data?.problems?.map((problem, index) => (
                     <tr key={problem.id}>
                       <td>{index + 1}</td>
-                      {/* <td>
+                      <td>
                         <input
                           type="checkbox"
                           className="checkbox checkbox-sm"
-                          checked={problem?.isSolved} // TODO: Store solved problems
+                          checked={problemsSolved.includes(problem?.problemId)}
                           readOnly
                           // disabled
                         />
-                      </td> */}
+                      </td>
                       <td>
                         <Link
                           to={`/problems/${problem?.problemId}`}

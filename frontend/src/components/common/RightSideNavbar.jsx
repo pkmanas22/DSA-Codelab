@@ -7,7 +7,7 @@ import { useAuthLogout } from '../../hooks/reactQuery/useAuthApi';
 import toast from 'react-hot-toast';
 
 const RightSideNavbar = () => {
-  const { authUser, isAuthenticated, clearAuth } = useAuthStore();
+  const { authUser, isAuthenticated, clearAuth, problemsSolved } = useAuthStore();
 
   const { mutate: authLogoutHandle } = useAuthLogout();
 
@@ -44,23 +44,26 @@ const RightSideNavbar = () => {
   return (
     <div className="flex gap-3">
       {/* Notifications */}
-      <div className="relative">
+      {/* <div className="relative">
         <button className="p-2 text-slate-300 hover:text-white hover:bg-slate-700/50 rounded-lg transition-all duration-200">
           <Bell className="w-5 h-5" />
           <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></span>
         </button>
-      </div>
+      </div> */}
 
       {/* User Stats (Desktop) */}
       <div className="hidden xl:flex items-center gap-4 px-4 py-2 bg-slate-800/50 rounded-xl border border-slate-600/30">
-        <div className="flex items-center gap-2">
+        {/* <div className="flex items-center gap-2">
           <Trophy className="w-4 h-4 text-yellow-400" />
           <span className="text-sm font-medium text-slate-200">{authUser?.streak || 45}</span>
-        </div>
-        <div className="w-px h-4 bg-slate-600"></div>
+        </div> */}
+        {/* <div className="w-px h-4 bg-slate-600"></div> */}
         <div className="flex items-center gap-2">
           <Code className="w-4 h-4 text-emerald-400" />
-          <span className="text-sm font-medium text-slate-200">{authUser?.solved || 234}</span>
+
+          <span className="text-sm font-medium text-slate-200">
+            {problemsSolved.length || ''} solved
+          </span>
         </div>
       </div>
 
@@ -85,15 +88,17 @@ const RightSideNavbar = () => {
               <p className="font-semibold text-slate-200">{authUser?.name}</p>
               <p className="text-sm text-slate-400">{authUser?.email}</p>
               <div className="flex items-center gap-4 mt-2">
-                <div className="flex items-center gap-1">
+                {/* <div className="flex items-center gap-1">
                   <Trophy className="w-3 h-3 text-yellow-400" />
                   <span className="text-xs text-slate-300">
                     {authUser?.streak || 45} day streak
                   </span>
-                </div>
+                </div> */}
                 <div className="flex items-center gap-1">
                   <Code className="w-3 h-3 text-emerald-400" />
-                  <span className="text-xs text-slate-300">{authUser?.solved || 234} solved</span>
+                  <span className="text-xs text-slate-300">
+                    {problemsSolved.length || ''} problems solved
+                  </span>
                 </div>
               </div>
             </div>

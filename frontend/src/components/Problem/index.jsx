@@ -25,7 +25,7 @@ const LeetCodeInterface = () => {
 
   const navigate = useNavigate();
 
-  const { isAuthenticated } = useAuthStore();
+  const { isAuthenticated, addSolvedProblem } = useAuthStore();
 
   const { data, isLoading, isError } = useGetProblemById(problemId || '');
   const { mutate: myRunProblemHandler, isLoading: runProblemLoading } = useRunProblem();
@@ -65,7 +65,7 @@ const LeetCodeInterface = () => {
       !languageId ||
       problem?.codeSnippets[SUPPORTED_LANGUAGES[0].value] === sourceCode
     ) {
-      toast.error('Please write code first');
+      toast.error('Looks like you have not written any code yet');
       return;
     }
 
@@ -132,7 +132,7 @@ const LeetCodeInterface = () => {
       !languageId ||
       problem?.codeSnippets[SUPPORTED_LANGUAGES[0].value] === sourceCode
     ) {
-      toast.error('Please write code first');
+      toast.error('Looks like you have not written any code yet');
       return;
     }
 
@@ -154,6 +154,8 @@ const LeetCodeInterface = () => {
         } else {
           toast.success(res?.message || 'Submission successful');
         }
+
+        addSolvedProblem(problemId);
 
         setProblem({
           ...problem,
@@ -248,7 +250,7 @@ const LeetCodeInterface = () => {
         </div>
       </div>
 
-      {/* Main Content - Fixed height calculation */}
+      {/* Main Content */}
       <div className="h-[calc(100vh-4rem)] overflow-hidden">
         <PanelGroup direction="horizontal" className="h-full">
           {/* Left Panel - Problem Description */}

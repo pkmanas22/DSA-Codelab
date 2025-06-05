@@ -17,7 +17,7 @@ const PlaylistSet = () => {
 
   const navigate = useNavigate();
 
-  const { authUser } = useAuthStore();
+  const { authUser, isAuthenticated } = useAuthStore();
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
@@ -56,14 +56,19 @@ const PlaylistSet = () => {
               <BookMarked className="w-6 h-6 md:w-8 md:h-8 text-primary" />
               My Playlist
             </h2>
-            <button
-              className="flex items-center text-lg gap-2 btn btn-primary"
-              type="button"
-              onClick={() => document.getElementById('create_playlist').showModal()}
+            <div
+              className="tooltip tooltip-bottom"
+              data-tip={isAuthenticated ? 'Create a new playlist' : 'Login to create to playlist'}
             >
-              <PlusCircle />
-              Create new one
-            </button>
+              <button
+                className="flex items-center text-lg gap-2 btn btn-primary"
+                type="button"
+                onClick={() => document.getElementById('create_playlist').showModal()}
+              >
+                <PlusCircle />
+                Create new one
+              </button>
+            </div>
 
             {/* You can open the modal using document.getElementById('ID').showModal() method */}
             <dialog id="create_playlist" className="modal">
@@ -120,16 +125,28 @@ const PlaylistSet = () => {
                   <strong>{playlist?.problems?.length}</strong> Problems added
                 </p>
                 <div className="flex items-center gap-4 justify-between flex-wrap">
-                  <button
-                    onClick={() => navigate(`/playlists/${playlist?.id}`)}
-                    type="button"
-                    className="flex items-center gap-2 btn btn-success"
+                  <div
+                    className="tooltip tooltip-bottom"
+                    data-tip={
+                      isAuthenticated ? 'Explore the playlist' : 'Login to explore to playlist'
+                    }
                   >
-                    <Shuffle className="w-4" /> Explore
-                  </button>
-                  <button className="flex items-center gap-2 btn btn-error">
-                    <Trash2 className="w-4" />
-                  </button>
+                    <button
+                      onClick={() => navigate(`/playlists/${playlist?.id}`)}
+                      type="button"
+                      className="flex items-center gap-2 btn btn-success"
+                    >
+                      <Shuffle className="w-4" /> Explore
+                    </button>
+                  </div>
+                  <div
+                    className="tooltip tooltip-bottom"
+                    data-tip={isAuthenticated ? 'Delete the playlist' : 'Unauthorized'}
+                  >
+                    <button className="flex items-center gap-2 btn btn-error">
+                      <Trash2 className="w-4" />
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}

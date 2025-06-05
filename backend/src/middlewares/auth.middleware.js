@@ -30,6 +30,11 @@ export const authMiddleware = async (req, res, next) => {
         role: true,
         imageUrl: true,
         createdAt: true,
+        problemsSolved: {
+          select: {
+            problemId: true,
+          },
+        },
       },
     });
 

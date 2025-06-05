@@ -92,6 +92,13 @@ export const login = async (req, res) => {
   try {
     const user = await db.user.findUnique({
       where: { email },
+      include: {
+        problemsSolved: {
+          include: {
+            problem: true,
+          },
+        },
+      },
     });
 
     if (!user) {
@@ -126,6 +133,8 @@ export const login = async (req, res) => {
       maxAge: 1000 * 60 * 60 * 24 * 7,
     });
 
+    const problemsSolved = user.problemsSolved?.map((p) => p.problemId);
+
     return res.status(200).json({
       success: true,
       message: 'User login successfully.',
@@ -135,6 +144,7 @@ export const login = async (req, res) => {
         role: user.role,
         email: user.email,
         imageUrl: user.imageUrl,
+        problemsSolved,
       },
     });
   } catch (error) {

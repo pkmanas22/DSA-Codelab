@@ -11,7 +11,6 @@ const Contents = ({
   id = '',
   title = '',
   description = '',
-  isSolved = false,
   difficulty,
   tags = [],
   companies = [],
@@ -29,7 +28,7 @@ const Contents = ({
   const { hash: activeHashPathName } = useLocation();
 
   const { codeMap, lastEditedLanguage } = useCodeEditorStore();
-  const { isAuthenticated, authUser } = useAuthStore();
+  const { authUser, problemsSolved } = useAuthStore();
 
   const sourceCode = codeMap[`${id}:${lastEditedLanguage}`];
 
@@ -106,9 +105,8 @@ const Contents = ({
             <div className="prose prose-sm max-w-none">
               <div className="flex items-center justify-between">
                 <h1 className="text-2xl font-bold text-base-content m-0">{title}</h1>
-                {(isSolved || submissionData?.isAllPassed) && (
-                  <div className="badge badge-success">Solved ✓</div>
-                )}
+                {/* {(isSolved || submissionData?.isAllPassed) && ( */}
+                {problemsSolved.includes(id) && <div className="badge badge-success">Solved ✓</div>}
               </div>
 
               <div className="badge badge-warning capitalize my-3">{difficulty}</div>
@@ -195,6 +193,7 @@ const Contents = ({
             </div>
           )}
 
+          {/* current submission */}
           {activeTab === 'submission' && (
             <div className="prose prose-sm max-w-none">
               <h2 className="text-xl font-bold mb-4">Submissions</h2>{' '}
@@ -271,8 +270,10 @@ const Contents = ({
             </div>
           )}
 
-          {activeTab === 'submissionHistory' && submissionsHistory.length > 0 && (
+          {activeTab === 'submissionHistory' && submissionsHistory.length > 0 ? (
             <SubmissionHistory {...{ submissionsHistory }} />
+          ) : (
+            <p className=" opacity-70 p-4 text-center">No submissions yet</p>
           )}
         </div>
       </div>

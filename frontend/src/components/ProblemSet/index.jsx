@@ -32,18 +32,32 @@ const ProblemSet = () => {
   const { data, isLoading, isError, error } = useGetAllProblems();
   const { data: allPlaylists } = useGetAllPlaylists();
 
-  const { authUser, isAuthenticated } = useAuthStore();
+  const { authUser, isAuthenticated, problemsSolved } = useAuthStore();
 
   useEffect(() => {
-    const updatedData = data?.data
+    if (!data?.data) return;
+
+    const updatedData = data.data
+      .map((p) => ({
+        ...p,
+        solved: problemsSolved.includes(p.id), // inject "solved" status
+      }))
       .filter((p) => p.title.toLowerCase().includes(search.toLowerCase()))
       .filter((p) => (difficultyFilter ? p.difficulty === difficultyFilter : true))
       .filter((p) => (companyFilter ? p.companies.includes(companyFilter) : true))
       .filter((p) => (tagFilter ? p.tags.includes(tagFilter) : true))
       .sort((a, b) => {
         if (!sortBy) return 0;
+
+        if (sortBy === 'solved') {
+          return sortAsc
+            ? Number(b.solved) - Number(a.solved)
+            : Number(a.solved) - Number(b.solved);
+        }
+
         const valA = a[sortBy];
         const valB = b[sortBy];
+
         if (typeof valA === 'string') {
           return sortAsc ? valA.localeCompare(valB) : valB.localeCompare(valA);
         } else {
@@ -52,7 +66,7 @@ const ProblemSet = () => {
       });
 
     setFilteredProblems(updatedData);
-  }, [data, search, difficultyFilter, companyFilter, tagFilter, sortBy, sortAsc]);
+  }, [data, problemsSolved, search, difficultyFilter, companyFilter, tagFilter, sortBy, sortAsc]);
 
   const handleSort = (key) => {
     if (sortBy === key) {
@@ -141,7 +155,7 @@ const ProblemSet = () => {
           </div>
 
           {/* Table */}
-          <div className="overflow-x-auto">
+          <div className="overflow-auto">
             <table className="table table-zebra w-full text-sm">
               <thead>
                 <tr className="text-base-content/70">
@@ -215,7 +229,7 @@ const ProblemSet = () => {
                         <input
                           type="checkbox"
                           className="checkbox checkbox-sm"
-                          checked={isAuthenticated && problem?.isSolved} // TODO: Store solved problems
+                          checked={problemsSolved.includes(problem?.id)}
                           readOnly
                           // disabled
                         />
@@ -243,25 +257,37 @@ const ProblemSet = () => {
                         </span>
                       </td>
                       <td className="flex flex-wrap gap-2">
-                        <button
-                          type="button"
-                          onClick={() => {
-                            openModal();
-                            setProblemIdForPlaylist(problem?.id);
-                          }}
-                          className="btn btn-xs btn-outline btn-primary gap-1"
-                          disabled={!isAuthenticated}
+                        <div
+                          className="tooltip tooltip-bottom"
+                          data-tip={
+                            isAuthenticated ? 'Save to playlist' : 'Login to save to playlist'
+                          }
                         >
-                          <BookmarkPlusIcon className="w-4" />
-                        </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              openModal();
+                              setProblemIdForPlaylist(problem?.id);
+                            }}
+                            className="btn btn-xs btn-outline btn-primary gap-1"
+                            disabled={!isAuthenticated}
+                          >
+                            <BookmarkPlusIcon className="w-4" />
+                          </button>
+                        </div>
                         {isAuthenticated && authUser?.role === 'ADMIN' && (
                           <>
-                            <button className="btn btn-xs btn-outline btn-accent gap-1">
+                            {/* <button className="btn btn-xs btn-outline btn-accent gap-1">
                               <Pencil className="w-4" />
-                            </button>
-                            <button className="btn btn-xs btn-outline btn-error gap-1">
-                              <Trash className="w-4" />
-                            </button>
+                            </button> */}
+                            <div
+                              className="tooltip tooltip-bottom"
+                              data-tip={isAuthenticated ? 'Delete Problem' : 'Unauthorize access'}
+                            >
+                              <button className="btn btn-xs btn-outline btn-error gap-1">
+                                <Trash className="w-4" />
+                              </button>
+                            </div>
                           </>
                         )}
                       </td>
