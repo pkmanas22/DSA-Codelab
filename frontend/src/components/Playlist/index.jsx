@@ -1,4 +1,4 @@
-import { Book, BookMarked, Trash } from 'lucide-react';
+import { Book, BookMarked, LinkIcon, Trash } from 'lucide-react';
 import React, { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import {
@@ -9,6 +9,8 @@ import { DeleteModal, MyLoader } from '../common';
 import formatDate from '../../utils/formatDate';
 import { useAuthStore } from '../../stores/useAuthStore';
 import toast from 'react-hot-toast';
+import queryClient from '../../utils/queryClient';
+import { QUERY_KEYS } from '../../constants/keys';
 
 const Playlist = () => {
   const [entryToDelete, setEntryToDelete] = useState(null);
@@ -27,6 +29,7 @@ const Playlist = () => {
     removeProblem(entryToDelete, {
       onSuccess: ({ message }) => {
         toast.success(message || 'Problem removed successfully');
+        queryClient.invalidateQueries([QUERY_KEYS.PLAYLISTS, playlistId]);
       },
       onError: (err) => {
         toast.error(err?.response?.data?.error || 'Something went wrong');
@@ -108,7 +111,7 @@ const Playlist = () => {
                             : 'Hard'}
                         </span>
                       </td>
-                      <td className="flex flex-wrap gap-2">
+                      <td className="flex flex-wrap gap-2 justify-center">
                         <button
                           type="button"
                           onClick={() => {
@@ -124,11 +127,16 @@ const Playlist = () => {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="6" className="text-center space-y-3">
+                    <td colSpan="7" className="text-center space-y-3">
                       <p className="text-md opacity-70 p-5">
                         No problems added to this playlist. <br /> kindly add the problems through
                         problem page
+                        <br />
                       </p>
+                      <Link to="/problems" className="btn btn-outline mt-4">
+                        <LinkIcon className="w-4 h-4" />
+                        Go to problems page
+                      </Link>
                     </td>
                   </tr>
                 )}

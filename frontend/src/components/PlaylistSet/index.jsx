@@ -9,6 +9,8 @@ import {
 import { DeleteModal, MyLoader } from '../common';
 import { useAuthStore } from '../../stores/useAuthStore';
 import { useNavigate } from 'react-router-dom';
+import queryClient from '../../utils/queryClient';
+import { QUERY_KEYS } from '../../constants/keys';
 
 const PlaylistSet = () => {
   const [formData, setFormData] = useState({
@@ -43,6 +45,8 @@ const PlaylistSet = () => {
         if (modal) {
           modal.close();
         }
+
+        queryClient.invalidateQueries(QUERY_KEYS.PLAYLISTS);
       },
       onError: (err) => {
         toast.error(err.response.data?.error || 'Something went wrong');
@@ -58,6 +62,7 @@ const PlaylistSet = () => {
     deletePlaylist(id, {
       onSuccess: ({ message }) => {
         toast.success(message || 'Playlist deleted successfully');
+        queryClient.invalidateQueries(QUERY_KEYS.PLAYLISTS);
       },
       onError: (err) => {
         toast.error(err?.response?.data?.error || 'Something went wrong');

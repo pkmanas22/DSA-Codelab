@@ -20,7 +20,6 @@ const Contents = ({
   constraints,
   referenceSolutions = {},
   submissionData = {},
-  submissionsHistory = [],
 }) => {
   const [activeTab, setActiveTab] = useState('description');
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -270,9 +269,7 @@ const Contents = ({
             </div>
           )}
 
-          {activeTab === 'submissionHistory' && submissionsHistory.length > 0 && (
-            <SubmissionHistory {...{ submissionsHistory }} />
-          )}
+          {activeTab === 'submissionHistory' && <SubmissionHistory />}
         </div>
       </div>
       {/* footer */}

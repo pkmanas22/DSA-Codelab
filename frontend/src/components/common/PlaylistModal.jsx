@@ -3,6 +3,8 @@ import { useAuthStore } from '../../stores/useAuthStore';
 import { useAddProblemsToPlaylist } from '../../hooks/reactQuery/usePlaylistApi';
 import toast from 'react-hot-toast';
 import { useState } from 'react';
+import queryClient from '../../utils/queryClient';
+import { QUERY_KEYS } from '../../constants/keys';
 
 const PlaylistModal = ({ problemId, allPlaylists }) => {
   const [playlistAddDetails, setPlaylistAddDetails] = useState({
@@ -36,6 +38,7 @@ const PlaylistModal = ({ problemId, allPlaylists }) => {
       {
         onSuccess: (res) => {
           toast.success(res?.message || 'Added to playlist successfully');
+          queryClient.invalidateQueries(QUERY_KEYS.PLAYLISTS);
         },
         onError: (err) => {
           toast.error(err?.response?.data?.error || 'Something went wrong');

@@ -28,7 +28,7 @@ const Login = () => {
         // console.log(res);
         toast.success(res?.message || 'Login successful');
         setAuth({ user: res?.data });
-        navigate('/profile');
+        navigate('/problems');
       },
       onError: (err) => {
         // console.log(err);

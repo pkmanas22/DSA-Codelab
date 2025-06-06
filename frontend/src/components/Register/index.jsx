@@ -29,7 +29,7 @@ const Register = () => {
         // console.log(res);
         toast.success(res?.message || 'Registration successful');
         setAuth({ user: res?.data });
-        navigate('/profile');
+        navigate('/problems');
       },
       onError: (err) => {
         toast.error(err.response.data?.error || 'Something went wrong');

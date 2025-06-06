@@ -270,13 +270,6 @@ export const getProblemById = async (req, res) => {
       },
     });
 
-    const submissions = await db.Submission.findMany({
-      where: {
-        userId: id,
-        problemId,
-      },
-    });
-
     return res.status(200).json({
       success: true,
       message: 'Problem fetched successfully.',
@@ -284,7 +277,6 @@ export const getProblemById = async (req, res) => {
         ...problem,
         testcases: showedTestcases,
         isSolved: !!isSolved,
-        submissionsHistory: submissions,
       },
     });
   } catch (error) {

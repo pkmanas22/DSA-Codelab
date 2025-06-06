@@ -1,8 +1,22 @@
 import React from 'react';
 import formatDate from '../../utils/formatDate';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
+import { useGetSubmissionByProblemId } from '../../hooks/reactQuery/useSubmissionApi';
+import toast from 'react-hot-toast';
+import { MyLoader } from '../common';
 
-const SubmissionHistory = ({ submissionsHistory }) => {
+const SubmissionHistory = () => {
+  const { problemId } = useParams();
+
+  const { data, isLoading, isError, error } = useGetSubmissionByProblemId(problemId);
+
+  if (isLoading) {
+    return <MyLoader />;
+  }
+
+  if (isError) {
+    toast.error(error?.error || 'Something went wrong');
+  }
   return (
     <table className="table w-full">
       <thead>
@@ -14,23 +28,29 @@ const SubmissionHistory = ({ submissionsHistory }) => {
         </tr>
       </thead>
       <tbody className="text-center">
-        {submissionsHistory?.map((submission, index) => (
-          <tr className="hover:bg-base-200" key={submission?.id}>
-            <td>{index + 1}</td>
-            <td>
-              <Link
-                to={`/submissions/${submission?.id}`}
-                className={`underline ${
-                  submission?.status === 'Accepted' ? 'text-success' : 'text-error'
-                }`}
-              >
-                {submission.status}
-              </Link>
-            </td>
-            <td>{formatDate(submission?.createdAt, true)}</td>
-            <td className="capitalize">{submission.language.toLowerCase()}</td>
+        {data?.data?.length > 0 ? (
+          data?.data?.map((submission, index) => (
+            <tr className="hover:bg-base-200" key={submission?.id}>
+              <td>{index + 1}</td>
+              <td>
+                <Link
+                  to={`/submissions/${submission?.id}`}
+                  className={`underline ${
+                    submission?.status === 'Accepted' ? 'text-success' : 'text-error'
+                  }`}
+                >
+                  {submission.status}
+                </Link>
+              </td>
+              <td>{formatDate(submission?.createdAt, true)}</td>
+              <td className="capitalize">{submission.language.toLowerCase()}</td>
+            </tr>
+          ))
+        ) : (
+          <tr>
+            <td colSpan={4}>No submissions to this problem</td>
           </tr>
-        ))}
+        )}
       </tbody>
     </table>
   );

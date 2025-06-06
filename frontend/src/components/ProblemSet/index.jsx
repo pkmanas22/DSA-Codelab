@@ -19,6 +19,8 @@ import { useAuthStore } from '../../stores/useAuthStore';
 import { useGetAllPlaylists } from '../../hooks/reactQuery/usePlaylistApi';
 import { DeleteModal, MyLoader, PlaylistModal } from '../common';
 import { useDeleteProblem } from '../../hooks/reactQuery/useAdminApi';
+import queryClient from '../../utils/queryClient';
+import { QUERY_KEYS } from '../../constants/keys';
 
 const ProblemSet = () => {
   const [search, setSearch] = useState('');
@@ -102,6 +104,7 @@ const ProblemSet = () => {
       onSuccess: ({ message }) => {
         toast.success(message || 'Problem deleted successfully');
         setProblemToDelete({ id: null, title: null });
+        queryClient.invalidateQueries(QUERY_KEYS.PROBLEMS);
       },
       onError: (err) => {
         toast.error(err?.response?.data?.error || 'Something went wrong');
@@ -188,7 +191,7 @@ const ProblemSet = () => {
           </div>
 
           {/* Table */}
-          <div className="overflow-auto">
+          <div className="overflow-hidden">
             <table className="table table-zebra w-full text-sm">
               <thead>
                 <tr className="text-base-content/70">
@@ -337,7 +340,7 @@ const ProblemSet = () => {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="6" className="text-center">
+                    <td colSpan="5" className="text-center">
                       <p className="text-md opacity-70 p-5">No problems found</p>
                     </td>
                   </tr>

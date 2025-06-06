@@ -17,6 +17,8 @@ import toast from 'react-hot-toast';
 import { SUPPORTED_LANGUAGES } from '../../constants/problemDetails';
 import useCodeEditorStore from '../../stores/useCodeEditorStore';
 import { useGetAllPlaylists } from '../../hooks/reactQuery/usePlaylistApi';
+import queryClient from '../../utils/queryClient';
+import { QUERY_KEYS } from '../../constants/keys';
 
 const LeetCodeInterface = () => {
   const [problem, setProblem] = useState({});
@@ -164,6 +166,8 @@ const LeetCodeInterface = () => {
         });
         // console.log('Submission data', res?.data);
         navigate(`/problems/${problemId}/#submission`, { replace: true });
+
+        queryClient.invalidateQueries(QUERY_KEYS.SUBMISSIONS_BY_PROBLEM_ID);
       },
       onError: (err) => {
         toast.error(err.response.data?.error || 'Something went wrong');
@@ -255,7 +259,7 @@ const LeetCodeInterface = () => {
         <PanelGroup direction="horizontal" className="h-full">
           {/* Left Panel - Problem Description */}
           <Panel defaultSize={45} minSize={30}>
-            <Contents {...problem} /> // TODO: pass isSolved based on the value
+            <Contents {...problem} />
           </Panel>
 
           <PanelResizeHandle className="w-2 bg-base-300 hover:bg-primary transition-colors flex justify-center items-center">

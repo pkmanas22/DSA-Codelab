@@ -29,9 +29,10 @@ import {
   removeFromLocalStorage,
   setToLocalStorage,
 } from '../../utils/localStorage';
-import { DRAFT_PROBLEM_KEY } from '../../constants/keys';
+import { DRAFT_PROBLEM_KEY, QUERY_KEYS } from '../../constants/keys';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
+import queryClient from '../../utils/queryClient';
 
 const CreateProblem = () => {
   const [sampleType, setSampleType] = useState('DP');
@@ -82,7 +83,6 @@ const CreateProblem = () => {
   }, []);
 
   const handleSaveDraft = () => {
-    // TODO: Save as draft
     const data = getValues();
 
     setToLocalStorage(DRAFT_PROBLEM_KEY, data);
@@ -99,7 +99,6 @@ const CreateProblem = () => {
   const handleSubmitQuestion = (data) => {
     // console.log('first');
     // console.log(data);
-    // TODO: Submit question
 
     createProblem(data, {
       onSuccess: (res) => {
@@ -108,6 +107,7 @@ const CreateProblem = () => {
           toast.success(res?.message || 'Problem created successfully');
           // console.log(res.data)
           navigate(`/problems/${res?.data?.id}`);
+          queryClient.invalidateQueries(QUERY_KEYS.PROBLEMS);
         } else {
           toast.error(res?.message || 'Something went wrong');
           return;
@@ -120,7 +120,6 @@ const CreateProblem = () => {
   };
 
   const loadSampleData = () => {
-    // TODO: Load sample data
     const sampleData = sampleType === 'DP' ? sampleDPData : sampleStringProblem;
     replaceTestCases(sampleData?.testcases.map((test) => test));
     replaceExample(sampleData?.examples.map((ex) => ex));
