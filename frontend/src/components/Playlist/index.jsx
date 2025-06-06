@@ -1,4 +1,4 @@
-import { Book, BookMarked, LinkIcon, Trash } from 'lucide-react';
+import { Book, BookMarked, LinkIcon, Trash, UserCircle } from 'lucide-react';
 import React, { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import {
@@ -6,11 +6,11 @@ import {
   useRemoveSingleProblemFromPlaylist,
 } from '../../hooks/reactQuery/usePlaylistApi';
 import { DeleteModal, MyLoader, PaginatedTable } from '../common';
-import formatDate from '../../utils/formatDate';
 import { useAuthStore } from '../../stores/useAuthStore';
 import toast from 'react-hot-toast';
 import queryClient from '../../utils/queryClient';
 import { QUERY_KEYS } from '../../constants/keys';
+import timeAgo from '../../utils/timeAgo';
 
 const Playlist = () => {
   const [entryToDelete, setEntryToDelete] = useState(null);
@@ -52,6 +52,9 @@ const Playlist = () => {
             <div className="flex flex-col">
               <h3 className="font-bold text-2xl">{data?.data?.name}</h3>
               <p>{data?.data?.description}</p>
+              <p className="text-sm text-base-content/70">
+                <UserCircle className="w-4 h-4 inline" /> {data?.data?.user?.name}
+              </p>
             </div>
           </div>
 
@@ -64,7 +67,7 @@ const Playlist = () => {
               { label: 'Solved', sortKey: '' },
               { label: 'Title', sortKey: '' },
               { label: 'Tags', sortKey: '' },
-              { label: 'Added on', sortKey: '' },
+              { label: 'Added', sortKey: '' },
               { label: 'Difficulty', sortKey: '' },
               { label: 'Actions', sortKey: '' },
             ]}
@@ -88,7 +91,7 @@ const Playlist = () => {
                   </Link>
                 </td>
                 <td className="capitalize">{entry?.problem?.tags?.join(', ') || 'N/A'}</td>
-                <td>{formatDate(entry?.createdAt)}</td>
+                <td>{timeAgo(entry?.createdAt)}</td>
                 <td>
                   <span
                     className={`badge ${

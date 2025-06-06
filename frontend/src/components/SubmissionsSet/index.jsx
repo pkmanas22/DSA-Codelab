@@ -4,7 +4,7 @@ import { useGetAllSubmissions } from '../../hooks/reactQuery/useSubmissionApi';
 import toast from 'react-hot-toast';
 import { MyLoader, PaginatedTable } from '../common';
 import { calculateAverageMemory, calculateAverageTime } from '../../utils/calculation';
-import formatDate from '../../utils/formatDate';
+import timeAgo from '../../utils/timeAgo';
 
 const SubmissionsSet = () => {
   const { data, isLoading, isError, error } = useGetAllSubmissions();
@@ -26,7 +26,7 @@ const SubmissionsSet = () => {
           </div>
 
           <PaginatedTable
-            data={submissions}
+            data={[...submissions].reverse()}
             itemsPerPage={20}
             columns={[
               { label: '#', sortKey: null },
@@ -51,7 +51,7 @@ const SubmissionsSet = () => {
                       {submission?.problem?.title}
                     </Link>
                   </td>
-                  <td className="text-center">{formatDate(submission?.createdAt, true)}</td>
+                  <td className="text-center">{timeAgo(submission?.createdAt)}</td>
                   <td
                     className={`text-center ${
                       submission?.status === 'Accepted' ? 'text-success' : 'text-error'

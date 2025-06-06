@@ -1,14 +1,13 @@
-import React from 'react';
-import formatDate from '../../utils/formatDate';
 import { Link, useParams } from 'react-router-dom';
 import { useGetSubmissionByProblemId } from '../../hooks/reactQuery/useSubmissionApi';
 import toast from 'react-hot-toast';
 import { MyLoader } from '../common';
+import timeAgo from '../../utils/timeAgo';
 
 const SubmissionHistory = () => {
   const { problemId } = useParams();
 
-  const { data, isLoading, isError, error } = useGetSubmissionByProblemId(problemId);
+  const { data, isError, error } = useGetSubmissionByProblemId(problemId);
 
   if (isError) {
     toast.error(error?.error || 'Something went wrong');
@@ -23,10 +22,10 @@ const SubmissionHistory = () => {
           <th>Language</th>
         </tr>
       </thead>
-      {isLoading && <MyLoader />}
+
       <tbody className="text-center">
         {data?.data?.length > 0 ? (
-          data?.data?.map((submission, index) => (
+          [...data.data]?.reverse()?.map((submission, index) => (
             <tr className="hover:bg-base-200" key={submission?.id}>
               <td>{index + 1}</td>
               <td>
@@ -39,8 +38,8 @@ const SubmissionHistory = () => {
                   {submission.status}
                 </Link>
               </td>
-              <td>{formatDate(submission?.createdAt, true)}</td>
-              <td className="capitalize">{submission.language.toLowerCase()}</td>
+              <td>{timeAgo(submission?.createdAt, true)}</td>
+              <td className="capitalize">{submission.language?.toLowerCase()}</td>
             </tr>
           ))
         ) : (

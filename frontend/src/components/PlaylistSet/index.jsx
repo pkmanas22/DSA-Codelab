@@ -25,7 +25,7 @@ const PlaylistSet = () => {
 
   const navigate = useNavigate();
 
-  const { authUser, isAuthenticated } = useAuthStore();
+  const { isAuthenticated } = useAuthStore();
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
@@ -144,7 +144,7 @@ const PlaylistSet = () => {
                 <h3 className="text-2xl font-semibold">{playlist?.name}</h3>
                 <div className="flex items-center gap-2">
                   <UserCircle className="w-4" />
-                  {authUser?.name}
+                  {playlist?.user?.name}
                 </div>
                 <p className=" opacity-80">{playlist?.description}</p>
                 <p className="text-lg">
