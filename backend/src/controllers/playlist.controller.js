@@ -144,10 +144,25 @@ export const getAllPlaylistDetails = async (req, res) => {
   try {
     const playlists = await db.Playlist.findMany({
       where: { createdBy: userId },
-      include: {
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        updatedAt: true,
         problems: {
-          include: {
-            problem: true,
+          select: {
+            problem: {
+              select: {
+                id: true,
+                title: true,
+                difficulty: true,
+              },
+            },
+          },
+        },
+        user: {
+          select: {
+            name: true,
           },
         },
       },
@@ -176,10 +191,29 @@ export const getPlaylistById = async (req, res) => {
         id: playlistId,
         createdBy: userId,
       },
-      include: {
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        updatedAt: true,
         problems: {
-          include: {
-            problem: true,
+          select: {
+            id: true,
+            createdAt: true,
+            problemId: true,
+            problem: {
+              select: {
+                id: true,
+                title: true,
+                difficulty: true,
+                tags: true,
+              },
+            },
+          },
+        },
+        user: {
+          select: {
+            name: true,
           },
         },
       },
@@ -235,7 +269,7 @@ export const deletePlaylist = async (req, res) => {
     return res.status(200).json({
       success: true,
       message: 'Playlist deleted successfully.',
-      data: playlist,
+      data: true,
     });
   } catch (error) {
     console.log('Error while deleting playlist', error);
@@ -301,7 +335,7 @@ export const removeSingleProblemFromPlaylist = async (req, res) => {
     return res.status(200).json({
       success: true,
       message: 'Problem removed from playlist successfully.',
-      data: deletedProblem,
+      data: true,
     });
   } catch (error) {
     return res.status(500).json({
