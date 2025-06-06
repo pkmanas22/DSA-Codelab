@@ -7,6 +7,7 @@ import PageNotFound from './PageNotFound';
 import RightSideNavbar from './RightSideNavbar';
 import MyLoader from './MyLoader';
 import PlaylistModal from './PlaylistModal';
+import DeleteModal from './DeleteModal';
 
 export {
   Header,
@@ -18,4 +19,5 @@ export {
   CopyButton,
   MyLoader,
   PlaylistModal,
+  DeleteModal,
 };

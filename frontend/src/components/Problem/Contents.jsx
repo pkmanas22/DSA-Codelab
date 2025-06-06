@@ -270,10 +270,8 @@ const Contents = ({
             </div>
           )}
 
-          {activeTab === 'submissionHistory' && submissionsHistory.length > 0 ? (
+          {activeTab === 'submissionHistory' && submissionsHistory.length > 0 && (
             <SubmissionHistory {...{ submissionsHistory }} />
-          ) : (
-            <p className=" opacity-70 p-4 text-center">No submissions yet</p>
           )}
         </div>
       </div>

@@ -280,3 +280,33 @@ export const removeProblemsFromPlaylist = async (req, res) => {
     });
   }
 };
+
+export const removeSingleProblemFromPlaylist = async (req, res) => {
+  const { entryId } = req.params;
+
+  if (!entryId) {
+    return res.status(400).json({
+      success: false,
+      error: 'Invalid details provided.',
+    });
+  }
+
+  try {
+    const deletedProblem = await db.ProblemInPlaylist.delete({
+      where: {
+        id: entryId,
+      },
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: 'Problem removed from playlist successfully.',
+      data: deletedProblem,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      error: 'Error while removing problem from playlist.',
+    });
+  }
+};

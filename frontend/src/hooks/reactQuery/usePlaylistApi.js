@@ -17,3 +17,8 @@ export const useGetPlaylistById = (playlistId) =>
   });
 
 export const useAddProblemsToPlaylist = () => useMutation(playlistApis.addSingleProblemToPlaylist);
+
+export const useDeletePlaylistById = () => useMutation(playlistApis.deletePlaylist);
+
+export const useRemoveSingleProblemFromPlaylist = () =>
+  useMutation(playlistApis.removeSingleProblemFromPlaylist);

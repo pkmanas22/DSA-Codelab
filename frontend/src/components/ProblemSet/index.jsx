@@ -17,7 +17,8 @@ import { toast } from 'react-hot-toast';
 import { COMPANIES_NAME, TAG_OPTIONS } from '../../constants/problemDetails';
 import { useAuthStore } from '../../stores/useAuthStore';
 import { useGetAllPlaylists } from '../../hooks/reactQuery/usePlaylistApi';
-import { MyLoader, PlaylistModal } from '../common';
+import { DeleteModal, MyLoader, PlaylistModal } from '../common';
+import { useDeleteProblem } from '../../hooks/reactQuery/useAdminApi';
 
 const ProblemSet = () => {
   const [search, setSearch] = useState('');
@@ -28,9 +29,11 @@ const ProblemSet = () => {
   const [sortAsc, setSortAsc] = useState(true);
   const [filteredProblems, setFilteredProblems] = useState([]);
   const [problemIdForPlaylist, setProblemIdForPlaylist] = useState(null);
+  const [problemToDelete, setProblemToDelete] = useState({ id: null, title: null });
 
   const { data, isLoading, isError, error } = useGetAllProblems();
   const { data: allPlaylists } = useGetAllPlaylists();
+  const { mutate: deleteProblem } = useDeleteProblem();
 
   const { authUser, isAuthenticated, problemsSolved } = useAuthStore();
 
@@ -76,11 +79,35 @@ const ProblemSet = () => {
       setSortAsc(true);
     }
   };
-  const openModal = () => {
-    const modal = document.getElementById('add_to_playlist');
+  const openModal = (modalId) => {
+    const modal = document.getElementById(modalId);
     if (modal) {
       modal.showModal();
     } else return;
+  };
+
+  const closeModal = (modalId) => {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+      modal.close();
+    } else return;
+  };
+
+  const handleDeleteProblem = () => {
+    if (!problemToDelete.id) {
+      toast.error('Please select a problem to delete');
+      return;
+    }
+    deleteProblem(problemToDelete.id, {
+      onSuccess: ({ message }) => {
+        toast.success(message || 'Problem deleted successfully');
+        setProblemToDelete({ id: null, title: null });
+      },
+      onError: (err) => {
+        toast.error(err?.response?.data?.error || 'Something went wrong');
+      },
+    });
+    closeModal('delete_problem_modal');
   };
 
   if (isLoading) {
@@ -272,7 +299,7 @@ const ProblemSet = () => {
                           <button
                             type="button"
                             onClick={() => {
-                              openModal();
+                              openModal('add_to_playlist');
                               setProblemIdForPlaylist(problem?.id);
                             }}
                             className="btn btn-xs btn-outline btn-primary gap-1"
@@ -290,7 +317,16 @@ const ProblemSet = () => {
                               className="tooltip tooltip-bottom"
                               data-tip={isAuthenticated ? 'Delete Problem' : 'Unauthorize access'}
                             >
-                              <button className="btn btn-xs btn-outline btn-error gap-1">
+                              <button
+                                className="btn btn-xs btn-outline btn-error gap-1"
+                                onClick={() => {
+                                  setProblemToDelete({
+                                    id: problem?.id,
+                                    title: problem?.title,
+                                  });
+                                  openModal('delete_problem_modal');
+                                }}
+                              >
                                 <Trash className="w-4" />
                               </button>
                             </div>
@@ -313,6 +349,14 @@ const ProblemSet = () => {
           {/* Modal */}
 
           <PlaylistModal allPlaylists={allPlaylists?.data} problemId={problemIdForPlaylist} />
+
+          {/* Delete Problem Modal */}
+          <DeleteModal
+            modalId="delete_problem_modal"
+            title="Delete this problem?"
+            message={`Are you sure you want to delete the problem "${problemToDelete.title}" ? This action cannot be undone.`}
+            onDelete={handleDeleteProblem}
+          />
         </div>
       </div>
     </div>

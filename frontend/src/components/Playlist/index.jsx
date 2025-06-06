@@ -1,23 +1,45 @@
 import { Book, BookMarked, Trash } from 'lucide-react';
-import React from 'react';
+import React, { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { useGetPlaylistById } from '../../hooks/reactQuery/usePlaylistApi';
-import { MyLoader } from '../common';
+import {
+  useGetPlaylistById,
+  useRemoveSingleProblemFromPlaylist,
+} from '../../hooks/reactQuery/usePlaylistApi';
+import { DeleteModal, MyLoader } from '../common';
 import formatDate from '../../utils/formatDate';
 import { useAuthStore } from '../../stores/useAuthStore';
+import toast from 'react-hot-toast';
 
 const Playlist = () => {
+  const [entryToDelete, setEntryToDelete] = useState(null);
   const { playlistId } = useParams();
 
   const { problemsSolved } = useAuthStore();
 
   const { data, isLoading } = useGetPlaylistById(playlistId);
-  // console.log(data);
+  const { mutate: removeProblem } = useRemoveSingleProblemFromPlaylist();
+
+  const handleDeleteProblem = () => {
+    if (!entryToDelete) {
+      return;
+    }
+
+    removeProblem(entryToDelete, {
+      onSuccess: ({ message }) => {
+        toast.success(message || 'Problem removed successfully');
+      },
+      onError: (err) => {
+        toast.error(err?.response?.data?.error || 'Something went wrong');
+      },
+    });
+
+    setEntryToDelete(null);
+  };
 
   if (isLoading) {
     return <MyLoader />;
   }
-  console.log(problemsSolved);
+
   return (
     <div className="container mx-auto px-4 max-w-7xl">
       <div className="card bg-base-100 shadow-xl">
@@ -47,47 +69,54 @@ const Playlist = () => {
               </thead>
               <tbody className="text-center">
                 {data?.data?.problems?.length > 0 ? (
-                  data?.data?.problems?.map((problem, index) => (
-                    <tr key={problem.id}>
+                  data?.data?.problems?.map((entry, index) => (
+                    <tr key={entry.id}>
                       <td>{index + 1}</td>
                       <td>
                         <input
                           type="checkbox"
                           className="checkbox checkbox-sm"
-                          checked={problemsSolved.includes(problem?.problemId)}
+                          checked={problemsSolved.includes(entry?.problemId)}
                           readOnly
                           // disabled
                         />
                       </td>
                       <td>
                         <Link
-                          to={`/problems/${problem?.problemId}`}
+                          to={`/problems/${entry?.problemId}`}
                           className="text-primary link text-left"
                         >
-                          {problem?.problem?.title}
+                          {entry?.problem?.title}
                         </Link>
                       </td>
-                      <td className="capitalize">{problem?.problem?.tags?.join(', ') || 'N/A'}</td>
-                      <td>{formatDate(problem?.createdAt)}</td>
+                      <td className="capitalize">{entry?.problem?.tags?.join(', ') || 'N/A'}</td>
+                      <td>{formatDate(entry?.createdAt)}</td>
                       <td>
                         <span
                           className={`badge ${
-                            problem.difficulty === 'EASY'
+                            entry.difficulty === 'EASY'
                               ? 'badge-success'
-                              : problem.difficulty === 'MEDIUM'
+                              : entry.difficulty === 'MEDIUM'
                               ? 'badge-warning'
                               : 'badge-error'
                           }`}
                         >
-                          {problem.difficulty === 'EASY'
+                          {entry.difficulty === 'EASY'
                             ? 'Easy'
-                            : problem.difficulty === 'MEDIUM'
+                            : entry.difficulty === 'MEDIUM'
                             ? 'Med.'
                             : 'Hard'}
                         </span>
                       </td>
                       <td className="flex flex-wrap gap-2">
-                        <button className="btn btn-xs btn-outline btn-error gap-1">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setEntryToDelete(entry?.id);
+                            document.getElementById('delete_problem_in_playlist_modal').showModal();
+                          }}
+                          className="btn btn-xs btn-outline btn-error gap-1"
+                        >
                           <Trash className="w-4" />
                         </button>
                       </td>
@@ -106,6 +135,14 @@ const Playlist = () => {
               </tbody>
             </table>
           </div>
+
+          {/* Delete Modal */}
+          <DeleteModal
+            modalId="delete_problem_in_playlist_modal"
+            title="Remove Problem from the playlist"
+            message={`Are you sure you want to remove the problem from the playlist?`}
+            onDelete={handleDeleteProblem}
+          />
         </div>
       </div>
     </div>

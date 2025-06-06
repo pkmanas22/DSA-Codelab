@@ -11,7 +11,10 @@ const addSingleProblemToPlaylist = (payload) => axios.post(`/playlist/add-proble
 const removeProblemsFromPlaylist = (playlistId, payload) =>
   axios.delete(`/playlist/${playlistId}/remove-problems`, payload);
 
-const deletePlaylist = (playlistId) => axios.delete(`/playlist/${playlistId}`);
+const deletePlaylist = (playlistId) => axios.delete(`/playlist/delete/${playlistId}`);
+
+const removeSingleProblemFromPlaylist = (entryId) =>
+  axios.delete(`/playlist/remove-problem/${entryId}`);
 
 const playlistApis = {
   createPlaylist,
@@ -20,6 +23,7 @@ const playlistApis = {
   addSingleProblemToPlaylist,
   removeProblemsFromPlaylist,
   deletePlaylist,
+  removeSingleProblemFromPlaylist,
 };
 
 export default playlistApis;

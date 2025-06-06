@@ -1,8 +1,12 @@
 import { BookMarked, LibraryBig, PlusCircle, Shuffle, Trash2, UserCircle } from 'lucide-react';
 import React, { useState } from 'react';
 import toast from 'react-hot-toast';
-import { useCreatePlaylist, useGetAllPlaylists } from '../../hooks/reactQuery/usePlaylistApi';
-import { MyLoader } from '../common';
+import {
+  useCreatePlaylist,
+  useDeletePlaylistById,
+  useGetAllPlaylists,
+} from '../../hooks/reactQuery/usePlaylistApi';
+import { DeleteModal, MyLoader } from '../common';
 import { useAuthStore } from '../../stores/useAuthStore';
 import { useNavigate } from 'react-router-dom';
 
@@ -11,8 +15,10 @@ const PlaylistSet = () => {
     name: '',
     description: '',
   });
+  const [playlistToDeleted, setPlaylistToDeleted] = useState(null);
 
   const { mutate: createPlaylist } = useCreatePlaylist();
+  const { mutate: deletePlaylist } = useDeletePlaylistById();
   const { data, isLoading } = useGetAllPlaylists();
 
   const navigate = useNavigate();
@@ -40,6 +46,21 @@ const PlaylistSet = () => {
       },
       onError: (err) => {
         toast.error(err.response.data?.error || 'Something went wrong');
+      },
+    });
+  };
+
+  const handleDeletePlaylist = (id) => {
+    if (!id) {
+      toast.error('Please select a playlist to perform this action');
+      return;
+    }
+    deletePlaylist(id, {
+      onSuccess: ({ message }) => {
+        toast.success(message || 'Playlist deleted successfully');
+      },
+      onError: (err) => {
+        toast.error(err?.response?.data?.error || 'Something went wrong');
       },
     });
   };
@@ -143,7 +164,14 @@ const PlaylistSet = () => {
                     className="tooltip tooltip-bottom"
                     data-tip={isAuthenticated ? 'Delete the playlist' : 'Unauthorized'}
                   >
-                    <button className="flex items-center gap-2 btn btn-error">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setPlaylistToDeleted(playlist);
+                        document.getElementById('delete_playlist_modal').showModal();
+                      }}
+                      className="flex items-center gap-2 btn btn-error"
+                    >
                       <Trash2 className="w-4" />
                     </button>
                   </div>
@@ -151,6 +179,17 @@ const PlaylistSet = () => {
               </div>
             ))}
           </div>
+
+          {/* Delete Modal */}
+          <DeleteModal
+            modalId="delete_playlist_modal"
+            title="Delete Playlist"
+            message={`Are you sure you want to delete "${playlistToDeleted?.name}"? This selected playlist will be deleted permanently, along with all its problems. This action cannot be undone.`}
+            onDelete={() => {
+              handleDeletePlaylist(playlistToDeleted?.id);
+              setPlaylistToDeleted(null);
+            }}
+          />
         </div>
       </div>
     </div>
