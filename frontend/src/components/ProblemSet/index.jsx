@@ -10,6 +10,8 @@ import {
   Bookmark,
   Search,
   BookmarkPlusIcon,
+  Tag,
+  BriefcaseBusiness,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useGetAllProblems } from '../../hooks/reactQuery/useProblemApi';
@@ -17,7 +19,7 @@ import { toast } from 'react-hot-toast';
 import { COMPANIES_NAME, TAG_OPTIONS } from '../../constants/problemDetails';
 import { useAuthStore } from '../../stores/useAuthStore';
 import { useGetAllPlaylists } from '../../hooks/reactQuery/usePlaylistApi';
-import { DeleteModal, MyLoader, PlaylistModal } from '../common';
+import { DeleteModal, MyLoader, PaginatedTable, PlaylistModal } from '../common';
 import { useDeleteProblem } from '../../hooks/reactQuery/useAdminApi';
 import queryClient from '../../utils/queryClient';
 import { QUERY_KEYS } from '../../constants/keys';
@@ -73,14 +75,11 @@ const ProblemSet = () => {
     setFilteredProblems(updatedData);
   }, [data, problemsSolved, search, difficultyFilter, companyFilter, tagFilter, sortBy, sortAsc]);
 
-  const handleSort = (key) => {
-    if (sortBy === key) {
-      setSortAsc(!sortAsc);
-    } else {
-      setSortBy(key);
-      setSortAsc(true);
-    }
+  const handleSortChange = ({ key, asc }) => {
+    setSortBy(key);
+    setSortAsc(asc);
   };
+
   const openModal = (modalId) => {
     const modal = document.getElementById(modalId);
     if (modal) {
@@ -191,163 +190,117 @@ const ProblemSet = () => {
           </div>
 
           {/* Table */}
-          <div className="overflow-hidden">
-            <table className="table table-zebra w-full text-sm">
-              <thead>
-                <tr className="text-base-content/70">
-                  <th>#</th>
-                  {/* <th>Solved</th> */}
-                  <th onClick={() => handleSort('solved')} className="cursor-pointer">
-                    <div className="flex items-center gap-2">
-                      Solved{' '}
-                      {sortBy === 'solved' ? (
-                        sortAsc ? (
-                          <ArrowUp className="w-5" />
-                        ) : (
-                          <ArrowDown className="w-5" />
-                        )
-                      ) : (
-                        <ArrowUpDown className="w-5" />
-                      )}
+
+          <PaginatedTable
+            data={filteredProblems}
+            itemsPerPage={10}
+            columns={[
+              { label: '#', sortKey: '' },
+              { label: 'Solved', sortKey: 'solved' },
+              { label: 'Title', sortKey: 'title' },
+              { label: 'Difficulty', sortKey: 'difficulty' },
+              { label: 'Company', sortKey: '' },
+              { label: 'Topics', sortKey: '' },
+              { label: 'Actions', sortKey: '' },
+            ]}
+            sortConfig={{ key: sortBy, asc: sortAsc }}
+            onSortChange={handleSortChange}
+            renderRow={(problem, index) => (
+              <tr key={problem.id} className="text-center">
+                <td>{index + 1}</td>
+
+                <td>
+                  <input
+                    type="checkbox"
+                    className="checkbox checkbox-sm"
+                    checked={problemsSolved.includes(problem?.id)}
+                    readOnly
+                  />
+                </td>
+
+                <td className="text-left">
+                  <Link to={`/problems/${problem?.id}`} className="link-hover">
+                    {problem?.title}
+                  </Link>
+                </td>
+
+                <td>
+                  <span
+                    className={`badge ${
+                      problem.difficulty === 'EASY'
+                        ? 'badge-success'
+                        : problem.difficulty === 'MEDIUM'
+                        ? 'badge-warning'
+                        : 'badge-error'
+                    }`}
+                  >
+                    {problem.difficulty === 'EASY'
+                      ? 'Easy'
+                      : problem.difficulty === 'MEDIUM'
+                      ? 'Med.'
+                      : 'Hard'}
+                  </span>
+                </td>
+
+                <td>
+                  <div
+                    className="tooltip tooltip-top"
+                    data-tip={
+                      problem.companies?.length ? problem.companies.join(', ') : 'No company'
+                    }
+                  >
+                    <BriefcaseBusiness className="w-4 h-4 mx-auto text-base-content" />
+                  </div>
+                </td>
+
+                <td>
+                  <div
+                    className="tooltip tooltip-top"
+                    data-tip={problem.tags?.length ? problem.tags.join(', ') : 'No topics'}
+                  >
+                    <Tag className="w-4 h-4 mx-auto text-base-content" />
+                  </div>
+                </td>
+
+                {/* Actions */}
+                <td className="flex flex-wrap gap-2 text-center justify-center">
+                  <div
+                    className="tooltip tooltip-bottom"
+                    data-tip={isAuthenticated ? 'Save to playlist' : 'Login to save to playlist'}
+                  >
+                    <button
+                      type="button"
+                      onClick={() => {
+                        openModal('add_to_playlist');
+                        setProblemIdForPlaylist(problem?.id);
+                      }}
+                      className="btn btn-xs btn-outline btn-primary gap-1"
+                      disabled={!isAuthenticated}
+                    >
+                      <BookmarkPlusIcon className="w-4" />
+                    </button>
+                  </div>
+
+                  {isAuthenticated && authUser?.role === 'ADMIN' && (
+                    <div className="tooltip tooltip-bottom" data-tip="Delete Problem">
+                      <button
+                        className="btn btn-xs btn-outline btn-error gap-1"
+                        onClick={() => {
+                          setProblemToDelete({
+                            id: problem?.id,
+                            title: problem?.title,
+                          });
+                          openModal('delete_problem_modal');
+                        }}
+                      >
+                        <Trash className="w-4" />
+                      </button>
                     </div>
-                  </th>
-                  <th onClick={() => handleSort('title')} className="cursor-pointer">
-                    <div className="flex items-center gap-2">
-                      Title{' '}
-                      {sortBy === 'title' ? (
-                        sortAsc ? (
-                          <ArrowUp className="w-5" />
-                        ) : (
-                          <ArrowDown className="w-5" />
-                        )
-                      ) : (
-                        <ArrowUpDown className="w-5" />
-                      )}
-                    </div>
-                  </th>
-                  {/* <th onClick={() => handleSort('acceptance')} className="cursor-pointer">
-                    <div className="flex items-center gap-2">
-                      Acceptance{' '}
-                      {sortBy === 'acceptance' ? (
-                        sortAsc ? (
-                          <ArrowUp className="w-5" />
-                        ) : (
-                          <ArrowDown className="w-5" />
-                        )
-                      ) : (
-                        <ArrowUpDown className="w-5" />
-                      )}
-                    </div>
-                  </th> */}
-                  <th onClick={() => handleSort('difficulty')} className="cursor-pointer ">
-                    <div className="flex items-center gap-2">
-                      Difficulty{' '}
-                      {sortBy === 'difficulty' ? (
-                        sortAsc ? (
-                          <ArrowUp className="w-5" />
-                        ) : (
-                          <ArrowDown className="w-5" />
-                        )
-                      ) : (
-                        <ArrowUpDown className="w-5" />
-                      )}
-                    </div>
-                  </th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredProblems?.length > 0 ? (
-                  filteredProblems?.map((problem, index) => (
-                    <tr key={problem.id}>
-                      <td>{index + 1}</td>
-                      <td>
-                        <input
-                          type="checkbox"
-                          className="checkbox checkbox-sm"
-                          checked={problemsSolved.includes(problem?.id)}
-                          readOnly
-                          // disabled
-                        />
-                      </td>
-                      <td>
-                        <Link to={`/problems/${problem?.id}`}>{problem?.title}</Link>
-                      </td>
-                      {/* <td>{problem.acceptance.toFixed(1)}%</td> */}
-                      {/* <td>75%</td> */}
-                      <td>
-                        <span
-                          className={`badge ${
-                            problem.difficulty === 'EASY'
-                              ? 'badge-success'
-                              : problem.difficulty === 'MEDIUM'
-                              ? 'badge-warning'
-                              : 'badge-error'
-                          }`}
-                        >
-                          {problem.difficulty === 'EASY'
-                            ? 'Easy'
-                            : problem.difficulty === 'MEDIUM'
-                            ? 'Med.'
-                            : 'Hard'}
-                        </span>
-                      </td>
-                      <td className="flex flex-wrap gap-2">
-                        <div
-                          className="tooltip tooltip-bottom"
-                          data-tip={
-                            isAuthenticated ? 'Save to playlist' : 'Login to save to playlist'
-                          }
-                        >
-                          <button
-                            type="button"
-                            onClick={() => {
-                              openModal('add_to_playlist');
-                              setProblemIdForPlaylist(problem?.id);
-                            }}
-                            className="btn btn-xs btn-outline btn-primary gap-1"
-                            disabled={!isAuthenticated}
-                          >
-                            <BookmarkPlusIcon className="w-4" />
-                          </button>
-                        </div>
-                        {isAuthenticated && authUser?.role === 'ADMIN' && (
-                          <>
-                            {/* <button className="btn btn-xs btn-outline btn-accent gap-1">
-                              <Pencil className="w-4" />
-                            </button> */}
-                            <div
-                              className="tooltip tooltip-bottom"
-                              data-tip={isAuthenticated ? 'Delete Problem' : 'Unauthorize access'}
-                            >
-                              <button
-                                className="btn btn-xs btn-outline btn-error gap-1"
-                                onClick={() => {
-                                  setProblemToDelete({
-                                    id: problem?.id,
-                                    title: problem?.title,
-                                  });
-                                  openModal('delete_problem_modal');
-                                }}
-                              >
-                                <Trash className="w-4" />
-                              </button>
-                            </div>
-                          </>
-                        )}
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan="5" className="text-center">
-                      <p className="text-md opacity-70 p-5">No problems found</p>
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
+                  )}
+                </td>
+              </tr>
+            )}
+          />
 
           {/* Modal */}
 

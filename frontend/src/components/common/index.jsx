@@ -8,6 +8,7 @@ import RightSideNavbar from './RightSideNavbar';
 import MyLoader from './MyLoader';
 import PlaylistModal from './PlaylistModal';
 import DeleteModal from './DeleteModal';
+import PaginatedTable from './PaginatedTable';
 
 export {
   Header,
@@ -20,4 +21,5 @@ export {
   MyLoader,
   PlaylistModal,
   DeleteModal,
+  PaginatedTable,
 };

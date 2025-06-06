@@ -5,7 +5,7 @@ import {
   useGetPlaylistById,
   useRemoveSingleProblemFromPlaylist,
 } from '../../hooks/reactQuery/usePlaylistApi';
-import { DeleteModal, MyLoader } from '../common';
+import { DeleteModal, MyLoader, PaginatedTable } from '../common';
 import formatDate from '../../utils/formatDate';
 import { useAuthStore } from '../../stores/useAuthStore';
 import toast from 'react-hot-toast';
@@ -56,93 +56,85 @@ const Playlist = () => {
           </div>
 
           {/* Table */}
-          <div className="overflow-x-auto">
-            <table className="table table-zebra w-full text-sm">
-              <thead>
-                <tr className="text-base-content/70 text-center font-semibold">
-                  <th>#</th>
-                  <th>Solved</th>
-                  <th>Title</th>
-                  {/* <th>Acceptance</th> */}
-                  <th>Tags</th>
-                  <th>Added on</th>
-                  <th>Difficulty</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody className="text-center">
-                {data?.data?.problems?.length > 0 ? (
-                  data?.data?.problems?.map((entry, index) => (
-                    <tr key={entry.id}>
-                      <td>{index + 1}</td>
-                      <td>
-                        <input
-                          type="checkbox"
-                          className="checkbox checkbox-sm"
-                          checked={problemsSolved.includes(entry?.problemId)}
-                          readOnly
-                          // disabled
-                        />
-                      </td>
-                      <td>
-                        <Link
-                          to={`/problems/${entry?.problemId}`}
-                          className="text-primary link text-left"
-                        >
-                          {entry?.problem?.title}
-                        </Link>
-                      </td>
-                      <td className="capitalize">{entry?.problem?.tags?.join(', ') || 'N/A'}</td>
-                      <td>{formatDate(entry?.createdAt)}</td>
-                      <td>
-                        <span
-                          className={`badge ${
-                            entry.difficulty === 'EASY'
-                              ? 'badge-success'
-                              : entry.difficulty === 'MEDIUM'
-                              ? 'badge-warning'
-                              : 'badge-error'
-                          }`}
-                        >
-                          {entry.difficulty === 'EASY'
-                            ? 'Easy'
-                            : entry.difficulty === 'MEDIUM'
-                            ? 'Med.'
-                            : 'Hard'}
-                        </span>
-                      </td>
-                      <td className="flex flex-wrap gap-2 justify-center">
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setEntryToDelete(entry?.id);
-                            document.getElementById('delete_problem_in_playlist_modal').showModal();
-                          }}
-                          className="btn btn-xs btn-outline btn-error gap-1"
-                        >
-                          <Trash className="w-4" />
-                        </button>
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan="7" className="text-center space-y-3">
-                      <p className="text-md opacity-70 p-5">
-                        No problems added to this playlist. <br /> kindly add the problems through
-                        problem page
-                        <br />
-                      </p>
-                      <Link to="/problems" className="btn btn-outline mt-4">
-                        <LinkIcon className="w-4 h-4" />
-                        Go to problems page
-                      </Link>
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
+          <PaginatedTable
+            data={data?.data?.problems || []}
+            itemsPerPage={10}
+            columns={[
+              { label: '#', sortKey: '' },
+              { label: 'Solved', sortKey: '' },
+              { label: 'Title', sortKey: '' },
+              { label: 'Tags', sortKey: '' },
+              { label: 'Added on', sortKey: '' },
+              { label: 'Difficulty', sortKey: '' },
+              { label: 'Actions', sortKey: '' },
+            ]}
+            renderRow={(entry, index) => (
+              <tr key={entry.id} className="text-center">
+                <td>{index + 1}</td>
+                <td>
+                  <input
+                    type="checkbox"
+                    className="checkbox checkbox-sm"
+                    checked={problemsSolved.includes(entry?.problemId)}
+                    readOnly
+                  />
+                </td>
+                <td>
+                  <Link
+                    to={`/problems/${entry?.problemId}`}
+                    className="text-primary link text-left"
+                  >
+                    {entry?.problem?.title}
+                  </Link>
+                </td>
+                <td className="capitalize">{entry?.problem?.tags?.join(', ') || 'N/A'}</td>
+                <td>{formatDate(entry?.createdAt)}</td>
+                <td>
+                  <span
+                    className={`badge ${
+                      entry.difficulty === 'EASY'
+                        ? 'badge-success'
+                        : entry.difficulty === 'MEDIUM'
+                        ? 'badge-warning'
+                        : 'badge-error'
+                    }`}
+                  >
+                    {entry.difficulty === 'EASY'
+                      ? 'Easy'
+                      : entry.difficulty === 'MEDIUM'
+                      ? 'Med.'
+                      : 'Hard'}
+                  </span>
+                </td>
+                <td className="flex flex-wrap gap-2 justify-center">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setEntryToDelete(entry?.id);
+                      document.getElementById('delete_problem_in_playlist_modal').showModal();
+                    }}
+                    className="btn btn-xs btn-outline btn-error gap-1"
+                  >
+                    <Trash className="w-4" />
+                  </button>
+                </td>
+              </tr>
+            )}
+            noDataMessage={
+              <tr>
+                <td colSpan="7" className="text-center space-y-3">
+                  <p className="text-md opacity-70 p-5">
+                    No problems added to this playlist. <br /> Kindly add problems from the problems
+                    page.
+                  </p>
+                  <Link to="/problems" className="btn btn-outline mt-4">
+                    <LinkIcon className="w-4 h-4" />
+                    Go to problems page
+                  </Link>
+                </td>
+              </tr>
+            }
+          />
 
           {/* Delete Modal */}
           <DeleteModal
