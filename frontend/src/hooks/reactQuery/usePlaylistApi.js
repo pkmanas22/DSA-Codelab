@@ -14,6 +14,7 @@ export const useGetPlaylistById = (playlistId) =>
   useQuery({
     queryKey: [QUERY_KEYS.PLAYLISTS, playlistId],
     queryFn: () => playlistApis.getPlaylistById(playlistId),
+    enabled: !!playlistId,
   });
 
 export const useAddProblemsToPlaylist = () => useMutation(playlistApis.addSingleProblemToPlaylist);

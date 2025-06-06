@@ -10,10 +10,6 @@ const SubmissionHistory = () => {
 
   const { data, isLoading, isError, error } = useGetSubmissionByProblemId(problemId);
 
-  if (isLoading) {
-    return <MyLoader />;
-  }
-
   if (isError) {
     toast.error(error?.error || 'Something went wrong');
   }
@@ -27,6 +23,7 @@ const SubmissionHistory = () => {
           <th>Language</th>
         </tr>
       </thead>
+      {isLoading && <MyLoader />}
       <tbody className="text-center">
         {data?.data?.length > 0 ? (
           data?.data?.map((submission, index) => (

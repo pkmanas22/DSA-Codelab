@@ -1,4 +1,4 @@
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { CopyButton } from '../common';
 import { useEffect, useState } from 'react';
 import { ArrowLeftCircle } from 'lucide-react';
@@ -27,7 +27,9 @@ const Contents = ({
   const { hash: activeHashPathName } = useLocation();
 
   const { codeMap, lastEditedLanguage } = useCodeEditorStore();
-  const { authUser, problemsSolved } = useAuthStore();
+  const { authUser, problemsSolved, isAuthenticated } = useAuthStore();
+
+  const navigate = useNavigate();
 
   const sourceCode = codeMap[`${id}:${lastEditedLanguage}`];
 
@@ -43,6 +45,10 @@ const Contents = ({
     window.addEventListener('hashchange', updateTabFromHash);
     return () => window.removeEventListener('hashchange', updateTabFromHash);
   }, [activeHashPathName]);
+
+  if (!isAuthenticated && (activeTab === 'submissionHistory' || activeTab === 'submission')) {
+    navigate('/login');
+  }
 
   return (
     <div className="h-full flex flex-col">
@@ -75,25 +81,29 @@ const Contents = ({
         >
           Solutions
         </span>
-        <span
-          className={`tab ${activeTab === 'submissionHistory' ? 'tab-active' : ''}`}
-          onClick={() => {
-            setActiveTab('submissionHistory');
-            window.location.hash = 'submissionHistory';
-          }}
-        >
-          Submission History
-        </span>
-        {isSubmitted && (
-          <span
-            className={`tab ${activeTab === 'submission' ? 'tab-active' : ''}`}
-            onClick={() => {
-              setActiveTab('submission');
-              window.location.hash = 'submission';
-            }}
-          >
-            Current Submission
-          </span>
+        {isAuthenticated && (
+          <>
+            <span
+              className={`tab ${activeTab === 'submissionHistory' ? 'tab-active' : ''}`}
+              onClick={() => {
+                setActiveTab('submissionHistory');
+                window.location.hash = 'submissionHistory';
+              }}
+            >
+              Submission History
+            </span>
+            {isSubmitted && (
+              <span
+                className={`tab ${activeTab === 'submission' ? 'tab-active' : ''}`}
+                onClick={() => {
+                  setActiveTab('submission');
+                  window.location.hash = 'submission';
+                }}
+              >
+                Current Submission
+              </span>
+            )}
+          </>
         )}
       </div>
 
@@ -269,7 +279,7 @@ const Contents = ({
             </div>
           )}
 
-          {activeTab === 'submissionHistory' && <SubmissionHistory />}
+          {activeTab === 'submissionHistory' && <SubmissionHistory key={id} />}
         </div>
       </div>
       {/* footer */}

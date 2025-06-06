@@ -12,6 +12,7 @@ export const useGetProblemById = (id) =>
   useQuery({
     queryKey: [QUERY_KEYS.PROBLEMS, id],
     queryFn: () => problemApis.getProblemById(id),
+    enabled: !!id,
   });
 
 export const useRunProblem = () => useMutation(problemApis.runTheProblem);

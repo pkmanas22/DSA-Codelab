@@ -167,7 +167,7 @@ const LeetCodeInterface = () => {
         // console.log('Submission data', res?.data);
         navigate(`/problems/${problemId}/#submission`, { replace: true });
 
-        queryClient.invalidateQueries(QUERY_KEYS.SUBMISSIONS_BY_PROBLEM_ID);
+        queryClient.invalidateQueries([QUERY_KEYS.SUBMISSIONS, problemId]);
       },
       onError: (err) => {
         toast.error(err.response.data?.error || 'Something went wrong');
