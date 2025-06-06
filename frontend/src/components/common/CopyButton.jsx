@@ -1,4 +1,4 @@
-import { CopyCheck, Copy } from 'lucide-react';
+import { CopyCheck, Copy, CheckCircle2 } from 'lucide-react';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 
@@ -20,7 +20,7 @@ const CopyButton = ({ text }) => {
   return (
     <>
       {isCopied ? (
-        <CopyCheck className="w-4 cursor-pointer text-primary" />
+        <CheckCircle2 className="w-4 cursor-pointer text-primary" />
       ) : (
         <Copy onClick={() => copyToClipBoard(text)} className="w-4 cursor-pointer text-primary" />
       )}

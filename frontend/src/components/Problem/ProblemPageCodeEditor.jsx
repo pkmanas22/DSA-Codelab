@@ -1,4 +1,4 @@
-import { Fullscreen, Maximize2, Minimize2 } from 'lucide-react';
+import { CheckCircle, Fullscreen, Maximize2, Minimize2, Share2 } from 'lucide-react';
 import { SUPPORTED_LANGUAGES } from '../../constants/problemDetails';
 import CodeEditor from '../common/CodeEditor';
 import useFullScreen from '../../hooks/useFullScreen';
@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { CopyButton } from '../common';
 import useCodeEditorStore from '../../stores/useCodeEditorStore';
 import { useParams } from 'react-router-dom';
+import toast from 'react-hot-toast';
 const ProblemPageCodeEditor = ({ codeSnippets = {} }) => {
   const [selectedLanguage, setSelectedLanguage] = useState(SUPPORTED_LANGUAGES[0].value);
   const [isFullScreen, handleFullScreen] = useFullScreen();
@@ -52,10 +53,29 @@ const ProblemPageCodeEditor = ({ codeSnippets = {} }) => {
             ))}
           </select>
           <div className="flex items-center gap-2">
+            <button
+              onClick={() => {
+                if (problemId) {
+                  const shareUrl = `${window.location.origin}/problems/${problemId}`;
+                  navigator.clipboard.writeText(shareUrl);
+                  toast.success('Problem link copied to clipboard!');
+                }
+              }}
+              className="btn btn-ghost btn-sm tooltip tooltip-bottom"
+              data-tip="Copy problem link"
+            >
+              <Share2 className="w-4 h-4" />
+            </button>
+
             <div className="relative mx-3">
               <CopyButton text={code} />
             </div>
-            <span className="text-sm text-base-content/70">Auto</span>
+
+            <div className="flex items-center gap-1 text-sm text-green-600">
+              <CheckCircle className="w-4 h-4" />
+              <span>Auto saved</span>
+            </div>
+
             <button
               type="button"
               onClick={handleFullScreen}

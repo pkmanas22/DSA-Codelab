@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
+import { useEffect, useRef, useState } from 'react';
+import { PanelGroup, Panel, PanelResizeHandle } from 'react-resizable-panels';
 import { Play, Upload, Home, List, Plus, BookmarkPlus, Star, FileJson } from 'lucide-react';
 import { useAuthStore } from '../../stores/useAuthStore';
 import { MyLoader, PageNotFound, PlaylistModal, RightSideNavbar } from '../common';
@@ -22,6 +22,9 @@ import { QUERY_KEYS } from '../../constants/keys';
 
 const LeetCodeInterface = () => {
   const [problem, setProblem] = useState({});
+
+  const editorPanelRef = useRef(null);
+  const testcasesPanelRef = useRef(null);
 
   const { problemId } = useParams();
 
@@ -58,6 +61,11 @@ const LeetCodeInterface = () => {
       testcases: data?.data?.testcases,
     });
     if (!problemId || !lastEditedLanguage) return;
+
+    // Resize panels dynamically
+    testcasesPanelRef.current?.resize(40);
+    editorPanelRef.current?.resize(60);
+
     const languageId = SUPPORTED_LANGUAGES.find((l) => l.value === lastEditedLanguage)?.id;
 
     const sourceCode = codeMap[`${problemId}:${lastEditedLanguage}`];
@@ -270,7 +278,7 @@ const LeetCodeInterface = () => {
           <Panel defaultSize={55} minSize={40}>
             <PanelGroup direction="vertical">
               {/* Code Editor */}
-              <Panel defaultSize={80} minSize={40}>
+              <Panel ref={editorPanelRef} defaultSize={80} minSize={40}>
                 <ProblemPageCodeEditor codeSnippets={problem?.codeSnippets} />
               </Panel>
 
@@ -281,7 +289,7 @@ const LeetCodeInterface = () => {
               </PanelResizeHandle>
 
               {/* Test Cases */}
-              <Panel defaultSize={20} minSize={20}>
+              <Panel ref={testcasesPanelRef} defaultSize={20} minSize={20}>
                 <Testcases testcases={problem?.testcases} />
               </Panel>
             </PanelGroup>
