@@ -40,29 +40,15 @@ export const getSubmissionById = async (req, res) => {
   try {
     const submission = await db.Submission.findUnique({
       where: { id: submissionId },
-      select: {
-        id: true,
-        language: true,
-        createdAt: true,
-        memory: true,
-        status: true,
-        time: true,
-        problemId: true,
-        sourceCode: true,
-        problem: {
-          select: {
-            title: true,
-          },
-        },
+      include: {
+        problem: true,
         testcasesResults: {
-          select: {
-            isPassed: true,
+          orderBy: {
+            testCaseNumber: 'asc',
           },
         },
       },
     });
-
-    // console.log(submission);
 
     if (!submission) {
       return res.status(404).json({
@@ -71,10 +57,16 @@ export const getSubmissionById = async (req, res) => {
       });
     }
 
+    // Find the first failed test case
+    const firstFailedTestCase = submission.testcasesResults.find((testCase) => !testCase.isPassed);
+
     return res.status(200).json({
       success: true,
       message: 'Submission fetched successfully.',
-      data: submission,
+      data: {
+        ...submission,
+        firstFailedTestCase: firstFailedTestCase || null,
+      },
     });
   } catch (error) {
     console.log('Error while fetching submission', error);
@@ -84,7 +76,6 @@ export const getSubmissionById = async (req, res) => {
     });
   }
 };
-
 export const getSubmissionByProblemId = async (req, res) => {
   const { problemId } = req.params;
   const { id: userId } = req.user;

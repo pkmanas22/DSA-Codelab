@@ -1,6 +1,19 @@
 import { useEffect, useRef, useState } from 'react';
 import { PanelGroup, Panel, PanelResizeHandle } from 'react-resizable-panels';
-import { Play, Upload, Home, List, Plus, BookmarkPlus, Star, FileJson } from 'lucide-react';
+import {
+  Play,
+  Upload,
+  Home,
+  List,
+  Plus,
+  BookmarkPlus,
+  Star,
+  FileJson,
+  Book,
+  Code,
+  Clock,
+  Zap,
+} from 'lucide-react';
 import { useAuthStore } from '../../stores/useAuthStore';
 import { MyLoader, PageNotFound, PlaylistModal, RightSideNavbar } from '../common';
 import Contents from './Contents';
@@ -176,6 +189,7 @@ const LeetCodeInterface = () => {
         navigate(`/problems/${problemId}/#submission`, { replace: true });
 
         queryClient.invalidateQueries([QUERY_KEYS.SUBMISSIONS, problemId]);
+        queryClient.invalidateQueries(QUERY_KEYS.SUBMISSIONS);
       },
       onError: (err) => {
         toast.error(err.response.data?.error || 'Something went wrong');
@@ -184,113 +198,135 @@ const LeetCodeInterface = () => {
   };
 
   return (
-    <div className="h-screen w-screen overflow-hidden bg-base-100 text-base-content">
+    <div className="h-screen w-screen overflow-hidden bg-base-200">
       {/* Header */}
-      <div className="navbar bg-base-200 border-b border-base-300 flex-shrink-0">
-        <div className="navbar-start">
-          <div className="flex items-center gap-2">
-            <Link to={routes.root} className="btn btn-ghost btn-sm">
-              <Home className="w-4 h-4" />
-              DSA CodeLab
-            </Link>
-            <Link to={routes.problems.all} className="btn btn-ghost btn-sm">
-              <List className="w-4 h-4" />
-              All Problems
-            </Link>
+      <div className="card bg-base-100 shadow-xl rounded-none border-b border-base-300 flex-shrink-0">
+        <div className="card-body p-4">
+          <div className="flex items-center justify-between">
+            {/* Left Section */}
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-3">
+                <Link to={routes.root} className="btn btn-ghost btn-sm gap-2">
+                  <Home className="w-4 h-4" />
+                  DSA CodeLab
+                </Link>
+                <Link to={routes.problems.all} className="btn btn-ghost btn-sm gap-2">
+                  <List className="w-4 h-4" />
+                  All Problems
+                </Link>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <div
+                className="tooltip tooltip-bottom"
+                data-tip={isAuthenticated ? 'Save to playlist' : 'Login to save to playlist'}
+              >
+                <button
+                  type="button"
+                  onClick={() => {
+                    document.getElementById('add_to_playlist').showModal();
+                  }}
+                  className="btn btn-sm btn-outline gap-2"
+                  disabled={!isAuthenticated}
+                >
+                  <BookmarkPlus className="w-4 h-4" />
+                  Save
+                </button>
+              </div>
+
+              <div
+                className="tooltip tooltip-bottom"
+                data-tip={isAuthenticated ? 'Run Code' : 'Login to run code'}
+              >
+                <button
+                  type="button"
+                  className={`btn btn-primary btn-sm gap-2 ${
+                    (!isAuthenticated || runProblemLoading) && 'btn-disabled'
+                  }`}
+                  disabled={!isAuthenticated || runProblemLoading}
+                  onClick={handleRunCode}
+                >
+                  {runProblemLoading ? (
+                    <span className="loading loading-spinner loading-sm"></span>
+                  ) : (
+                    <Play className="w-4 h-4" />
+                  )}
+                  Run
+                </button>
+              </div>
+
+              <div
+                className="tooltip tooltip-bottom"
+                data-tip={isAuthenticated ? 'Submit Code' : 'Login to submit code'}
+              >
+                <button
+                  type="button"
+                  className={`btn btn-success btn-sm gap-2 ${
+                    (!isAuthenticated || submitProblemLoading) && 'btn-disabled'
+                  }`}
+                  disabled={!isAuthenticated || submitProblemLoading}
+                  onClick={handleSubmitCode}
+                >
+                  {submitProblemLoading ? (
+                    <span className="loading loading-spinner loading-sm"></span>
+                  ) : (
+                    <Upload className="w-4 h-4" />
+                  )}
+                  Submit
+                </button>
+              </div>
+            </div>
+            <RightSideNavbar />
           </div>
-        </div>
-
-        <div className="navbar-center">
-          <div className="flex items-center gap-3">
-            <div
-              className="tooltip tooltip-bottom"
-              data-tip={isAuthenticated ? 'Save to playlist' : 'Login to save to playlist'}
-            >
-              <button
-                type="button"
-                onClick={() => {
-                  document.getElementById('add_to_playlist').showModal();
-                }}
-                className="btn btn-sm btn-outline gap-1"
-                disabled={!isAuthenticated}
-              >
-                <BookmarkPlus className="w-4" />
-                Save
-              </button>
-            </div>
-
-            <div
-              className="tooltip tooltip-bottom"
-              data-tip={isAuthenticated ? 'Run Code' : 'Login to run code'}
-            >
-              <button
-                type="button"
-                className={`btn btn-primary btn-sm ${
-                  (!isAuthenticated || runProblemLoading) && 'btn-disabled'
-                }`}
-                disabled={!isAuthenticated || runProblemLoading}
-                onClick={handleRunCode}
-              >
-                {runProblemLoading && <span className="loading loading-spinner"></span>}
-                <Play className="w-4 h-4" />
-                Run
-              </button>
-            </div>
-
-            <div
-              className="tooltip tooltip-bottom"
-              data-tip={isAuthenticated ? 'Submit Code' : 'Login to submit code'}
-            >
-              <button
-                type="button"
-                className={`btn btn-success btn-sm ${
-                  (!isAuthenticated || submitProblemLoading) && 'btn-disabled'
-                }`}
-                disabled={!isAuthenticated || submitProblemLoading}
-                onClick={handleSubmitCode}
-              >
-                {submitProblemLoading && <span className="loading loading-spinner"></span>}
-                <Upload className="w-4 h-4" />
-                Submit
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <div className="navbar-end">
-          <RightSideNavbar />
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="h-[calc(100vh-4rem)] overflow-hidden">
+      <div className="h-[calc(100vh-5rem)] overflow-hidden p-2 space-y-4">
         <PanelGroup direction="horizontal" className="h-full">
           {/* Left Panel - Problem Description */}
           <Panel defaultSize={45} minSize={30}>
-            <Contents {...problem} />
+            <div className="card bg-base-100 shadow-xl h-full">
+              <div className="card-body p-0 h-full overflow-hidden">
+                <div className="flex-1 overflow-auto card">
+                  <Contents {...problem} />
+                </div>
+              </div>
+            </div>
           </Panel>
 
-          <PanelResizeHandle className="w-2 bg-base-300 hover:bg-primary transition-colors flex justify-center items-center">
-            <div className="h-20 w-0.5 bg-success rounded-full opacity-80" />
+          <PanelResizeHandle className="w-4 flex justify-center items-center">
+            <div className="h-20 w-1 bg-base-300 hover:bg-primary transition-colors rounded-full" />
           </PanelResizeHandle>
 
           {/* Right Panel - Code Editor and Tests */}
           <Panel defaultSize={55} minSize={40}>
-            <PanelGroup direction="vertical">
+            <PanelGroup direction="vertical" className="h-full">
               {/* Code Editor */}
               <Panel ref={editorPanelRef} defaultSize={80} minSize={40}>
-                <ProblemPageCodeEditor codeSnippets={problem?.codeSnippets} />
+                <div className="card bg-base-100 shadow-xl h-full">
+                  <div className="card-body p-0 h-full overflow-hidden">
+                    <div className="flex-1 overflow-hidden card">
+                      <ProblemPageCodeEditor codeSnippets={problem?.codeSnippets} />
+                    </div>
+                  </div>
+                </div>
               </Panel>
 
-              <PanelResizeHandle className="h-2 bg-base-300 hover:bg-primary transition-colors flex justify-center items-center">
-                <div className="w-6 h-0.5 bg-success rounded-full opacity-80" />
-                <div className="w-6 h-0.5 bg-success rounded-full opacity-80" />
-                <div className="w-6 h-0.5 bg-success rounded-full opacity-80" />
+              <PanelResizeHandle className="h-4 flex justify-center items-center">
+                <div className="w-20 h-1 bg-base-300 hover:bg-primary transition-colors rounded-full" />
               </PanelResizeHandle>
 
               {/* Test Cases */}
               <Panel ref={testcasesPanelRef} defaultSize={20} minSize={20}>
-                <Testcases testcases={problem?.testcases} />
+                <div className="card bg-base-100 shadow-xl h-full">
+                  <div className="card-body p-0 h-full overflow-hidden">
+                    <div className="flex-1 overflow-auto card">
+                      <Testcases testcases={problem?.testcases} />
+                    </div>
+                  </div>
+                </div>
               </Panel>
             </PanelGroup>
           </Panel>
@@ -298,7 +334,6 @@ const LeetCodeInterface = () => {
       </div>
 
       {/* Modal */}
-
       <PlaylistModal allPlaylists={allPlaylists?.data} {...{ problemId }} />
     </div>
   );

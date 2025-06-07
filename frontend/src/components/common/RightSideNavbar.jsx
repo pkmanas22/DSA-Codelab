@@ -5,8 +5,10 @@ import { Bell, BookMarked, BookOpen, Code, LogOut, Trophy, User } from 'lucide-r
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuthLogout } from '../../hooks/reactQuery/useAuthApi';
 import toast from 'react-hot-toast';
+import queryClient from '../../utils/queryClient';
+import { QUERY_KEYS } from '../../constants/keys';
 
-const RightSideNavbar = () => {
+const RightSideNavbar = ({ isMobile = false, onLinkClick }) => {
   const { authUser, isAuthenticated, clearAuth, problemsSolved } = useAuthStore();
 
   const { mutate: authLogoutHandle } = useAuthLogout();
@@ -17,7 +19,9 @@ const RightSideNavbar = () => {
     authLogoutHandle(null, {
       onSuccess: () => {
         clearAuth();
+        queryClient.clear();
         navigate('/login');
+        if (onLinkClick) onLinkClick();
       },
       onError: (err) => {
         toast.error(err.response.data?.error || 'Something went wrong');
@@ -25,7 +29,32 @@ const RightSideNavbar = () => {
     });
   };
 
+  const handleLinkClick = () => {
+    if (onLinkClick) onLinkClick();
+  };
+
   if (!isAuthenticated) {
+    if (isMobile) {
+      return (
+        <div className="flex flex-col gap-2">
+          <Link
+            to={routes.login}
+            className="block px-3 py-2 text-slate-300 hover:text-white hover:bg-slate-700/50 rounded-lg transition-all duration-200 font-medium text-center"
+            onClick={handleLinkClick}
+          >
+            Sign In
+          </Link>
+          <Link
+            to={routes.register}
+            className="btn btn-primary btn-sm w-full"
+            onClick={handleLinkClick}
+          >
+            Sign Up
+          </Link>
+        </div>
+      );
+    }
+
     return (
       <div className="flex items-center gap-3">
         <Link
@@ -41,24 +70,50 @@ const RightSideNavbar = () => {
     );
   }
 
+  if (isMobile) {
+    return (
+      <div className="space-y-2">
+        {/* User Info */}
+        <div className="flex items-center gap-3 p-3 bg-slate-800/50 rounded-lg">
+          <div className="w-10 h-10 rounded-full ring-2 ring-slate-600/30">
+            <img
+              src={authUser?.image || 'https://avatar.iran.liara.run/public/boy'}
+              alt="User Avatar"
+              className="object-cover rounded-full w-full h-full"
+            />
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="font-semibold text-slate-200 truncate">{authUser?.name}</p>
+            <p className="text-sm text-slate-400 truncate">{authUser?.email}</p>
+            {problemsSolved?.length > 0 && (
+              <div className="flex items-center gap-1 mt-1">
+                <Trophy className="w-3 h-3 text-emerald-400" />
+                <span className="text-xs text-slate-300">
+                  {problemsSolved?.length} Problems solved
+                </span>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Mobile Menu Items */}
+        <div className="space-y-1">
+          <button
+            className="flex items-center gap-3 px-3 py-2 hover:bg-red-600/20 rounded-lg transition-all duration-200 text-red-400 w-full"
+            onClick={handleLogout}
+          >
+            <LogOut className="w-4 h-4" />
+            <span>Logout</span>
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex gap-3">
-      {/* Notifications */}
-      {/* <div className="relative">
-        <button className="p-2 text-slate-300 hover:text-white hover:bg-slate-700/50 rounded-lg transition-all duration-200">
-          <Bell className="w-5 h-5" />
-          <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></span>
-        </button>
-      </div> */}
-
       {/* User Stats (Desktop) */}
       <div className="hidden xl:flex items-center gap-4 px-4 py-2 bg-slate-800/50 rounded-xl border border-slate-600/30">
-        {/* <div className="flex items-center gap-2">
-          <Trophy className="w-4 h-4 text-yellow-400" />
-          <span className="text-sm font-medium text-slate-200">{authUser?.streak || 45}</span>
-        </div> */}
-        {/* <div className="w-px h-4 bg-slate-600"></div> */}
-
         {problemsSolved?.length > 0 && (
           <div className="flex items-center gap-1">
             <Trophy className="w-3 h-3 text-emerald-400" />
@@ -90,12 +145,6 @@ const RightSideNavbar = () => {
               <p className="font-semibold text-slate-200">{authUser?.name}</p>
               <p className="text-sm text-slate-400">{authUser?.email}</p>
               <div className="flex items-center gap-4 mt-2">
-                {/* <div className="flex items-center gap-1">
-                  <Trophy className="w-3 h-3 text-yellow-400" />
-                  <span className="text-xs text-slate-300">
-                    {authUser?.streak || 45} day streak
-                  </span>
-                </div> */}
                 {problemsSolved?.length > 0 && (
                   <div className="flex items-center gap-1">
                     <Trophy className="w-3 h-3 text-emerald-400" />
@@ -109,7 +158,7 @@ const RightSideNavbar = () => {
           </li>
 
           {/* Menu Items */}
-          <li>
+          {/* <li>
             <Link
               to={routes.profile}
               className="flex items-center gap-3 p-3 hover:bg-slate-700/50 rounded-lg transition-all duration-200"
@@ -117,7 +166,7 @@ const RightSideNavbar = () => {
               <User className="w-4 h-4 text-slate-400" />
               <span className="text-slate-200">My Profile</span>
             </Link>
-          </li>
+          </li> */}
 
           <li>
             <Link

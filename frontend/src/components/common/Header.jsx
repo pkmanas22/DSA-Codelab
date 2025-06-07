@@ -1,110 +1,137 @@
 import { Link } from 'react-router-dom';
+import { useState } from 'react';
+import { Menu, X } from 'lucide-react';
 import { useAuthStore } from '../../stores/useAuthStore';
 import routes from '../../routes';
 import RightSideNavbar from './RightSideNavbar';
 
 const Header = () => {
   const { authUser, isAuthenticated } = useAuthStore();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  // console.log(isAuthenticated);
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-base-300 text-base-content from-slate-900 via-slate-800 to-slate-900 border-b border-slate-700/50 backdrop-blur-xl">
+    <header className="sticky top-0 z-50 w-full bg-base-300 text-base-content border-b border-slate-700/50 backdrop-blur-xl">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          {/* Logo and Navigation */}
-          <div className="flex items-center gap-8">
-            {/* Logo */}
-            <Link to={routes.root} className="flex items-center gap-3 group">
-              <div className="relative">
-                <img
-                  src="/logo.svg"
-                  alt="DSA CodeLab"
-                  className="h-9 w-9 p-1.5 bg-gradient-to-br from-emerald-400 to-cyan-400 rounded-xl group-hover:scale-105 transition-transform duration-200"
-                />
-                <div className="absolute -inset-1 bg-gradient-to-br from-emerald-400 to-cyan-400 rounded-xl opacity-20 group-hover:opacity-40 transition-opacity duration-200 blur-sm"></div>
+          {/* Logo */}
+          <div className="flex items-center">
+            <Link to={routes.root} className="btn btn-ghost text-xl font-bold normal-case">
+              <div className="avatar placeholder">
+                <div className="bg-gradient-to-br from-orange-600 to-orange-200 text-white rounded-full w-8 h-8">
+                  <span className="text-sm font-bold">D</span>
+                </div>
               </div>
-              <span className="text-xl font-bold bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent hidden sm:block">
+              <span className="hidden sm:inline bg-gradient-to-r from-orange-400 to-orange-200 bg-clip-text text-transparent">
                 DSA CodeLab
               </span>
             </Link>
+          </div>
 
-            {/* Navigation Links */}
-            <nav className="hidden md:flex items-center gap-1">
+          {/* Desktop Navigation */}
+          <nav className="hidden md:flex items-center gap-1">
+            <Link
+              to={routes.problems.all}
+              className="px-4 py-2 text-slate-300 hover:text-white hover:bg-slate-700/50 rounded-lg transition-all duration-200 font-medium"
+            >
+              Problems
+            </Link>
+
+            {isAuthenticated && (
+              <>
+                <Link
+                  to={routes.submissions.all}
+                  className="px-4 py-2 text-slate-300 hover:text-white hover:bg-slate-700/50 rounded-lg transition-all duration-200 font-medium"
+                >
+                  My Submissions
+                </Link>
+                <Link
+                  to={routes.playlists.all}
+                  className="px-4 py-2 text-slate-300 hover:text-white hover:bg-slate-700/50 rounded-lg transition-all duration-200 font-medium"
+                >
+                  My Playlist
+                </Link>
+              </>
+            )}
+
+            {authUser?.role === 'ADMIN' && (
+              <Link
+                to={routes.admin.createProblem}
+                className="px-4 py-2 text-slate-300 hover:text-white hover:bg-slate-700/50 rounded-lg transition-all duration-200 font-medium"
+              >
+                Add Problem
+              </Link>
+            )}
+          </nav>
+
+          {/* Right Side Actions */}
+          <div className="flex items-center gap-4">
+            {/* Desktop Right Side Navbar */}
+            <div className="hidden md:block">
+              <RightSideNavbar />
+            </div>
+
+            {/* Mobile Menu Button */}
+            <button
+              onClick={toggleMobileMenu}
+              className="md:hidden p-2 text-slate-300 hover:text-white hover:bg-slate-700/50 rounded-lg transition-all duration-200"
+            >
+              {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
+          </div>
+        </div>
+
+        {/* Mobile Menu */}
+        {isMobileMenuOpen && (
+          <div className="md:hidden">
+            <div className="px-2 pt-2 pb-3 space-y-1 bg-slate-800/50 rounded-lg mt-2 border border-slate-700/30">
               <Link
                 to={routes.problems.all}
-                className="px-4 py-2 text-slate-300 hover:text-white hover:bg-slate-700/50 rounded-lg transition-all duration-200 font-medium"
+                className="block px-3 py-2 text-slate-300 hover:text-white hover:bg-slate-700/50 rounded-lg transition-all duration-200 font-medium"
+                onClick={() => setIsMobileMenuOpen(false)}
               >
                 Problems
               </Link>
-              {/* <Link
-                to="/contests"
-                className="px-4 py-2 text-slate-300 hover:text-white hover:bg-slate-700/50 rounded-lg transition-all duration-200 font-medium"
-              >
-                Contests
-              </Link>
-              <Link
-                to="/discuss"
-                className="px-4 py-2 text-slate-300 hover:text-white hover:bg-slate-700/50 rounded-lg transition-all duration-200 font-medium"
-              >
-                Discuss
-              </Link> */}
 
               {isAuthenticated && (
                 <>
-                  <li>
-                    <Link
-                      to={routes.submissions.all}
-                      className="px-4 py-2 text-slate-300 hover:text-white hover:bg-slate-700/50 rounded-lg transition-all duration-200 font-medium"
-                    >
-                      My Submissions
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      to={routes.playlists.all}
-                      className="px-4 py-2 text-slate-300 hover:text-white hover:bg-slate-700/50 rounded-lg transition-all duration-200 font-medium"
-                    >
-                      My Playlist
-                    </Link>
-                  </li>
+                  <Link
+                    to={routes.submissions.all}
+                    className="block px-3 py-2 text-slate-300 hover:text-white hover:bg-slate-700/50 rounded-lg transition-all duration-200 font-medium"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    My Submissions
+                  </Link>
+                  <Link
+                    to={routes.playlists.all}
+                    className="block px-3 py-2 text-slate-300 hover:text-white hover:bg-slate-700/50 rounded-lg transition-all duration-200 font-medium"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    My Playlist
+                  </Link>
                 </>
               )}
 
               {authUser?.role === 'ADMIN' && (
-                <>
-                  <li>
-                    <Link
-                      to={routes.admin.createProblem}
-                      className="px-4 py-2 text-slate-300 hover:text-white hover:bg-slate-700/50 rounded-lg transition-all duration-200 font-medium"
-                    >
-                      Add Problem
-                    </Link>
-                  </li>
-                </>
+                <Link
+                  to={routes.admin.createProblem}
+                  className="block px-3 py-2 text-slate-300 hover:text-white hover:bg-slate-700/50 rounded-lg transition-all duration-200 font-medium"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Add Problem
+                </Link>
               )}
-            </nav>
-          </div>
 
-          {/* Right Side Actions */}
-          <div className="flex items-center gap-4">
-            <RightSideNavbar />
-
-            {/* Mobile Menu Button */}
-            <div className="md:hidden">
-              <button className="p-2 text-slate-300 hover:text-white hover:bg-slate-700/50 rounded-lg transition-all duration-200">
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M4 6h16M4 12h16M4 18h16"
-                  />
-                </svg>
-              </button>
+              {/* Mobile Right Side Navbar */}
+              <div className="pt-4 border-t border-slate-700/30">
+                <RightSideNavbar isMobile={true} onLinkClick={() => setIsMobileMenuOpen(false)} />
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
     </header>
   );

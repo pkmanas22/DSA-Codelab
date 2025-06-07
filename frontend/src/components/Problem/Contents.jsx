@@ -90,7 +90,7 @@ const Contents = ({
                 window.location.hash = 'submissionHistory';
               }}
             >
-              Submission History
+              History
             </span>
             {isSubmitted && (
               <span
@@ -128,11 +128,16 @@ const Contents = ({
               </div>
 
               <div className="space-y-2 text-base-content">
-                <p>{description}</p>
+                {/* Description */}
+                <div className="card bg-base-100 shadow-xl">
+                  <div className="card-body p-2">
+                    <p className="text-sm leading-relaxed">{description}</p>
+                  </div>
+                </div>
 
                 {Array.isArray(examples) &&
                   examples.map((exmp, index) => (
-                    <div key={index} className="bg-base-200 p-4 rounded-lg mt-6">
+                    <div key={index} className="card bg-base-200 p-4 rounded-lg mt-6">
                       <h3 className="font-semibold mb-2">Example {index + 1}:</h3>
                       <pre className="space-y-2 font-mono text-sm text-pretty">
                         <div>
@@ -148,57 +153,77 @@ const Contents = ({
                     </div>
                   ))}
 
-                <div className="">
-                  <h3 className="font-semibold mb-1">Constraints:</h3>
-                  <ul className="space-y-1 text-sm ml-3">{constraints}</ul>
-                </div>
-
-                <div className="">
-                  <h3 className="font-semibold mb-2">Tags:</h3>
-                  <div className="flex gap-2">
-                    {tags.map((tag) => (
-                      <div key={tag} className="badge badge-outline">
-                        {tag}
+                {/* Constraints and Tags */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="card bg-base-100 shadow-xl">
+                    <div className="card-body p-4">
+                      <h3 className="font-semibold text-sm mb-2">Constraints</h3>
+                      <div className="bg-base-200 rounded p-2">
+                        <div className="text-xs">{constraints}</div>
                       </div>
-                    ))}
+                    </div>
+                  </div>
+
+                  <div className="card bg-base-100 shadow-xl">
+                    <div className="card-body p-4">
+                      <h3 className="font-semibold text-sm mb-2">Tags</h3>
+                      <div className="flex flex-wrap gap-1">
+                        {tags.map((tag) => (
+                          <div key={tag} className="badge badge-outline text-xs">
+                            {tag}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
                   </div>
                 </div>
 
-                <div className="">
-                  <h3 className="font-semibold mb-1">Hints:</h3>
-                  <ul className="space-y-1 text-sm ml-3">{hints}</ul>
-                </div>
+                {/* Hints */}
+                {hints && (
+                  <div className="card bg-base-100 shadow-xl">
+                    <div className="card-body p-4">
+                      <h3 className="font-semibold text-sm mb-2">Hints</h3>
+                      <div className="bg-base-200 rounded p-2">
+                        <div className="text-xs">{hints}</div>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           )}
 
           {activeTab === 'editorial' && (
-            <div className="prose prose-sm max-w-none">
-              <h2 className="text-xl font-bold mb-4">Editorial</h2>
-              <p>{editorial}</p>
+            <div className="max-w-7xl mx-auto">
+              <div className="card bg-base-100 shadow-xl">
+                <div className="card-body p-4">
+                  <p className="text-sm leading-relaxed">{editorial}</p>
+                </div>
+              </div>
             </div>
           )}
 
           {activeTab === 'solutions' && (
-            <div className="prose prose-sm max-w-none">
-              <h2 className="text-xl font-bold mb-4">Solutions</h2>
-              <div>
-                {Object.entries(referenceSolutions).map(([lang, code]) => {
-                  return (
-                    <div key={lang}>
-                      <h3 className="font-semibold my-2 flex justify-between">
-                        {lang}{' '}
-                        <span className="sticky top-0 right-0">
-                          <CopyButton text={code} />
-                        </span>
-                      </h3>
-                      <pre className="max-h-60 h-full text-xs bg-base-200 p-4 rounded-lg overflow-auto relative">
-                        {code}
-                      </pre>
+            <div className="max-w-7xl mx-auto space-y-4">
+              {Object.entries(referenceSolutions).map(([lang, code]) => (
+                <div key={lang} className="card bg-base-100 shadow-xl">
+                  <div className="card-body p-0">
+                    <div className="p-3 border-b border-base-300">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-semibold capitalize">{lang}</span>
+                        <CopyButton text={code} />
+                      </div>
                     </div>
-                  );
-                })}
-              </div>
+                    <div className="p-3">
+                      <div className="bg-base-200 rounded p-3">
+                        <pre className="text-xs overflow-auto max-h-60 whitespace-pre-wrap">
+                          <code>{code}</code>
+                        </pre>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           )}
 
@@ -282,9 +307,10 @@ const Contents = ({
           {activeTab === 'submissionHistory' && <SubmissionHistory key={id} />}
         </div>
       </div>
-      {/* footer */}
-      <footer className="footer flex justify-center items-center mt-1">
-        <p className="text-sm text-center opacity-50">
+
+      {/* Footer */}
+      <footer className="footer flex justify-center items-center p-2 bg-base-100 border-t border-base-300">
+        <p className="text-xs text-center opacity-50">
           Copyright © {new Date().getFullYear()} - All right reserved
         </p>
       </footer>

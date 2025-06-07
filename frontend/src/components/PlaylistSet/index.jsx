@@ -1,58 +1,24 @@
-import { BookMarked, LibraryBig, PlusCircle, Shuffle, Trash2, UserCircle } from 'lucide-react';
-import React, { useState } from 'react';
+import { BookMarked, List, Play, PlusCircle, Shuffle, Trash2, UserCircle } from 'lucide-react';
+import { useState } from 'react';
 import toast from 'react-hot-toast';
-import {
-  useCreatePlaylist,
-  useDeletePlaylistById,
-  useGetAllPlaylists,
-} from '../../hooks/reactQuery/usePlaylistApi';
+import { useDeletePlaylistById, useGetAllPlaylists } from '../../hooks/reactQuery/usePlaylistApi';
 import { DeleteModal, MyLoader } from '../common';
 import { useAuthStore } from '../../stores/useAuthStore';
 import { useNavigate } from 'react-router-dom';
 import queryClient from '../../utils/queryClient';
 import { QUERY_KEYS } from '../../constants/keys';
+import timeAgo from '../../utils/timeAgo';
+import CreatePlaylistModal from './CreatePlaylistModal';
 
 const PlaylistSet = () => {
-  const [formData, setFormData] = useState({
-    name: '',
-    description: '',
-  });
   const [playlistToDeleted, setPlaylistToDeleted] = useState(null);
 
-  const { mutate: createPlaylist } = useCreatePlaylist();
   const { mutate: deletePlaylist } = useDeletePlaylistById();
   const { data, isLoading } = useGetAllPlaylists();
 
   const navigate = useNavigate();
 
   const { isAuthenticated } = useAuthStore();
-
-  const handleFormSubmit = (e) => {
-    e.preventDefault();
-
-    if (!formData.name || !formData.description) {
-      toast.error('Please fill in all the fields');
-      return;
-    }
-    createPlaylist(formData, {
-      onSuccess: ({ message }) => {
-        toast.success(message || 'Success');
-        setFormData({
-          name: '',
-          description: '',
-        });
-        const modal = document.getElementById('create_playlist');
-        if (modal) {
-          modal.close();
-        }
-
-        queryClient.invalidateQueries(QUERY_KEYS.PLAYLISTS);
-      },
-      onError: (err) => {
-        toast.error(err.response.data?.error || 'Something went wrong');
-      },
-    });
-  };
 
   const handleDeletePlaylist = (id) => {
     if (!id) {
@@ -74,128 +40,178 @@ const PlaylistSet = () => {
   if (isLoading) return <MyLoader />;
 
   return (
-    <div className="container mx-auto px-4 max-w-7xl">
-      <div className="card bg-base-100 shadow-xl">
-        <div className="card-body p-6 md:p-8">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 md:mb-8 pb-4 border-b">
-            <h2 className="card-title text-2xl md:text-3xl flex items-center gap-3">
-              <BookMarked className="w-6 h-6 md:w-8 md:h-8 text-primary" />
-              My Playlist
-            </h2>
-            <div
-              className="tooltip tooltip-bottom"
-              data-tip={isAuthenticated ? 'Create a new playlist' : 'Login to create to playlist'}
-            >
-              <button
-                className="flex items-center text-lg gap-2 btn btn-primary"
-                type="button"
-                onClick={() => document.getElementById('create_playlist').showModal()}
-              >
-                <PlusCircle />
-                Create new one
-              </button>
+    <div className="min-h-screen bg-base-200 p-6 md:p-12">
+      <div className="max-w-7xl mx-auto space-y-6">
+        {/* Header Card */}
+        <div className="card bg-base-100 shadow-2xl">
+          <div className="card-body">
+            <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
+              <div className="flex items-center gap-4">
+                <div className="p-3 bg-primary/10 rounded-xl">
+                  <BookMarked className="w-8 h-8 text-primary" />
+                </div>
+                <div>
+                  <h1 className="text-4xl font-bold mb-2">My Playlists</h1>
+                  <p className="text-base-content/70 text-lg">
+                    Organize and manage your coding problem collections
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-4">
+                <div className="stats shadow">
+                  <div className="stat">
+                    <div className="stat-title text-xs">Total Playlists</div>
+                    <div className="stat-value text-2xl text-primary">
+                      {data?.data?.length || 0}
+                    </div>
+                  </div>
+                </div>
+
+                <div
+                  className="tooltip tooltip-bottom"
+                  data-tip={isAuthenticated ? 'Create a new playlist' : 'Login to create playlist'}
+                >
+                  <button
+                    className="btn btn-primary gap-2"
+                    type="button"
+                    onClick={() => document.getElementById('create_playlist').showModal()}
+                    disabled={!isAuthenticated}
+                  >
+                    <PlusCircle className="w-5 h-5" />
+                    Create Playlist
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Playlists Grid Card */}
+        <div className="card bg-base-100 shadow-2xl">
+          <div className="card-body p-0">
+            <div className="p-6 border-b border-base-300">
+              <h2 className="card-title text-2xl flex items-center gap-2">
+                <List className="w-6 h-6 text-primary" />
+                Your Collections
+              </h2>
             </div>
 
-            {/* You can open the modal using document.getElementById('ID').showModal() method */}
-            <dialog id="create_playlist" className="modal">
-              <div className="modal-box">
-                <form method="dialog">
-                  {/* if there is a button in form, it will close the modal */}
-                  <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
-                    ✕
-                  </button>
-                </form>
-                <div>
-                  <h3 className="font-bold text-lg">Create a playlist</h3>
-                  <form onSubmit={handleFormSubmit} className="py-4 space-y-2">
-                    <label htmlFor="name">Enter the playlist name</label>
-                    <input
-                      id="name"
-                      type="text"
-                      placeholder="Playlist name"
-                      className="input input-bordered w-full"
-                      value={formData.name}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    />
-                    <label htmlFor="description">Enter the playlist description</label>
-                    <input
-                      id="description"
-                      type="text"
-                      placeholder="Playlist description"
-                      className="input input-bordered w-full"
-                      value={formData.description}
-                      onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                    />
-                    <button type="submit" className="btn btn-primary">
-                      Create
-                    </button>
-                  </form>
-                </div>
-              </div>
-            </dialog>
-          </div>
-          {/* // playlists */}
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 p-4">
-            {data?.data?.map((playlist) => (
-              <div
-                key={playlist?.id}
-                className=" border shadow border-base-200 rounded-lg p-4 space-y-2"
-              >
-                <h3 className="text-2xl font-semibold">{playlist?.name}</h3>
-                <div className="flex items-center gap-2">
-                  <UserCircle className="w-4" />
-                  {playlist?.user?.name}
-                </div>
-                <p className=" opacity-80">{playlist?.description}</p>
-                <p className="text-lg">
-                  <strong>{playlist?.problems?.length}</strong> Problems added
-                </p>
-                <div className="flex items-center gap-4 justify-between flex-wrap">
-                  <div
-                    className="tooltip tooltip-bottom"
-                    data-tip={
-                      isAuthenticated ? 'Explore the playlist' : 'Login to explore to playlist'
-                    }
-                  >
-                    <button
-                      onClick={() => navigate(`/playlists/${playlist?.id}`)}
-                      type="button"
-                      className="flex items-center gap-2 btn btn-success"
+            <div className="p-6">
+              {data?.data?.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {data?.data?.map((playlist) => (
+                    <div
+                      key={playlist?.id}
+                      className="card bg-base-200 shadow-lg hover:shadow-xl transition-all hover:scale-[1.02] duration-200"
                     >
-                      <Shuffle className="w-4" /> Explore
-                    </button>
-                  </div>
-                  <div
-                    className="tooltip tooltip-bottom"
-                    data-tip={isAuthenticated ? 'Delete the playlist' : 'Unauthorized'}
-                  >
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setPlaylistToDeleted(playlist);
-                        document.getElementById('delete_playlist_modal').showModal();
-                      }}
-                      className="flex items-center gap-2 btn btn-error"
-                    >
-                      <Trash2 className="w-4" />
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+                      <div className="card-body">
+                        <div className="flex items-start justify-between mb-4">
+                          <div className="flex items-center gap-3">
+                            <div className="p-2 bg-primary/10 rounded-lg">
+                              <Play className="w-5 h-5 text-primary" />
+                            </div>
+                            <div>
+                              <h3 className="card-title text-xl">{playlist?.name}</h3>
+                              <div className="flex items-center gap-2 text-sm text-base-content/60">
+                                <UserCircle className="w-4 h-4" />
+                                {playlist?.user?.name}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
 
-          {/* Delete Modal */}
-          <DeleteModal
-            modalId="delete_playlist_modal"
-            title="Delete Playlist"
-            message={`Are you sure you want to delete "${playlistToDeleted?.name}"? This selected playlist will be deleted permanently, along with all its problems. This action cannot be undone.`}
-            onDelete={() => {
-              handleDeletePlaylist(playlistToDeleted?.id);
-              setPlaylistToDeleted(null);
-            }}
-          />
+                        <p className="text-base-content/70 line-clamp-2">{playlist?.description}</p>
+
+                        <div className="flex items-center justify-between mb-4">
+                          <div className="stat p-2">
+                            <div className="stat-title text-xs">Problems</div>
+                            <div className="stat-value text-lg text-primary">
+                              {playlist?.problems?.length || 0}
+                            </div>
+                          </div>
+                          <div className="badge badge-outline ml-2 opacity-70">
+                            <span className="px-2 whitespace-nowrap">
+                              {timeAgo(playlist?.updatedAt)}
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-2 justify-between">
+                          <div
+                            className="tooltip tooltip-bottom"
+                            data-tip={
+                              isAuthenticated ? 'Explore the playlist' : 'Login to explore playlist'
+                            }
+                          >
+                            <button
+                              onClick={() => navigate(`/playlists/${playlist?.id}`)}
+                              type="button"
+                              className="btn btn-primary btn-sm gap-2 flex-1"
+                              disabled={!isAuthenticated}
+                            >
+                              <Shuffle className="w-4 h-4" />
+                              Explore
+                            </button>
+                          </div>
+
+                          <div
+                            className="tooltip tooltip-bottom"
+                            data-tip={isAuthenticated ? 'Delete the playlist' : 'Unauthorized'}
+                          >
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setPlaylistToDeleted(playlist);
+                                document.getElementById('delete_playlist_modal').showModal();
+                              }}
+                              className="btn btn-error btn-sm"
+                              disabled={!isAuthenticated}
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-12">
+                  <div className="p-4 bg-base-200 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+                    <BookMarked className="w-8 h-8 text-base-content/40" />
+                  </div>
+                  <h3 className="text-xl font-semibold mb-2">No playlists yet</h3>
+                  <p className="text-base-content/60 mb-4">
+                    Create your first playlist to organize your favorite problems
+                  </p>
+                  <button
+                    className="btn btn-primary gap-2"
+                    onClick={() => document.getElementById('create_playlist').showModal()}
+                    disabled={!isAuthenticated}
+                  >
+                    <PlusCircle className="w-5 h-5" />
+                    Create Your First Playlist
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
+
+        {/* Create Playlist Modal */}
+        <CreatePlaylistModal />
+
+        {/* Delete Modal */}
+        <DeleteModal
+          modalId="delete_playlist_modal"
+          title="Delete Playlist"
+          message={`Are you sure you want to delete "${playlistToDeleted?.name}"? This selected playlist will be deleted permanently, along with all its problems. This action cannot be undone.`}
+          onDelete={() => {
+            handleDeletePlaylist(playlistToDeleted?.id);
+            setPlaylistToDeleted(null);
+          }}
+        />
       </div>
     </div>
   );

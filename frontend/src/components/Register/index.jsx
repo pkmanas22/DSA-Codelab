@@ -125,7 +125,7 @@ const Register = () => {
               </div>
 
               {/* Right Side - Hero Content */}
-              <div className="flex-1 bg-gradient-to-br from-secondary/10 via-primary/5 to-success/10 p-8 lg:p-12 flex items-center">
+              <div className="rounded-l-2xl flex-1 bg-gradient-to-br from-secondary/10 via-primary/5 to-success/10 p-8 lg:p-12 flex items-center">
                 <div className="max-w-md mx-auto text-center lg:text-left">
                   <div className="p-4 bg-secondary/20 rounded-full w-fit mx-auto lg:mx-0 mb-6">
                     <BookOpen className="w-12 h-12 text-secondary" />

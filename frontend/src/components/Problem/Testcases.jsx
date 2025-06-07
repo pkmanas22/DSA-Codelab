@@ -16,7 +16,7 @@ const Testcases = ({ testcases = [] }) => {
       {/* Test Header */}
       <div className="bg-base-200 border-b border-base-300 flex-shrink-0">
         <div className="tabs tabs-bordered">
-          <span className="tab ">Testcases</span>
+          <span className="btn ">Testcases</span>
         </div>
       </div>
 
@@ -52,21 +52,21 @@ const Testcases = ({ testcases = [] }) => {
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium mb-1">Input</label>
-              <div className="bg-base-200 p-3 rounded font-mono text-sm">
+              <div className="bg-base-200 p-3 rounded-lg font-mono text-sm">
                 {testcases[activeTestCase]?.input}
               </div>
             </div>
             {!!testcases[activeTestCase]?.status && (
               <div>
                 <label className="block text-sm font-medium mb-1">Output:</label>
-                <div className="bg-base-200 p-3 rounded font-mono text-sm">
+                <div className="bg-base-200 p-3 rounded-lg font-mono text-sm">
                   {testcases[activeTestCase]?.stdout}
                 </div>
               </div>
             )}
             <div>
               <label className="block text-sm font-medium mb-1">Expected:</label>
-              <div className="bg-base-200 p-3 rounded font-mono text-sm">
+              <div className="bg-base-200 p-3 rounded-lg font-mono text-sm">
                 {testcases[activeTestCase]?.output}
               </div>
             </div>
