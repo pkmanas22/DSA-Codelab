@@ -1,54 +1,31 @@
-import { forwardRef, useId, useState } from 'react';
-import { Eye, EyeOff } from 'lucide-react';
+import { forwardRef } from 'react';
 
-const Input = forwardRef(function Input(
-  {
-    icon: Icon = null,
-    label = '',
-    type = 'text',
-    classNames = '',
-    placeHolder = '',
-    errorMsg,
-    ...props
-  },
-  ref
-) {
-  const inputId = useId();
-  const [show, setShow] = useState(false);
+const Input = forwardRef(
+  ({ label, icon: Icon, placeHolder, type = 'text', classNames = '', errorMsg, ...props }, ref) => (
+    <div className="form-control">
+      <label className="label">
+        <span className="label-text font-medium">{label}</span>
+      </label>
+      <div className="relative">
+        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-10 bg-transparent">
+          <Icon className="h-5 w-5 text-base-content" />
+        </div>
 
-  const togglePassword = () => {
-    setShow((prev) => !prev);
-  };
-
-  const inputType = type === 'password' && show ? 'text' : type;
-
-  return (
-    <div className="my-2">
-      {label && (
-        <label className="label" htmlFor={inputId}>
-          {label}
-        </label>
-      )}
-      <label htmlFor={inputId} className="input mt-1">
-        {Icon && <Icon />}
         <input
-          id={inputId}
-          type={inputType}
-          className={`${classNames}`}
-          placeholder={placeHolder}
           ref={ref}
+          type={type}
+          placeholder={placeHolder}
+          className={`input input-bordered w-full pl-10  ${classNames}`}
           {...props}
         />
-
-        {type === 'password' && (
-          <span onClick={togglePassword} className="cursor-pointer">
-            {show ? <EyeOff /> : <Eye />}
-          </span>
-        )}
-      </label>
-      {errorMsg && <p className="text-red-600 my-1">{errorMsg}</p>}
+      </div>
+      {errorMsg && (
+        <label className="label">
+          <span className="label-text-alt text-error">{errorMsg}</span>
+        </label>
+      )}
     </div>
-  );
-});
+  )
+);
 
 export default Input;

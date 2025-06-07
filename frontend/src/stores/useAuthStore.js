@@ -10,7 +10,7 @@ export const useAuthStore = create(
       problemsSolved: [],
 
       setAuth: ({ user }) =>
-        set({ authUser: user, isAuthenticated: true, problemsSolved: user?.problemsSolved }),
+        set({ authUser: user, isAuthenticated: true, problemsSolved: user?.problemsSolved || [] }),
 
       clearAuth: () => set({ authUser: null, isAuthenticated: false, problemsSolved: [] }),
 

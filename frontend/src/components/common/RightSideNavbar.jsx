@@ -58,13 +58,15 @@ const RightSideNavbar = () => {
           <span className="text-sm font-medium text-slate-200">{authUser?.streak || 45}</span>
         </div> */}
         {/* <div className="w-px h-4 bg-slate-600"></div> */}
-        <div className="flex items-center gap-2">
-          <Code className="w-4 h-4 text-emerald-400" />
 
-          <span className="text-sm font-medium text-slate-200">
-            {problemsSolved.length || ''} solved
-          </span>
-        </div>
+        {problemsSolved?.length > 0 && (
+          <div className="flex items-center gap-1">
+            <Trophy className="w-3 h-3 text-emerald-400" />
+            <span className="text-xs text-slate-300">
+              {problemsSolved?.length || ''} Problems solved
+            </span>
+          </div>
+        )}
       </div>
 
       {/* User Dropdown */}
@@ -94,12 +96,14 @@ const RightSideNavbar = () => {
                     {authUser?.streak || 45} day streak
                   </span>
                 </div> */}
-                <div className="flex items-center gap-1">
-                  <Code className="w-3 h-3 text-emerald-400" />
-                  <span className="text-xs text-slate-300">
-                    {problemsSolved.length || ''} problems solved
-                  </span>
-                </div>
+                {problemsSolved?.length > 0 && (
+                  <div className="flex items-center gap-1">
+                    <Trophy className="w-3 h-3 text-emerald-400" />
+                    <span className="text-xs text-slate-300">
+                      {problemsSolved?.length || ''} Problems solved
+                    </span>
+                  </div>
+                )}
               </div>
             </div>
           </li>
