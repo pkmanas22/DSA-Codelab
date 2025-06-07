@@ -14,7 +14,6 @@ import { Link } from 'react-router-dom';
 import { useGetAllProblems } from '../../hooks/reactQuery/useProblemApi';
 import { toast } from 'react-hot-toast';
 import { useAuthStore } from '../../stores/useAuthStore';
-import { useGetAllPlaylists } from '../../hooks/reactQuery/usePlaylistApi';
 import { DeleteModal, MyLoader, PaginatedTable, PlaylistModal } from '../common';
 import { useDeleteProblem } from '../../hooks/reactQuery/useAdminApi';
 import queryClient from '../../utils/queryClient';
@@ -32,10 +31,10 @@ const ProblemSet = () => {
   const [problemToDelete, setProblemToDelete] = useState({ id: null, title: null });
 
   const { data, isLoading, isError, error } = useGetAllProblems();
-  const { data: allPlaylists } = useGetAllPlaylists();
+  // const { data: allPlaylists } = useGetAllPlaylists();
   const { mutate: deleteProblem } = useDeleteProblem();
 
-  const { authUser, isAuthenticated, problemsSolved } = useAuthStore();
+  const { authUser, isAuthenticated, problemsSolved, playlists: myPlaylists } = useAuthStore();
 
   useEffect(() => {
     if (!data?.data) return;
@@ -361,7 +360,7 @@ const ProblemSet = () => {
         </div>
 
         {/* Modals */}
-        <PlaylistModal allPlaylists={allPlaylists?.data} problemId={problemIdForPlaylist} />
+        <PlaylistModal allPlaylists={myPlaylists} problemId={problemIdForPlaylist} />
 
         <DeleteModal
           modalId="delete_problem_modal"

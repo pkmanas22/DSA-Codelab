@@ -113,16 +113,16 @@ const RightSideNavbar = ({ isMobile = false, onLinkClick }) => {
   return (
     <div className="flex gap-3">
       {/* User Stats (Desktop) */}
-      <div className="hidden xl:flex items-center gap-4 px-4 py-2 bg-slate-800/50 rounded-xl border border-slate-600/30">
-        {problemsSolved?.length > 0 && (
+      {problemsSolved?.length > 0 && (
+        <div className="hidden xl:flex items-center gap-4 px-4 py-2 bg-slate-800/50 rounded-xl border border-slate-600/30">
           <div className="flex items-center gap-1">
             <Trophy className="w-3 h-3 text-emerald-400" />
             <span className="text-xs text-slate-300">
               {problemsSolved?.length || ''} Problems solved
             </span>
           </div>
-        )}
-      </div>
+        </div>
+      )}
 
       {/* User Dropdown */}
       <div className="dropdown dropdown-end">
@@ -158,7 +158,7 @@ const RightSideNavbar = ({ isMobile = false, onLinkClick }) => {
           </li>
 
           {/* Menu Items */}
-          {/* <li>
+          <li>
             <Link
               to={routes.profile}
               className="flex items-center gap-3 p-3 hover:bg-slate-700/50 rounded-lg transition-all duration-200"
@@ -166,7 +166,7 @@ const RightSideNavbar = ({ isMobile = false, onLinkClick }) => {
               <User className="w-4 h-4 text-slate-400" />
               <span className="text-slate-200">My Profile</span>
             </Link>
-          </li> */}
+          </li>
 
           <li>
             <Link

@@ -5,6 +5,7 @@ import {
 } from '../libs/rapidApi.lib.js';
 
 import { db } from '../libs/db.js';
+import { JUDGE0_STATUS_MAP, JUDGE0_STATUS_PRIORITY_ORDER } from '../utils/constant.js';
 
 export const executeCodeForRun = async (req, res) => {
   /*
@@ -117,7 +118,7 @@ export const executeCodeForSubmit = async (req, res) => {
       languageId,
       sourceCode
     );
-
+    // console.log(submissionsResults);
     let isAllPassed = true;
 
     const detailedResults = submissionsResults.map((result, idx) => {
@@ -141,6 +142,16 @@ export const executeCodeForSubmit = async (req, res) => {
       };
     });
 
+    const finalStatusId = submissionsResults.reduce((worstId, result) => {
+      const currentId = result.status?.id;
+
+      const currentPriority = JUDGE0_STATUS_PRIORITY_ORDER.indexOf(currentId);
+      const worstPriority = JUDGE0_STATUS_PRIORITY_ORDER.indexOf(worstId);
+
+      // If current has higher priority (i.e. lower index), update
+      return currentPriority !== -1 && currentPriority < worstPriority ? currentId : worstId;
+    }, 3); // Default is 3 (Accepted)
+
     const submission = await db.Submission.create({
       data: {
         userId,
@@ -161,7 +172,7 @@ export const executeCodeForSubmit = async (req, res) => {
         memory: detailedResults.some(({ memory }) => memory)
           ? JSON.stringify(detailedResults.map(({ memory }) => memory))
           : null,
-        status: isAllPassed ? 'Accepted' : 'Wrong Answer',
+        status: JUDGE0_STATUS_MAP[finalStatusId],
       },
     });
 

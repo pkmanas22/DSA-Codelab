@@ -1,19 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { PanelGroup, Panel, PanelResizeHandle } from 'react-resizable-panels';
-import {
-  Play,
-  Upload,
-  Home,
-  List,
-  Plus,
-  BookmarkPlus,
-  Star,
-  FileJson,
-  Book,
-  Code,
-  Clock,
-  Zap,
-} from 'lucide-react';
+import { Play, Upload, Home, List, BookmarkPlus } from 'lucide-react';
 import { useAuthStore } from '../../stores/useAuthStore';
 import { MyLoader, PageNotFound, PlaylistModal, RightSideNavbar } from '../common';
 import Contents from './Contents';
@@ -29,7 +16,6 @@ import {
 import toast from 'react-hot-toast';
 import { SUPPORTED_LANGUAGES } from '../../constants/problemDetails';
 import useCodeEditorStore from '../../stores/useCodeEditorStore';
-import { useGetAllPlaylists } from '../../hooks/reactQuery/usePlaylistApi';
 import queryClient from '../../utils/queryClient';
 import { QUERY_KEYS } from '../../constants/keys';
 
@@ -43,12 +29,12 @@ const LeetCodeInterface = () => {
 
   const navigate = useNavigate();
 
-  const { isAuthenticated, addSolvedProblem } = useAuthStore();
+  const { isAuthenticated, addSolvedProblem, playlists: myPlaylists } = useAuthStore();
 
   const { data, isLoading, isError } = useGetProblemById(problemId || '');
   const { mutate: myRunProblemHandler, isLoading: runProblemLoading } = useRunProblem();
   const { mutate: mySubmitProblemHandler, isLoading: submitProblemLoading } = useSubmitProblem();
-  const { data: allPlaylists } = useGetAllPlaylists();
+  // const { data: allPlaylists } = useGetAllPlaylists();
 
   const { codeMap, lastEditedLanguage } = useCodeEditorStore();
 
@@ -334,7 +320,7 @@ const LeetCodeInterface = () => {
       </div>
 
       {/* Modal */}
-      <PlaylistModal allPlaylists={allPlaylists?.data} {...{ problemId }} />
+      <PlaylistModal allPlaylists={myPlaylists} {...{ problemId }} />
     </div>
   );
 };

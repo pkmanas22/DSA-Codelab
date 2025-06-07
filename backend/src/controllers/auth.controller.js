@@ -98,6 +98,7 @@ export const login = async (req, res) => {
             problem: true,
           },
         },
+        playlists: true,
       },
     });
 
@@ -133,6 +134,8 @@ export const login = async (req, res) => {
       maxAge: 1000 * 60 * 60 * 24 * 7,
     });
 
+    // console.log(user);
+
     const problemsSolved = user.problemsSolved?.map((p) => p.problemId);
 
     return res.status(200).json({
@@ -145,6 +148,7 @@ export const login = async (req, res) => {
         email: user.email,
         imageUrl: user.imageUrl,
         problemsSolved,
+        playlists: user.playlists?.map((p) => ({ id: p.id, name: p.name })),
       },
     });
   } catch (error) {
@@ -181,7 +185,58 @@ export const logout = async (req, res) => {
 
 export const profile = async (req, res) => {
   try {
-    const user = req.user;
+    const { id: userId } = req.user;
+
+    const user = await db.user.findUnique({
+      where: { id: userId },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        role: true,
+        imageUrl: true,
+        createdAt: true,
+
+        problemsSolved: {
+          select: {
+            id: true,
+            createdAt: true,
+            problem: {
+              select: {
+                id: true,
+                title: true,
+                difficulty: true,
+              },
+            },
+          },
+        },
+        submissions: {
+          select: {
+            id: true,
+            status: true,
+            language: true,
+            createdAt: true,
+            problem: {
+              select: {
+                title: true,
+              },
+            },
+          },
+        },
+        playlists: {
+          select: {
+            name: true,
+            id: true,
+            createdAt: true,
+            problems: {
+              select: {
+                id: true,
+              },
+            },
+          },
+        },
+      },
+    });
 
     if (!user) {
       return res.status(401).json({

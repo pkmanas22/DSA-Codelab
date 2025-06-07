@@ -34,7 +34,7 @@ function App() {
           <Route path={routes.problems.all} element={<ProblemSet />} />
 
           <Route element={<ProtectedRoute allowedRoles={['USER', 'ADMIN']} />}>
-            {/* <Route path={routes.profile} element={<Profile />} /> */}
+            <Route path={routes.profile} element={<Profile />} />
 
             <Route path={routes.submissions.all} element={<SubmissionsSet />} />
             <Route path={routes.submissions.submission} element={<Submission />} />
