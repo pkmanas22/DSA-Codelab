@@ -143,6 +143,9 @@ export const getAllProblems = async (req, res) => {
         tags: true,
         companies: true,
       },
+      orderBy: {
+        createdAt: 'desc',
+      },
     });
 
     if (!problems || problems.length === 0) {

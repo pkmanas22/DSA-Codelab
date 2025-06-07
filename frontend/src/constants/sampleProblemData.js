@@ -1,447 +1,3 @@
-export const sampleDPData = {
-  title: 'Climbing Stairs',
-  category: 'dp', // Dynamic Programming
-  description:
-    'You are climbing a staircase. It takes n steps to reach the top. Each time you can either climb 1 or 2 steps. In how many distinct ways can you climb to the top?',
-  difficulty: 'EASY',
-  tags: ['Dynamic Programming', 'Math', 'Memoization'],
-  constraints: '1 <= n <= 45',
-  hints: 'To reach the nth step, you can either come from the (n-1)th step or the (n-2)th step.',
-  editorial:
-    'This is a classic dynamic programming problem. The number of ways to reach the nth step is the sum of the number of ways to reach the (n-1)th step and the (n-2)th step, forming a Fibonacci-like sequence.',
-  testcases: [
-    {
-      input: '2',
-      output: '2',
-    },
-    {
-      input: '3',
-      output: '3',
-    },
-    {
-      input: '4',
-      output: '5',
-    },
-  ],
-  examples: [
-    {
-      input: 'n = 2',
-      output: '2',
-      explanation: 'There are two ways to climb to the top:\n1. 1 step + 1 step\n2. 2 steps',
-    },
-    {
-      input: 'n = 3',
-      output: '3',
-      explanation:
-        'There are three ways to climb to the top:\n1. 1 step + 1 step + 1 step\n2. 1 step + 2 steps\n3. 2 steps + 1 step',
-    },
-    {
-      input: 'n = 4',
-      output: '5',
-      explanation:
-        'There are five ways to climb to the top:\n1. 1 step + 1 step + 1 step + 1 step\n2. 1 step + 1 step + 2 steps\n3. 1 step + 2 steps + 1 step\n4. 2 steps + 1 step + 1 step\n5. 2 steps + 2 steps',
-    },
-  ],
-  codeSnippets: {
-    JAVASCRIPT: `/**
-  * @param {number} n
-  * @return {number}
-  */
-  function climbStairs(n) {
-  // Write your code here
-  }
-  
-  // Parse input and execute
-  const readline = require('readline');
-  const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout,
-  terminal: false
-  });
-  
-  rl.on('line', (line) => {
-  const n = parseInt(line.trim());
-  const result = climbStairs(n);
-  
-  console.log(result);
-  rl.close();
-  });`,
-    PYTHON: `class Solution:
-    def climbStairs(self, n: int) -> int:
-        # Write your code here
-        pass
-  
-  # Input parsing
-  if __name__ == "__main__":
-    import sys
-    
-    # Parse input
-    n = int(sys.stdin.readline().strip())
-    
-    # Solve
-    sol = Solution()
-    result = sol.climbStairs(n)
-    
-    # Print result
-    print(result)`,
-    JAVA: `import java.util.Scanner;
-  
-  class Main {
-    public int climbStairs(int n) {
-        // Write your code here
-        return 0;
-    }
-    
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        int n = Integer.parseInt(scanner.nextLine().trim());
-        
-        // Use Main class instead of Solution
-        Main main = new Main();
-        int result = main.climbStairs(n);
-        
-        System.out.println(result);
-        scanner.close();
-    }
-  }`,
-  },
-  referenceSolutions: {
-    JAVASCRIPT: `/**
-  * @param {number} n
-  * @return {number}
-  */
-  function climbStairs(n) {
-  // Base cases
-  if (n <= 2) {
-    return n;
-  }
-  
-  // Dynamic programming approach
-  let dp = new Array(n + 1);
-  dp[1] = 1;
-  dp[2] = 2;
-  
-  for (let i = 3; i <= n; i++) {
-    dp[i] = dp[i - 1] + dp[i - 2];
-  }
-  
-  return dp[n];
-  
-  /* Alternative approach with O(1) space
-  let a = 1; // ways to climb 1 step
-  let b = 2; // ways to climb 2 steps
-  
-  for (let i = 3; i <= n; i++) {
-    let temp = a + b;
-    a = b;
-    b = temp;
-  }
-  
-  return n === 1 ? a : b;
-  */
-  }
-  
-  // Parse input and execute
-  const readline = require('readline');
-  const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout,
-  terminal: false
-  });
-  
-  rl.on('line', (line) => {
-  const n = parseInt(line.trim());
-  const result = climbStairs(n);
-  
-  console.log(result);
-  rl.close();
-  });`,
-    PYTHON: `class Solution:
-    def climbStairs(self, n: int) -> int:
-        # Base cases
-        if n <= 2:
-            return n
-        
-        # Dynamic programming approach
-        dp = [0] * (n + 1)
-        dp[1] = 1
-        dp[2] = 2
-        
-        for i in range(3, n + 1):
-            dp[i] = dp[i - 1] + dp[i - 2]
-        
-        return dp[n]
-        
-        # Alternative approach with O(1) space
-        # a, b = 1, 2
-        # 
-        # for i in range(3, n + 1):
-        #     a, b = b, a + b
-        # 
-        # return a if n == 1 else b
-  
-  # Input parsing
-  if __name__ == "__main__":
-    import sys
-    
-    # Parse input
-    n = int(sys.stdin.readline().strip())
-    
-    # Solve
-    sol = Solution()
-    result = sol.climbStairs(n)
-    
-    # Print result
-    print(result)`,
-    JAVA: `import java.util.Scanner;
-  
-  class Main {
-    public int climbStairs(int n) {
-        // Base cases
-        if (n <= 2) {
-            return n;
-        }
-        
-        // Dynamic programming approach
-        int[] dp = new int[n + 1];
-        dp[1] = 1;
-        dp[2] = 2;
-        
-        for (int i = 3; i <= n; i++) {
-            dp[i] = dp[i - 1] + dp[i - 2];
-        }
-        
-        return dp[n];
-        
-        /* Alternative approach with O(1) space
-        int a = 1; // ways to climb 1 step
-        int b = 2; // ways to climb 2 steps
-        
-        for (int i = 3; i <= n; i++) {
-            int temp = a + b;
-            a = b;
-            b = temp;
-        }
-        
-        return n == 1 ? a : b;
-        */
-    }
-    
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        int n = Integer.parseInt(scanner.nextLine().trim());
-        
-        // Use Main class instead of Solution
-        Main main = new Main();
-        int result = main.climbStairs(n);
-        
-        System.out.println(result);
-        scanner.close();
-    }
-  }`,
-  },
-};
-
-// Sample problem data for another type of question
-// export const sampleStringProblem = {
-//   title: 'Valid Palindrome',
-//   description:
-//     'A phrase is a palindrome if, after converting all uppercase letters into lowercase letters and removing all non-alphanumeric characters, it reads the same forward and backward. Alphanumeric characters include letters and numbers. Given a string s, return true if it is a palindrome, or false otherwise.',
-//   difficulty: 'EASY',
-//   tags: ['String', 'Two Pointers'],
-//   constraints: '1 <= s.length <= 2 * 10^5\ns consists only of printable ASCII characters.',
-//   hints:
-//     'Consider using two pointers, one from the start and one from the end, moving towards the center.',
-//   editorial:
-//     'We can use two pointers approach to check if the string is a palindrome. One pointer starts from the beginning and the other from the end, moving towards each other.',
-//   testcases: [
-//     {
-//       input: 'A man, a plan, a canal: Panama',
-//       output: 'true',
-//     },
-//     {
-//       input: 'race a car',
-//       output: 'false',
-//     },
-//     {
-//       input: ' ',
-//       output: 'true',
-//     },
-//   ],
-//   examples: [
-//     {
-//       input: 's = "A man, a plan, a canal: Panama"',
-//       output: 'true',
-//       explanation: '"amanaplanacanalpanama" is a palindrome.',
-//     },
-//     {
-//       input: 's = "A man, a plan, a canal: Panama"',
-//       output: 'true',
-//       explanation: '"amanaplanacanalpanama" is a palindrome.',
-//     },
-//     {
-//       input: 's = "A man, a plan, a canal: Panama"',
-//       output: 'true',
-//       explanation: '"amanaplanacanalpanama" is a palindrome.',
-//     },
-//   ],
-//   codeSnippets: {
-//     JAVASCRIPT: `/**
-//      * @param {string} s
-//      * @return {boolean}
-//      */
-//     function isPalindrome(s) {
-//       // Write your code here
-//     }
-
-//     // Add readline for dynamic input handling
-//     const readline = require('readline');
-//     const rl = readline.createInterface({
-//       input: process.stdin,
-//       output: process.stdout,
-//       terminal: false
-//     });
-
-//     // Process input line
-//     rl.on('line', (line) => {
-//       // Call solution with the input string
-//       const result = isPalindrome(line);
-
-//       // Output the result
-//       console.log(result ? "true" : "false");
-//       rl.close();
-//     });`,
-//     PYTHON: `class Solution:
-//         def isPalindrome(self, s: str) -> bool:
-//             # Write your code here
-//             pass
-
-//     # Input parsing
-//     if __name__ == "__main__":
-//         import sys
-//         # Read the input string
-//         s = sys.stdin.readline().strip()
-
-//         # Call solution
-//         sol = Solution()
-//         result = sol.isPalindrome(s)
-
-//         # Output result
-//         print(str(result).lower())  # Convert True/False to lowercase true/false`,
-//     JAVA: `import java.util.Scanner;
-
-//   public class Main {
-//       public static String preprocess(String s) {
-//           return s.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
-//       }
-
-//       public static boolean isPalindrome(String s) {
-
-//       }
-
-//       public static void main(String[] args) {
-//           Scanner sc = new Scanner(System.in);
-//           String input = sc.nextLine();
-
-//           boolean result = isPalindrome(input);
-//           System.out.println(result ? "true" : "false");
-//       }
-//   }
-//   `,
-//   },
-//   referenceSolutions: {
-//     JAVASCRIPT: `/**
-//      * @param {string} s
-//      * @return {boolean}
-//      */
-//     function isPalindrome(s) {
-//       // Convert to lowercase and remove non-alphanumeric characters
-//       s = s.toLowerCase().replace(/[^a-z0-9]/g, '');
-
-//       // Check if it's a palindrome
-//       let left = 0;
-//       let right = s.length - 1;
-
-//       while (left < right) {
-//         if (s[left] !== s[right]) {
-//           return false;
-//         }
-//         left++;
-//         right--;
-//       }
-
-//       return true;
-//     }
-
-//     // Add readline for dynamic input handling
-//     const readline = require('readline');
-//     const rl = readline.createInterface({
-//       input: process.stdin,
-//       output: process.stdout,
-//       terminal: false
-//     });
-
-//     // Process input line
-//     rl.on('line', (line) => {
-//       // Call solution with the input string
-//       const result = isPalindrome(line);
-
-//       // Output the result
-//       console.log(result ? "true" : "false");
-//       rl.close();
-//     });`,
-//     PYTHON: `class Solution:
-//         def isPalindrome(self, s: str) -> bool:
-//             # Convert to lowercase and keep only alphanumeric characters
-//             filtered_chars = [c.lower() for c in s if c.isalnum()]
-
-//             # Check if it's a palindrome
-//             return filtered_chars == filtered_chars[::-1]
-
-//     # Input parsing
-//     if __name__ == "__main__":
-//         import sys
-//         # Read the input string
-//         s = sys.stdin.readline().strip()
-
-//         # Call solution
-//         sol = Solution()
-//         result = sol.isPalindrome(s)
-
-//         # Output result
-//         print(str(result).lower())  # Convert True/False to lowercase true/false`,
-//     JAVA: `import java.util.Scanner;
-
-//   public class Main {
-//       public static String preprocess(String s) {
-//           return s.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
-//       }
-
-//       public static boolean isPalindrome(String s) {
-//           s = preprocess(s);
-//           int left = 0, right = s.length() - 1;
-
-//           while (left < right) {
-//               if (s.charAt(left) != s.charAt(right)) return false;
-//               left++;
-//               right--;
-//           }
-
-//           return true;
-//       }
-
-//       public static void main(String[] args) {
-//           Scanner sc = new Scanner(System.in);
-//           String input = sc.nextLine();
-
-//           boolean result = isPalindrome(input);
-//           System.out.println(result ? "true" : "false");
-//       }
-//   }
-//   `,
-//   },
-// };
-
 export const sampleStringProblem = {
   title: 'Check Palindrome',
   description:
@@ -538,5 +94,60 @@ public class Main {
         System.out.println(s.equals(reversed));
     }
 }`,
+  },
+};
+
+export const sampleDPData = {
+  title: 'Number of Islands',
+  description:
+    "You are given a 2D grid of '1's (land) and '0's (water). An island is surrounded by water and is formed by connecting adjacent lands horizontally or vertically. Count the number of islands.\n\nInput Format:\n- The first line contains two integers, M and N, the number of rows and columns.\n- The next M lines each contain a string of length N consisting of '1's and '0's.\n\nOutput Format:\n- A single integer representing the total number of islands in the grid.",
+  difficulty: 'MEDIUM',
+  tags: ['Graph', 'Breadth-First Search'],
+  constraints: '1 <= M, N <= 300',
+  companies: ['Amazon', 'Google', 'Microsoft'],
+  hints:
+    'Use BFS or DFS to traverse each island and mark visited cells to avoid counting the same island multiple times.',
+  editorial:
+    "Iterate over each cell; when you find a '1', initiate a BFS/DFS to mark all connected lands as visited. Increase the island count by one each time a new '1' is found unvisited.",
+  examples: [
+    {
+      input: '4 5\n11000\n11000\n00100\n00011',
+      output: '3',
+      explanation: 'There are three islands in the grid.',
+    },
+    {
+      input: '3 3\n111\n010\n111',
+      output: '1',
+      explanation: "All '1's are connected as a single island.",
+    },
+    {
+      input: '1 1\n0',
+      output: '0',
+      explanation: 'No land cells, so zero islands.',
+    },
+  ],
+  testcases: [
+    { input: '4 5\n11000\n11000\n00100\n00011', output: '3' },
+    { input: '3 3\n111\n010\n111', output: '1' },
+    { input: '1 1\n0', output: '0' },
+    { input: '5 5\n11111\n10001\n10101\n10001\n11111', output: '1' },
+    { input: '3 4\n1001\n0000\n1001', output: '4' },
+    { input: '2 2\n11\n11', output: '1' },
+    { input: '2 2\n10\n01', output: '2' },
+    { input: '3 3\n000\n000\n000', output: '0' },
+  ],
+  codeSnippets: {
+    JAVASCRIPT:
+      "// Write your code here\nfunction solution(input) {\n  // your logic here\n\n}\n\n// Do not remove below lines\nconst input = require('fs').readFileSync(0, 'utf-8').trim();\nconsole.log(solution(input));",
+    PYTHON:
+      '# Write your code here\ndef solution(input):\n  # your logic here\n  pass\n\n# Do not remove below lines\nimport sys\ninput = sys.stdin.read().strip()\nprint(solution(input))',
+    JAVA: '// Write your code here\nimport java.util.*;\n\npublic class Main {\n  public static int solution(String input) {\n    // your logic here\n    return 0;\n  }\n\n  public static void main(String[] args) {\n    Scanner sc = new Scanner(System.in);\n    StringBuilder sb = new StringBuilder();\n    int M = sc.nextInt();\n    int N = sc.nextInt();\n    sc.nextLine();\n    sb.append(M).append(" ").append(N).append("\\n");\n    for (int i = 0; i < M; i++) {\n      sb.append(sc.nextLine()).append("\\n");\n    }\n    return solution(sb.toString().trim());\n  }\n}',
+  },
+  referenceSolutions: {
+    JAVASCRIPT:
+      "function solution(input) {\n  const lines = input.split('\\n');\n  const [M, N] = lines[0].split(' ').map(Number);\n  const grid = lines.slice(1).map(line => line.split(''));\n\n  const visited = Array.from({ length: M }, () => Array(N).fill(false));\n  const directions = [[1,0], [-1,0], [0,1], [0,-1]];\n\n  let count = 0;\n\n  function bfs(r, c) {\n    const queue = [[r, c]];\n    visited[r][c] = true;\n\n    while (queue.length) {\n      const [x, y] = queue.shift();\n      for (const [dx, dy] of directions) {\n        const nx = x + dx, ny = y + dy;\n        if (nx >= 0 && nx < M && ny >= 0 && ny < N && !visited[nx][ny] && grid[nx][ny] === '1') {\n          visited[nx][ny] = true;\n          queue.push([nx, ny]);\n        }\n      }\n    }\n  }\n\n  for (let i = 0; i < M; i++) {\n    for (let j = 0; j < N; j++) {\n      if (grid[i][j] === '1' && !visited[i][j]) {\n        bfs(i, j);\n        count++;\n      }\n    }\n  }\n\n  return count.toString();\n}\n\nconst input = require('fs').readFileSync(0, 'utf-8').trim();\nconsole.log(solution(input));",
+    PYTHON:
+      "def solution(input):\n  lines = input.split('\\n')\n  M, N = map(int, lines[0].split())\n  grid = [list(line) for line in lines[1:]]\n\n  visited = [[False]*N for _ in range(M)]\n  directions = [(1,0), (-1,0), (0,1), (0,-1)]\n\n  def bfs(r, c):\n    queue = [(r, c)]\n    visited[r][c] = True\n\n    while queue:\n      x, y = queue.pop(0)\n      for dx, dy in directions:\n        nx, ny = x + dx, y + dy\n        if 0 <= nx < M and 0 <= ny < N and not visited[nx][ny] and grid[nx][ny] == '1':\n          visited[nx][ny] = True\n          queue.append((nx, ny))\n\n  count = 0\n  for i in range(M):\n    for j in range(N):\n      if grid[i][j] == '1' and not visited[i][j]:\n        bfs(i, j)\n        count += 1\n\n  return str(count)\n\nimport sys\ninput = sys.stdin.read().strip()\nprint(solution(input))",
+    JAVA: 'import java.util.*;\n\npublic class Main {\n  public static int solution(String input) {\n    String[] lines = input.split("\\n");\n    String[] firstLine = lines[0].split(" ");\n    int M = Integer.parseInt(firstLine[0]);\n    int N = Integer.parseInt(firstLine[1]);\n\n    char[][] grid = new char[M][N];\n    for (int i = 0; i < M; i++) {\n      grid[i] = lines[i+1].toCharArray();\n    }\n\n    boolean[][] visited = new boolean[M][N];\n    int count = 0;\n\n    int[][] directions = {{1,0},{-1,0},{0,1},{0,-1}};\n\n    for (int i = 0; i < M; i++) {\n      for (int j = 0; j < N; j++) {\n        if (grid[i][j] == \'1\' && !visited[i][j]) {\n          bfs(grid, visited, i, j, M, N, directions);\n          count++;\n        }\n      }\n    }\n\n    return count;\n  }\n\n  private static void bfs(char[][] grid, boolean[][] visited, int r, int c, int M, int N, int[][] directions) {\n    Queue<int[]> queue = new LinkedList<>();\n    queue.offer(new int[]{r, c});\n    visited[r][c] = true;\n\n    while (!queue.isEmpty()) {\n      int[] curr = queue.poll();\n      for (int[] dir : directions) {\n        int nr = curr[0] + dir[0];\n        int nc = curr[1] + dir[1];\n        if (nr >= 0 && nr < M && nc >= 0 && nc < N && !visited[nr][nc] && grid[nr][nc] == \'1\') {\n          visited[nr][nc] = true;\n          queue.offer(new int[]{nr, nc});\n        }\n      }\n    }\n  }\n\n  public static void main(String[] args) {\n    Scanner sc = new Scanner(System.in);\n    int M = sc.nextInt();\n    int N = sc.nextInt();\n    sc.nextLine();\n    StringBuilder sb = new StringBuilder();\n    sb.append(M).append(" ").append(N).append("\\n");\n    for (int i = 0; i < M; i++) {\n      sb.append(sc.nextLine()).append("\\n");\n    }\n    System.out.println(solution(sb.toString().trim()));\n  }\n}',
   },
 };

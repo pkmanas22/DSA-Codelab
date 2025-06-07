@@ -4,10 +4,12 @@ import toast from 'react-hot-toast';
 import { useCreatePlaylist } from '../../hooks/reactQuery/usePlaylistApi';
 import queryClient from '../../utils/queryClient';
 import { QUERY_KEYS } from '../../constants/keys';
+import { useAuthStore } from '../../stores/useAuthStore';
 
 const CreatePlaylistModal = ({ modalId = 'create_playlist' }) => {
   const [formData, setFormData] = useState({ name: '', description: '' });
   const { mutate: createPlaylist } = useCreatePlaylist();
+  const { addPlaylist } = useAuthStore();
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
@@ -18,12 +20,13 @@ const CreatePlaylistModal = ({ modalId = 'create_playlist' }) => {
     }
 
     createPlaylist(formData, {
-      onSuccess: ({ message }) => {
+      onSuccess: ({ message, data }) => {
         toast.success(message || 'Playlist created successfully');
         setFormData({ name: '', description: '' });
         const modal = document.getElementById(modalId);
         if (modal) modal.close();
         queryClient.invalidateQueries(QUERY_KEYS.PLAYLISTS);
+        addPlaylist({ id: data?.id, name: data?.name });
       },
       onError: (err) => {
         toast.error(err.response?.data?.error || 'Something went wrong');

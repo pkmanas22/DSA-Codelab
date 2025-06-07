@@ -18,7 +18,7 @@ const PlaylistSet = () => {
 
   const navigate = useNavigate();
 
-  const { isAuthenticated } = useAuthStore();
+  const { isAuthenticated, removePlaylist } = useAuthStore();
 
   const handleDeletePlaylist = (id) => {
     if (!id) {
@@ -29,6 +29,7 @@ const PlaylistSet = () => {
       onSuccess: ({ message }) => {
         toast.success(message || 'Playlist deleted successfully');
         queryClient.invalidateQueries(QUERY_KEYS.PLAYLISTS);
+        removePlaylist(id);
       },
       onError: (err) => {
         toast.error(err?.response?.data?.error || 'Something went wrong');

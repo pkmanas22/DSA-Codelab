@@ -27,14 +27,14 @@ const CopyButton = ({ text, size = 'sm' }) => {
   return (
     <button
       onClick={() => copyToClipBoard(text)}
-      className={`
+      className={`tooltip tooltip-bottom
         btn btn-ghost btn-xs p-1 h-auto min-h-0 
         hover:bg-primary/10 
         transition-all duration-200 
         ${isCopied ? 'text-success' : 'text-base-content/60 hover:text-primary'}
       `}
       disabled={isCopied}
-      title={isCopied ? 'Copied!' : 'Copy to clipboard'}
+      data-tip="Copy to clipboard"
     >
       {isCopied ? (
         <CheckCircle2 className={`${sizeClasses[size]} animate-pulse`} />

@@ -131,7 +131,9 @@ const Contents = ({
                 {/* Description */}
                 <div className="card bg-base-100 shadow-xl">
                   <div className="card-body p-2">
-                    <p className="text-sm leading-relaxed">{description}</p>
+                    <pre className="text-sm leading-relaxed text-pretty font-sans">
+                      {description}
+                    </pre>
                   </div>
                 </div>
 
@@ -159,7 +161,7 @@ const Contents = ({
                     <div className="card-body p-4">
                       <h3 className="font-semibold text-sm mb-2">Constraints</h3>
                       <div className="bg-base-200 rounded p-2">
-                        <div className="text-xs">{constraints}</div>
+                        <pre className="text-xs text-pretty">{constraints}</pre>
                       </div>
                     </div>
                   </div>
@@ -280,7 +282,7 @@ const Contents = ({
                     <div className="border border-base-300 rounded-lg p-3">
                       <h4 className="text-center font-semibold">Memory</h4>
                       <p className="text-center p-2 text-2xl text-white">
-                        {submissionData?.memory} KB
+                        {(parseInt(submissionData?.memory) / 1024).toFixed(2)} KB
                       </p>
                     </div>
                   </div>

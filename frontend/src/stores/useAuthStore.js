@@ -27,6 +27,18 @@ export const useAuthStore = create(
           set({ problemsSolved: [...current, problemId] });
         }
       },
+
+      addPlaylist: ({ id, name }) => {
+        const current = get().playlists;
+        if (!current.find((playlist) => playlist.id === id)) {
+          set({ playlists: [...current, { id, name }] });
+        }
+      },
+
+      removePlaylist: (id) => {
+        const current = get().playlists;
+        set({ playlists: current.filter((playlist) => playlist.id !== id) });
+      },
     }),
     {
       name: 'x-auth-store',

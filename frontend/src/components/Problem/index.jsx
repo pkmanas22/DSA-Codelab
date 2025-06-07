@@ -283,7 +283,7 @@ const LeetCodeInterface = () => {
           </Panel>
 
           <PanelResizeHandle className="w-4 flex justify-center items-center">
-            <div className="h-20 w-1 bg-base-300 hover:bg-primary transition-colors rounded-full" />
+            <div className="h-20 w-1  bg-secondary hover:bg-primary transition-colors rounded-full" />
           </PanelResizeHandle>
 
           {/* Right Panel - Code Editor and Tests */}
@@ -301,7 +301,7 @@ const LeetCodeInterface = () => {
               </Panel>
 
               <PanelResizeHandle className="h-4 flex justify-center items-center">
-                <div className="w-20 h-1 bg-base-300 hover:bg-primary transition-colors rounded-full" />
+                <div className="w-20 h-1 bg-secondary hover:bg-primary transition-colors rounded-full" />
               </PanelResizeHandle>
 
               {/* Test Cases */}

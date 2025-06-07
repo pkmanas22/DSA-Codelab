@@ -200,7 +200,7 @@ export const profile = async (req, res) => {
         problemsSolved: {
           select: {
             id: true,
-            createdAt: true,
+            updatedAt: true,
             problem: {
               select: {
                 id: true,

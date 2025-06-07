@@ -68,9 +68,51 @@ export const DEFAULT_PROBLEM_VALUES = {
     { input: '', output: '', explanation: '' },
   ],
   codeSnippets: {
-    JAVASCRIPT: 'function solution() {\n  // Write your code here\n}',
-    PYTHON: 'def solution():\n    # Write your code here\n    pass',
-    JAVA: 'public class Solution {\n    public static void main(String[] args) {\n        // Write your code here\n    }\n}',
+    JAVASCRIPT: `
+// Write your code here
+function houseRobber(nums) {
+  // your logic here
+}
+
+// Do not remove the below lines
+const input = require('fs').readFileSync(0, 'utf-8').trim();
+const nums = JSON.parse(input);
+console.log(houseRobber(nums));`,
+    PYTHON: `
+# Write your code here
+def houseRobber(nums):
+  # your logic here
+  pass
+
+# Do not remove the below lines
+import sys, json
+nums = json.loads(sys.stdin.read().strip())
+print(houseRobber(nums))`,
+    JAVA: `
+// Write your code here
+import java.util.*;
+
+public class Solution {
+  public static int houseRobber(int[] nums) {
+    // your logic here
+    return 0;
+  }
+
+  // Do not remove the below main method
+  public static void main(String[] args) {
+    Scanner sc = new Scanner(System.in);
+    String line = sc.nextLine();
+    line = line.substring(1, line.length() - 1);
+    String[] parts = line.split(",");
+    int[] nums = new int[parts.length];
+    for (int i = 0; i < parts.length; i++) {
+      nums[i] = Integer.parseInt(parts[i].trim());
+    }
+
+    int result = houseRobber(nums);
+    System.out.println(result);
+  }
+}`,
   },
   referenceSolutions: {
     JAVASCRIPT: '// Add your reference solution here',

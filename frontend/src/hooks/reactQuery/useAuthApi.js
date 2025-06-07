@@ -12,6 +12,6 @@ export const useAuthProfile = () =>
   useQuery({
     queryKey: QUERY_KEYS.PROFILE,
     queryFn: () => authApis.profile(),
-    staleTime: 5 * 60 * 1000, // 5 minutes - clear query when logout
+    staleTime: 0, // 5 minutes - clear query when logout
     retry: false,
   });

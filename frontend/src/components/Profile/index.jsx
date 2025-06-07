@@ -38,6 +38,7 @@ import {
 import { useAuthProfile } from '../../hooks/reactQuery/useAuthApi';
 import { MyLoader } from '../common';
 import { useNavigate } from 'react-router-dom';
+import timeAgo from '../../utils/timeAgo';
 
 const UserProfilePage = () => {
   const [activeTab, setActiveTab] = useState('overview');
@@ -120,10 +121,10 @@ const UserProfilePage = () => {
   const recentProblems = profileData?.data?.problemsSolved
     .slice(-3)
     .reverse()
-    .map(({ problem, createdAt }) => ({
+    .map(({ problem, updatedAt }) => ({
       title: problem.title,
       difficulty: problem.difficulty.charAt(0) + problem.difficulty.slice(1).toLowerCase(),
-      solved: new Date(createdAt).toLocaleDateString(), // Optional: make it "x days ago"
+      solved: new Date(updatedAt).toLocaleDateString(), // Optional: make it "x days ago"
     }));
 
   const playlists = profileData?.data?.playlists.map(({ id, name, createdAt, problems }) => ({
@@ -449,7 +450,7 @@ const UserProfilePage = () => {
                                 <td>
                                   <span className="badge badge-ghost">{submission.language}</span>
                                 </td>
-                                <td className="text-base-content/60">{submission.time}</td>
+                                <td className="text-base-content/60">{timeAgo(submission.time)}</td>
                               </tr>
                             ))}
                           </tbody>
@@ -475,9 +476,9 @@ const UserProfilePage = () => {
                               <h4 className="font-semibold text-base mb-3">{problem.title}</h4>
                               <div className="flex justify-between items-center">
                                 {getDifficultyBadge(problem.difficulty)}
-                                <span className="text-sm text-base-content/60">
-                                  {problem.solved}
-                                </span>
+                                {/* <span className="text-sm text-base-content/60">
+                                  {timeAgo(problem.solved)}
+                                </span> */}
                               </div>
                             </div>
                           </div>

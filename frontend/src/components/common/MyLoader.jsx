@@ -11,10 +11,10 @@ const MyLoader = ({ text = 'Loading...' }) => {
         </div>
 
         {/* Loading Text */}
-        <p className="text-base-content/60 mb-4">{text}</p>
+        {/* <p className="text-base-content/60 mb-4">{text}</p> */}
 
         {/* DaisyUI Spinner */}
-        {/* <span className="loading loading-spinner loading-md text-primary"></span> */}
+        <span className="loading  loading-dots loading-md text-primary"></span>
       </div>
     </div>
   );
