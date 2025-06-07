@@ -262,13 +262,16 @@ const ProblemSet = () => {
                       </div>
                     </td>
 
-                    <td className="text-left">
+                    <td className="text-left ">
                       <Link
                         to={`/problems/${problem?.id}`}
-                        className="font-medium text-primary hover:text-primary-focus transition-colors"
+                        className="font-medium text-primary hover:text-primary-focus transition-colors mr-2"
                       >
                         {problem?.title}
                       </Link>
+                      {problem?.id === import.meta.env.VITE_DEMO_PROBLEM_ID && (
+                        <span className="badge badge-sm badge-info">Demo</span>
+                      )}
                     </td>
 
                     <td className="text-center">

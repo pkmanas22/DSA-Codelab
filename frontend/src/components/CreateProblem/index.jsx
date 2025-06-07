@@ -23,7 +23,11 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { zodProblemSchema } from '../../utils/zodSchema';
 import { useCreateProblem } from '../../hooks/reactQuery/useAdminApi';
 import { DEFAULT_PROBLEM_VALUES } from '../../constants/problemDetails';
-import { sampleDPData, sampleStringProblem } from '../../constants/sampleProblemData';
+import {
+  sampleDemoData,
+  sampleDPData,
+  sampleStringProblem,
+} from '../../constants/sampleProblemData';
 import {
   getFromLocalStorage,
   removeFromLocalStorage,
@@ -138,7 +142,7 @@ const CreateProblem = () => {
             </h2>
 
             <div className="flex flex-col md:flex-row gap-3 mt-4 md:mt-0">
-              <div className="join">
+              {/* <div className="join">
                 <button
                   type="button"
                   className={`btn join-item ${sampleType === 'DP' ? 'btn-active' : ''}`}
@@ -153,10 +157,19 @@ const CreateProblem = () => {
                 >
                   String Problem
                 </button>
-              </div>
-              <button type="button" className="btn btn-secondary gap-2" onClick={loadSampleData}>
+              </div> */}
+              <button
+                type="button"
+                className="btn btn-secondary gap-2"
+                onClick={() => {
+                  replaceTestCases(sampleDemoData?.testcases.map((test) => test));
+                  replaceExample(sampleDemoData?.examples.map((ex) => ex));
+
+                  reset(sampleDemoData);
+                }}
+              >
                 <Download className="w-4 h-4" />
-                Load {sampleType} Sample
+                Load Sample Data
               </button>
             </div>
           </div>
