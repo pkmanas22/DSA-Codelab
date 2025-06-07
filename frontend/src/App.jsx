@@ -25,10 +25,11 @@ function App() {
       <Toaster position="bottom-right" reverseOrder={true} />
       <Routes>
         <Route path={routes.problems.problem} element={<ProblemContentInterface />} />
+        <Route path={routes.login} element={<Login />} />
+        <Route path={routes.register} element={<Register />} />
+
         <Route path={routes.root} element={<Layout />}>
           <Route index element={<Home />} />
-          <Route path={routes.login} element={<Login />} />
-          <Route path={routes.register} element={<Register />} />
 
           <Route path={routes.problems.all} element={<ProblemSet />} />
 
