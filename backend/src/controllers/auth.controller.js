@@ -55,7 +55,7 @@ export const register = async (req, res) => {
     res.cookie('x-auth-token', token, {
       path: '/',
       httpOnly: true,
-      sameSite: 'strict',
+      sameSite: 'None',
       secure: process.env.NODE_ENV === 'production',
       maxAge: 1000 * 60 * 60 * 24 * 7,
     });
@@ -129,7 +129,7 @@ export const login = async (req, res) => {
     res.cookie('x-auth-token', token, {
       path: '/',
       httpOnly: true,
-      sameSite: 'strict',
+      sameSite: 'None',
       secure: process.env.NODE_ENV === 'production',
       maxAge: 1000 * 60 * 60 * 24 * 7,
     });
@@ -165,7 +165,7 @@ export const logout = async (req, res) => {
     res.clearCookie('x-auth-token', {
       path: '/',
       httpOnly: true,
-      sameSite: 'strict',
+      sameSite: 'None',
       secure: process.env.NODE_ENV === 'production',
       maxAge: 1000 * 60 * 60 * 24 * 7,
     });
