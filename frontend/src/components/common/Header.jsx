@@ -20,14 +20,15 @@ const Header = () => {
           {/* Logo */}
           <div className="flex items-center">
             <Link to={routes.root} className="btn btn-ghost text-xl font-bold normal-case">
-              <div className="avatar placeholder">
+              {/* <div className="avatar placeholder">
                 <div className="bg-gradient-to-br from-orange-600 to-orange-200 text-white rounded-full w-8 h-8">
                   <span className="text-sm font-bold">D</span>
                 </div>
               </div>
               <span className="hidden sm:inline bg-gradient-to-r from-orange-400 to-orange-200 bg-clip-text text-transparent">
                 DSA CodeLab
-              </span>
+              </span> */}
+              <img src="./logo.svg" className="w-40 h-12" />
             </Link>
           </div>
 
