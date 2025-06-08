@@ -1,67 +1,22 @@
-import {
-  Play,
-  Trophy,
-  Target,
-  Code,
-  Users,
-  Zap,
-  ArrowRight,
-  CheckCircle,
-  Sparkles,
-  Rocket,
-} from 'lucide-react';
+import { Play, Target, ArrowRight, Sparkles, Rocket } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useAuthStore } from '../../stores/useAuthStore';
+import { PLATFORM_FEATURES, PLATFORM_STATS } from '../../constants/platformFeature';
 
 const LandingPage = () => {
   const navigate = useNavigate();
 
-  const features = [
-    {
-      icon: <Code className="w-8 h-8 text-primary" />,
-      title: 'Interactive Coding',
-      description: 'Practice with real-world problems and get instant feedback on your solutions.',
-    },
-    {
-      icon: <Zap className="w-8 h-8 text-warning" />,
-      title: 'Auto Save',
-      description: 'Never lose your progress. Your code is automatically saved as you type.',
-    },
-    {
-      icon: <Target className="w-8 h-8 text-success" />,
-      title: '15+ Language Support',
-      description: 'Code in Python, JavaScript, and Java with full syntax highlighting.',
-    },
-    {
-      icon: <Play className="w-8 h-8 text-secondary" />,
-      title: 'Curated Playlists',
-      description: 'Expertly crafted problem sets designed to enhance your coding skills.',
-    },
-    {
-      icon: <Trophy className="w-8 h-8 text-primary" />,
-      title: 'Detailed Profile Statistics',
-      description:
-        'Comprehensive analytics to track your progress and identify areas for improvement.',
-    },
-    {
-      icon: <CheckCircle className="w-8 h-8 text-success" />,
-      title: 'Browse Problems Without Login',
-      description: 'Explore our extensive problem library before creating an account.',
-    },
-  ];
+  const { isAuthenticated } = useAuthStore();
 
-  const stats = [
-    { number: '50K+', label: 'Problems Solved', icon: <Target className="w-6 h-6 text-success" /> },
-    { number: '10K+', label: 'Active Users', icon: <Users className="w-6 h-6 text-primary" /> },
-    { number: '15+', label: 'Languages', icon: <Code className="w-6 h-6 text-warning" /> },
-    { number: '99.9%', label: 'Uptime', icon: <Zap className="w-6 h-6 text-info" /> },
-  ];
+  // console.log(isAuthenticated);
 
   return (
     <div className="min-h-screen bg-base-200">
       {/* Hero Section */}
       <div className="hero min-h-screen bg-gradient-to-br from-primary/20 via-base-200 to-secondary/20">
         <div className="hero-content text-center max-w-6xl mx-auto px-6">
-          <div className="space-y-8">
+          <div className="space-y-12">
+            {/* Hero Section */}
             <div className="space-y-4">
               <div className="flex justify-center mb-6">
                 <div className="p-6 bg-primary/10 rounded-full ring-4 ring-primary/20">
@@ -74,26 +29,65 @@ const LandingPage = () => {
               <h2 className="text-2xl md:text-3xl font-bold text-base-content">
                 One Problem at a Time
               </h2>
-              <p className="text-xl md:text-2xl text-base-content/70 max-w-3xl mx-auto">
+              <p className="text-lg md:text-xl text-base-content/70 max-w-2xl mx-auto">
                 Join thousands of developers sharpening their skills with our comprehensive coding
                 platform. Track progress, solve challenges, and level up your programming abilities.
               </p>
+
+              <p className="text-md md:text-lg text-success text-center font-medium mt-4">
+                🚀 Trusted by over 10,000 developers to ace coding interviews and competitive
+                programming.
+              </p>
             </div>
 
+            {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              {/* <button className="btn btn-primary btn-lg gap-2 shadow-lg hover:shadow-xl transition-all hover:scale-105">
-                <Play className="w-6 h-6" />
-                Start Coding Now
-                <ArrowRight className="w-5 h-5" />
-              </button> */}
-              <button
+              {isAuthenticated ? (
+                <a
+                  onClick={() => navigate('/profile')}
+                  className="btn btn-primary btn-md gap-2 shadow-lg hover:shadow-xl transition-all hover:scale-105"
+                >
+                  <Play className="w-6 h-6" />
+                  My Profile
+                  <ArrowRight className="w-5 h-5" />
+                </a>
+              ) : (
+                <a
+                  onClick={() => navigate('/register')}
+                  className="btn btn-primary btn-md gap-2 shadow-lg hover:shadow-xl transition-all hover:scale-105"
+                >
+                  <Play className="w-6 h-6" />
+                  Register
+                  <ArrowRight className="w-5 h-5" />
+                </a>
+              )}
+              <a
                 onClick={() => navigate('/problems')}
-                className="btn btn-outline btn-lg gap-2 hover:scale-105 transition-all"
+                className="btn btn-outline btn-md gap-2 hover:scale-105 transition-all"
               >
                 <Target className="w-6 h-6" />
                 Browse Problems
-              </button>
+              </a>
+              <a
+                href="#features"
+                className="btn btn-outline btn-md gap-2 hover:scale-105 transition-all"
+              >
+                <Sparkles className="w-6 h-6" />
+                Cool Features
+              </a>
             </div>
+
+            {!isAuthenticated && (
+              <div className="text-center text-base text-muted-foreground mt-4">
+                <span>🔍 Want to explore first? </span>
+                <button
+                  onClick={() => navigate('/problems')}
+                  className="link link-hover text-primary underline font-medium hover:text-secondary transition-colors"
+                >
+                  Check out problems before registering →
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -109,7 +103,7 @@ const LandingPage = () => {
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {stats.map((stat, index) => (
+            {PLATFORM_STATS.map((stat, index) => (
               <div
                 key={index}
                 className="card bg-base-200 shadow-xl hover:shadow-2xl transition-all hover:scale-105"
@@ -128,7 +122,7 @@ const LandingPage = () => {
       </div>
 
       {/* Features Section */}
-      <div className="py-20 bg-base-200">
+      <div className="py-20 bg-base-200" id="features">
         <div className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-16">
             <div className="flex justify-center mb-4">
@@ -143,7 +137,7 @@ const LandingPage = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {features.map((feature, index) => (
+            {PLATFORM_FEATURES.map((feature, index) => (
               <div
                 key={index}
                 className="card bg-base-100 shadow-xl hover:shadow-2xl transition-all hover:scale-[1.02]"

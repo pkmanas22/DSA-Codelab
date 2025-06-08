@@ -7,6 +7,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import toast from 'react-hot-toast';
 import { zodRegisterSchema } from '../../utils/zodSchema';
+import { PLATFORM_FEATURES } from '../../constants/platformFeature';
 
 const Register = () => {
   const { mutate: registerUser, isLoading } = useAuthRegister();
@@ -131,49 +132,34 @@ const Register = () => {
                     <BookOpen className="w-12 h-12 text-secondary" />
                   </div>
 
-                  <h3 className="text-3xl font-bold mb-4">Join 100,000+ Developers</h3>
+                  <h3 className="text-3xl font-bold mb-4 text-secondary">
+                    Start Your Coding Journey
+                  </h3>
 
                   <p className="text-lg text-base-content/70 mb-8">
-                    Start your journey to mastering Data Structures & Algorithms. Practice with our
-                    comprehensive collection of problems and land your dream job.
+                    Join 10K+ developers solving 2,800+ curated problems to master DSA and land your
+                    dream job.
                   </p>
 
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-3 justify-center lg:justify-start">
-                      <div className="p-2 bg-primary/10 rounded-lg">
-                        <Code2 className="w-5 h-5 text-primary" />
-                      </div>
-                      <span className="font-medium">2,800+ coding problems</span>
-                    </div>
-
-                    <div className="flex items-center gap-3 justify-center lg:justify-start">
-                      <div className="p-2 bg-info/10 rounded-lg">
-                        <Target className="w-5 h-5 text-info" />
-                      </div>
-                      <span className="font-medium">Interview-focused content</span>
-                    </div>
-
-                    <div className="flex items-center gap-3 justify-center lg:justify-start">
-                      <div className="p-2 bg-success/10 rounded-lg">
-                        <Trophy className="w-5 h-5 text-success" />
-                      </div>
-                      <span className="font-medium">Progress tracking & badges</span>
-                    </div>
+                  <div className="max-w-lg mx-auto">
+                    <h3 className="text-xl font-bold mb-6">Why Choose DSA CodeLab?</h3>
+                    <ul className="space-y-4">
+                      {PLATFORM_FEATURES.slice(0, 4).map((feature, idx) => (
+                        <li key={idx} className="flex gap-4 items-start text-sm">
+                          <div>{feature.icon}</div>
+                          <div>
+                            <h4 className="font-semibold">{feature.title}</h4>
+                            <p className="text-sm text-muted-foreground">{feature.description}</p>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
                   </div>
 
-                  <div className="grid grid-cols-3 gap-4 mt-8">
-                    <div className="text-center p-3 bg-base-100/50 rounded-lg backdrop-blur-sm">
-                      <div className="text-2xl font-bold text-primary">95%</div>
-                      <div className="text-xs text-base-content/60">Success Rate</div>
-                    </div>
-                    <div className="text-center p-3 bg-base-100/50 rounded-lg backdrop-blur-sm">
-                      <div className="text-2xl font-bold text-secondary">12</div>
-                      <div className="text-xs text-base-content/60">Languages</div>
-                    </div>
-                    <div className="text-center p-3 bg-base-100/50 rounded-lg backdrop-blur-sm">
-                      <div className="text-2xl font-bold text-success">24/7</div>
-                      <div className="text-xs text-base-content/60">Support</div>
-                    </div>
+                  <div className="mt-10 text-sm text-muted-foreground text-center lg:text-left">
+                    <Link to="/" className="underline text-primary">
+                      ← Back to Homepage
+                    </Link>
                   </div>
                 </div>
               </div>

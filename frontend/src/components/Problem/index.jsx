@@ -74,7 +74,7 @@ const LeetCodeInterface = () => {
       !languageId ||
       problem?.codeSnippets[SUPPORTED_LANGUAGES[0].value] === sourceCode
     ) {
-      toast.error('Looks like you have not written any code yet');
+      toast.error('Looks like you have not written any code yet, please write some code first');
       return;
     }
 
@@ -129,7 +129,7 @@ const LeetCodeInterface = () => {
       ...problem,
       testcases: data?.data?.testcases,
     });
-    console.log(data?.data?.testcases);
+    // console.log(data?.data?.testcases);
 
     if (!problemId || !lastEditedLanguage) return;
     const languageId = SUPPORTED_LANGUAGES.find((l) => l.value === lastEditedLanguage)?.id;
@@ -141,7 +141,7 @@ const LeetCodeInterface = () => {
       !languageId ||
       problem?.codeSnippets[SUPPORTED_LANGUAGES[0].value] === sourceCode
     ) {
-      toast.error('Looks like you have not written any code yet');
+      toast.error('Looks like you have not written any code yet, please write some code first');
       return;
     }
 
@@ -162,9 +162,8 @@ const LeetCodeInterface = () => {
           toast.error(res?.message || 'Something went wrong');
         } else {
           toast.success(res?.message || 'Submission successful');
+          addSolvedProblem(problemId);
         }
-
-        addSolvedProblem(problemId);
 
         setProblem({
           ...problem,

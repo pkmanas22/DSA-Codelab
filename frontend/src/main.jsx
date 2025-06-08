@@ -6,7 +6,6 @@ import { BrowserRouter } from 'react-router-dom';
 import { QueryClientProvider } from 'react-query';
 import queryClient from './utils/queryClient.js';
 import initializeAxios from './apis/axios.js';
-import { Analytics } from '@vercel/analytics/next';
 
 initializeAxios();
 
@@ -17,6 +16,5 @@ createRoot(document.getElementById('root')).render(
         <App />
       </BrowserRouter>
     </QueryClientProvider>
-    <Analytics />
   </StrictMode>
 );

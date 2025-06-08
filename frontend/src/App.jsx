@@ -18,15 +18,24 @@ import SubmissionsSet from './components/SubmissionsSet';
 import Submission from './components/Submission';
 import PlaylistSet from './components/PlaylistSet';
 import Playlist from './components/Playlist';
+import { useAuthStore } from './stores/useAuthStore';
 
 function App() {
+  const { isAuthenticated } = useAuthStore();
+
   return (
     <>
       <Toaster position="bottom-right" reverseOrder={true} />
       <Routes>
         <Route path={routes.problems.problem} element={<ProblemContentInterface />} />
-        <Route path={routes.login} element={<Login />} />
-        <Route path={routes.register} element={<Register />} />
+        <Route
+          path={routes.login}
+          element={isAuthenticated ? <Navigate to={routes.problems.all} /> : <Login />}
+        />
+        <Route
+          path={routes.register}
+          element={isAuthenticated ? <Navigate to={routes.problems.all} /> : <Register />}
+        />
 
         <Route path={routes.root} element={<Layout />}>
           <Route index element={<Home />} />

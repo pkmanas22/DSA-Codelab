@@ -7,6 +7,7 @@ import { zodLoginSchema } from '../../utils/zodSchema';
 import { useAuthStore } from '../../stores/useAuthStore';
 import toast from 'react-hot-toast';
 import { Link, useNavigate } from 'react-router-dom';
+import { PLATFORM_FEATURES } from '../../constants/platformFeature';
 
 const Login = () => {
   const { mutate: loginUser, isLoading } = useAuthLogin();
@@ -99,9 +100,9 @@ const Login = () => {
 
                   <p className="text-center mt-8 text-base-content/60">
                     Don't have an account?{' '}
-                    <a href="/register" className="link link-primary font-medium">
+                    <Link to="/register" className="link link-primary font-medium">
                       Create account
-                    </a>
+                    </Link>
                   </p>
                 </div>
               </div>
@@ -113,37 +114,35 @@ const Login = () => {
                     <Code2 className="w-12 h-12 text-primary" />
                   </div>
 
-                  <h3 className="text-3xl font-bold mb-4">Master DSA & Ace Your Interviews</h3>
+                  <h3 className="text-3xl font-bold mb-4 text-secondary">Master Coding </h3>
 
                   <p className="text-lg text-base-content/70 mb-8">
                     Practice with 2,800+ curated problems, from easy arrays to complex dynamic
                     programming. Build the skills top tech companies are looking for.
                   </p>
 
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-3 justify-center lg:justify-start">
-                      <div className="p-2 bg-success/10 rounded-lg">
-                        <Target className="w-5 h-5 text-success" />
-                      </div>
-                      <span className="font-medium">LeetCode-style problems</span>
-                    </div>
-
-                    <div className="flex items-center gap-3 justify-center lg:justify-start">
-                      <div className="p-2 bg-info/10 rounded-lg">
-                        <Code2 className="w-5 h-5 text-info" />
-                      </div>
-                      <span className="font-medium">12 programming languages</span>
-                    </div>
-
-                    <div className="flex items-center gap-3 justify-center lg:justify-start">
-                      <div className="p-2 bg-warning/10 rounded-lg">
-                        <Trophy className="w-5 h-5 text-warning" />
-                      </div>
-                      <span className="font-medium">Weekly contests & rankings</span>
-                    </div>
+                  <div className="max-w-lg mx-auto">
+                    <h3 className="text-xl font-bold mb-6">Why Choose DSA CodeLab?</h3>
+                    <ul className="space-y-4">
+                      {PLATFORM_FEATURES.slice(0, 4).map((feature, idx) => (
+                        <li key={idx} className="flex gap-4 items-start text-sm">
+                          <div>{feature.icon}</div>
+                          <div>
+                            <h4 className="font-semibold">{feature.title}</h4>
+                            <p className="text-sm text-muted-foreground">{feature.description}</p>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
                   </div>
 
-                  <div className="mt-8 p-4 bg-base-100/50 rounded-lg backdrop-blur-sm">
+                  <div className="mt-10 text-sm text-muted-foreground text-center lg:text-left">
+                    <Link to="/" className="underline text-primary">
+                      ← Back to Homepage
+                    </Link>
+                  </div>
+
+                  {/* <div className="mt-8 p-4 bg-base-100/50 rounded-lg backdrop-blur-sm">
                     <div className="flex items-center gap-3 mb-3">
                       <div className="avatar">
                         <div className="w-10 h-10 rounded-full">
@@ -164,7 +163,7 @@ const Login = () => {
                       "DSA CodeLab helped me crack FAANG interviews. The problem patterns are
                       spot-on!"
                     </p>
-                  </div>
+                  </div> */}
                 </div>
               </div>
             </div>
