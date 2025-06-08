@@ -9,7 +9,7 @@ const ChatbotWidget = () => {
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="tooltip tooltip-top fixed bottom-6 right-6 bg-gradient-to-br from-indigo-600 to-purple-600 text-white p-3 rounded-full shadow-2xl hover:scale-110 transition-transform duration-300 z-[9999] flex items-center gap-2 px-4 animate-bounce"
+          className="tooltip tooltip-top fixed bottom-6 right-6 bg-gradient-to-br from-indigo-600 to-purple-600 text-white p-3 rounded-full shadow-2xl hover:scale-110 transition-transform duration-300 z-[100] flex items-center gap-2 px-4 animate-bounce"
           title="Open AI Assistant"
           aria-label="Open AI Assistant"
           data-tip="Open AI Assistant"
