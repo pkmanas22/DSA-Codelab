@@ -23,20 +23,26 @@ const LandingPage = () => {
                   <Rocket className="w-16 h-16 text-primary" />
                 </div>
               </div>
+
               <h1 className="text-3xl md:text-5xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
                 Master Coding
               </h1>
+
               <h2 className="text-2xl md:text-3xl font-bold text-base-content">
                 One Problem at a Time
               </h2>
-              <p className="text-lg md:text-xl text-base-content/70 max-w-2xl mx-auto">
+
+              <p className="text-lg md:text-xl text-base-content/70 max-w-3xl mx-auto">
                 Join thousands of developers sharpening their skills with our comprehensive coding
-                platform. Track progress, solve challenges, and level up your programming abilities.
+                platform. Track progress, solve challenges, and level up your programming abilities
+                with the help of our built-in{' '}
+                <span className="text-primary font-semibold">AI mentor</span>—DSA CodeLab AI Bot.
+                Get hints, explanations, and pseudocode without spoilers.
               </p>
 
               <p className="text-md md:text-lg text-success text-center font-medium mt-4">
-                🚀 Trusted by over 10,000 developers to ace coding interviews and competitive
-                programming.
+                🚀 Trusted by over 10,000 developers—and now smarter with AI to help you learn
+                better, not just faster.
               </p>
             </div>
 

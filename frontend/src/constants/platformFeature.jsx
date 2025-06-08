@@ -16,9 +16,9 @@ import {
 
 export const PLATFORM_FEATURES = [
   {
-    icon: <Code className="w-8 h-8 text-primary" />,
-    title: 'Interactive Coding',
-    description: 'Practice with real-world problems and get instant feedback on your solutions.',
+    icon: <Sparkles className="w-8 h-8 text-purple-500" />,
+    title: 'AI Assistance',
+    description: 'Get hints, pseudocode, and step-by-step guidance from DSA CodeLab AI Bot',
   },
   {
     icon: <Zap className="w-8 h-8 text-warning" />,
@@ -30,6 +30,11 @@ export const PLATFORM_FEATURES = [
     title: 'Hidden Test Cases',
     description:
       'Test your code against hidden cases that aren’t visible to prevent hardcoded solutions.',
+  },
+  {
+    icon: <Layout className="w-8 h-8 text-primary" />,
+    title: 'Interactive Code Editor UI',
+    description: 'Enjoy a smooth and modern coding experience with our custom-built code editor.',
   },
   {
     icon: <Trophy className="w-8 h-8 text-primary" />,
@@ -57,11 +62,6 @@ export const PLATFORM_FEATURES = [
     icon: <Play className="w-8 h-8 text-secondary" />,
     title: 'Curated Playlists',
     description: 'Expertly crafted problem sets designed to enhance your coding skills.',
-  },
-  {
-    icon: <Layout className="w-8 h-8 text-indigo-500" />,
-    title: 'Sleek Code Editor UI',
-    description: 'Enjoy a smooth and modern coding experience with our custom-built code editor.',
   },
 ];
 
