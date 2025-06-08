@@ -148,52 +148,52 @@ export const sampleDPData = {
 };
 
 export const sampleDemoData = {
-  title: 'Sum of Digits',
+  title: 'Is Palindrome',
   description:
-    'Given a number as input, return the sum of its digits.\n\nInput Format:\n- A single line containing a non-negative integer.\n\nOutput Format:\n- A single integer representing the sum of digits of the input number.',
+    "Given a string, determine if it is a palindrome.\n\nA palindrome is a string that reads the same forward and backward.\n\nInput Format:\n- A single line containing the string s (1 <= s.length <= 1000). The string contains only lowercase English letters.\n\nOutput Format:\n- Print 'YES' if the string is a palindrome, otherwise print 'NO'.",
   difficulty: 'EASY',
-  tags: ['Math', 'String'],
-  constraints: '0 <= number <= 10^18',
-  companies: ['PayPal', 'Adobe', 'Microsoft', 'Google', 'Apple'],
-  hints: 'Convert the number to a string and iterate through each digit.',
+  tags: ['String'],
+  constraints: '1 <= s.length <= 1000',
+  companies: ['Amazon', 'Microsoft'],
+  hints: 'Use two pointers to compare characters from both ends moving inward.',
   editorial:
-    'You can solve this by converting the number to a string and summing each digit, or by repeatedly using modulo and division operations.',
+    'To check if a string is a palindrome, you can reverse it and compare with the original, or use two pointers starting from both ends and moving toward the center.',
   examples: [
     {
-      input: '12345',
-      output: '15',
-      explanation: '1+2+3+4+5 = 15',
+      input: 'madam',
+      output: 'YES',
+      explanation: "The string 'madam' reads the same forwards and backwards.",
     },
     {
-      input: '987',
-      output: '24',
-      explanation: '9+8+7 = 24',
+      input: 'racecar',
+      output: 'YES',
+      explanation: "'racecar' is also a palindrome.",
     },
   ],
   testcases: [
-    { input: '12345', output: '15' },
-    { input: '987', output: '24' },
-    { input: '0', output: '0' },
-    { input: '100000', output: '1' },
-    { input: '99999', output: '45' },
-    { input: '1111111111', output: '10' },
-    { input: '8008', output: '16' },
-    { input: '999999999999999999', output: '162' },
+    { input: 'madam', output: 'YES' },
+    { input: 'racecar', output: 'YES' },
+    { input: 'hello', output: 'NO' },
+    { input: 'world', output: 'NO' },
+    { input: 'noon', output: 'YES' },
+    { input: 'abcba', output: 'YES' },
+    { input: 'abcd', output: 'NO' },
+    { input: 'a', output: 'YES' },
+    { input: 'aa', output: 'YES' },
+    { input: 'ab', output: 'NO' },
   ],
   codeSnippets: {
     JAVASCRIPT:
-      "// Write your code here\nfunction solution(input) {\n  // Your logic\n  // Uncomment below line\n  // return [...input].reduce((sum, ch) => sum + Number(ch), 0);\n}\n\n// Do not remove below lines\nconst input = require('fs').readFileSync(0, 'utf-8').trim();\nconsole.log(solution(input));",
-
+      "// Write your code here\nfunction solution(input) {\n  // your logic here\n\n  // return \"YES\"    // for failing hidden testcase on submitting, otherwise leave as it is\n\n  const s = input;\n  const reversed = s.split('').reverse().join('');\n  return s === reversed ? \"YES\" : \"NO\";\n}\n\n// Do not remove below lines\nconst input = require('fs').readFileSync(0, 'utf-8').trim();\nconsole.log(solution(input));",
     PYTHON:
-      '# Write your code here\ndef solution(input):\n  # Your logic\n  # Uncomment below line\n  # return sum(int(ch) for ch in input)\n\n# Do not remove below lines\nimport sys\ninput = sys.stdin.read().strip()\nprint(solution(input))',
-
-    JAVA: "// Write your code here\nimport java.util.*;\n\npublic class Main {\n  public static int solution(String input) {\n    // Your logic\n    // Uncomment below line\n    // return input.chars().map(c -> c - '0').sum();\n  }\n\n  public static void main(String[] args) {\n    Scanner sc = new Scanner(System.in);\n    String input = sc.nextLine();\n    System.out.println(solution(input));\n  }\n}",
+      '# Write your code here\ndef solution(input):\n  # your logic here\n\n  # return "YES"    # for failing hidden testcase on submitting, otherwise leave as it is\n\n  s = input\n  return "YES" if s == s[::-1] else "NO"\n\n# Do not remove below lines\nimport sys\ninput = sys.stdin.read().strip()\nprint(solution(input))',
+    JAVA: '// Write your code here\nimport java.util.*;\n\npublic class Main {\n  public static String solution(String input) {\n    // your logic here\n\n    // return "YES";    // for failing hidden testcase on submitting, otherwise leave as it is\n\n    StringBuilder sb = new StringBuilder(input);\n    String reversed = sb.reverse().toString();\n    return input.equals(reversed) ? "YES" : "NO";\n  }\n\n  public static void main(String[] args) {\n    Scanner sc = new Scanner(System.in);\n    String input = sc.nextLine();\n    System.out.println(solution(input));\n  }\n}',
   },
   referenceSolutions: {
     JAVASCRIPT:
-      "function solution(input) {\n  return input.split('').reduce((sum, digit) => sum + Number(digit), 0);\n}\n\nconst input = require('fs').readFileSync(0, 'utf-8').trim();\nconsole.log(solution(input));",
+      "function solution(input) {\n  const s = input;\n  const reversed = s.split('').reverse().join('');\n  return s === reversed ? \"YES\" : \"NO\";\n}\n\nconst input = require('fs').readFileSync(0, 'utf-8').trim();\nconsole.log(solution(input));",
     PYTHON:
-      'def solution(input):\n  return sum(int(d) for d in input)\n\nimport sys\ninput = sys.stdin.read().strip()\nprint(solution(input))',
-    JAVA: "import java.util.*;\n\npublic class Main {\n  public static int solution(String input) {\n    int sum = 0;\n    for (char ch : input.toCharArray()) {\n      sum += ch - '0';\n    }\n    return sum;\n  }\n\n  public static void main(String[] args) {\n    Scanner sc = new Scanner(System.in);\n    String input = sc.nextLine();\n    System.out.println(solution(input));\n  }\n}",
+      'def solution(input):\n  s = input\n  return "YES" if s == s[::-1] else "NO"\n\nimport sys\ninput = sys.stdin.read().strip()\nprint(solution(input))',
+    JAVA: 'import java.util.*;\n\npublic class Main {\n  public static String solution(String input) {\n    StringBuilder sb = new StringBuilder(input);\n    String reversed = sb.reverse().toString();\n    return input.equals(reversed) ? "YES" : "NO";\n  }\n\n  public static void main(String[] args) {\n    Scanner sc = new Scanner(System.in);\n    String input = sc.nextLine();\n    System.out.println(solution(input));\n  }\n}',
   },
 };

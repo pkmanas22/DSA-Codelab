@@ -269,7 +269,7 @@ const ProblemSet = () => {
                       >
                         {problem?.title}
                       </Link>
-                      {problem?.id === import.meta.env.VITE_DEMO_PROBLEM_ID && (
+                      {import.meta.env.VITE_DEMO_PROBLEM_ID?.includes(problem?.id) && (
                         <span className="badge badge-sm badge-info">Demo</span>
                       )}
                     </td>
