@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { PanelGroup, Panel, PanelResizeHandle } from 'react-resizable-panels';
 import { Play, Upload, Home, List, BookmarkPlus } from 'lucide-react';
 import { useAuthStore } from '../../stores/useAuthStore';
-import { MyLoader, PageNotFound, PlaylistModal, RightSideNavbar } from '../common';
+import { ChatbotWidget, MyLoader, PageNotFound, PlaylistModal, RightSideNavbar } from '../common';
 import Contents from './Contents';
 import ProblemPageCodeEditor from './ProblemPageCodeEditor';
 import Testcases from './Testcases';
@@ -320,6 +320,8 @@ const LeetCodeInterface = () => {
 
       {/* Modal */}
       <PlaylistModal allPlaylists={myPlaylists} {...{ problemId }} />
+
+      {isAuthenticated && <ChatbotWidget />}
     </div>
   );
 };
