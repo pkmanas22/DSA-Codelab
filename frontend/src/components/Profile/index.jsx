@@ -215,7 +215,7 @@ const UserProfilePage = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-base-content/60">Total Submissions</p>
-                  {stats.totalSubmissions}
+                  <p className="text-3xl font-bold text-info">{stats.totalSubmissions}</p>
                 </div>
                 <div className="p-3 bg-info/10 rounded-lg">
                   <FileText className="w-8 h-8 text-info" />
